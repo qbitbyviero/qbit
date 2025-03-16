@@ -570,6 +570,36 @@
     color: #000;
     box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
 }
+/* Estilos para el modal de agradecimiento */
+.thank-you-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.thank-you-container img {
+    width: 100px;
+    filter: drop-shadow(0 0 5px rgba(255, 69, 0, 0.5)) opacity(0.8);
+    margin-bottom: 20px;
+}
+
+.thank-you-message {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5em;
+    color: #ff4500;
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.7), 0 0 20px rgba(255, 69, 0, 0.5), 0 0 30px rgba(255, 69, 0, 0.3);
+    animation: glow 2s infinite alternate;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 10px rgba(255, 69, 0, 0.7), 0 0 20px rgba(255, 69, 0, 0.5), 0 0 30px rgba(255, 69, 0, 0.3);
+    }
+    100% {
+        text-shadow: 0 0 20px rgba(255, 69, 0, 0.9), 0 0 30px rgba(255, 69, 0, 0.7), 0 0 40px rgba(255, 69, 0, 0.5);
+    }
+}
 </style>
 </head>
 <body>
@@ -758,18 +788,15 @@
     </section>
     <section id="contacto">
         <h2>Contacto</h2>
-        <form class="contact-form" id="formulario" action="https://formsubmit.co/qbit.by.fjmg@gmail.com" method="POST">
+        <form class="contact-form" id="formulario" action="https://formsubmit.co/qbit.by.fjmg@gmail.com" method="POST" onsubmit="showThankYouModal(event)">
             <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
             <input type="email" name="email" id="email" placeholder="Email" required>
             <textarea name="mensaje" id="mensaje" placeholder="Mensaje" rows="5" required></textarea>
-            <!-- Opcional: Establece el asunto del correo -->
             <input type="hidden" name="_subject" value="Nuevo mensaje desde Qbit">
-            <!-- Opcional: Redirige a una página de "Gracias" después del envío
-                 Descomenta la siguiente línea cuando tengas creada tu página de agradecimiento.
-            <input type="hidden" name="_next" value="https://qbitbyviero.github.io/thank-you.html">
-            -->
+            <!-- Descomenta y cambia la redirección para abrir el modal -->
+            <input type="hidden" name="_next" value="#thank-you-modal">
             <button type="submit" class="btn">Enviar</button>
-        </form>        
+        </form>   
         <div class="social-icons" style="margin-top: 30px;">
             <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-facebook"></i></a>
             <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-instagram"></i></a>
@@ -858,6 +885,40 @@ lema.addEventListener('animationend', () => {
                 menu.classList.remove('active');
             }
         });
+        function showThankYouModal(event) {
+    // Evita que el formulario se envíe de manera tradicional
+    event.preventDefault();
+
+    // Envía el formulario manualmente
+    const form = event.target;
+    fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+    })
+    .then(response => {
+        if (response.ok) {
+            // Si el envío es exitoso, abre el modal de agradecimiento
+            openModal('thank-you-modal');
+            form.reset(); // Limpia el formulario
+        } else {
+            alert('Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.');
+    });
+}
     </script>
+    <!-- Modal de agradecimiento -->
+<div id="thank-you-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-modal" onclick="closeModal('thank-you-modal')">&times;</div>
+        <div class="thank-you-container">
+            <img src="logo.jpg" alt="Qbit Logo">
+            <p class="thank-you-message">¡Muchas gracias!<br>El equipo de Qbit se pondrá en contacto con usted a la brevedad posible.</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>
