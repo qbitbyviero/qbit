@@ -857,45 +857,22 @@ lema.addEventListener('animationend', () => {
   const url = 'https://script.google.com/macros/s/AKfycbyzOyYCXaJVVT2p9y_nN8mqmt7iz6RoUnl5H9qmbFR7w9F-latSRNyhr2kmJcxPG1vAFQ/exec';
   
   try {
-    // Enviar la solicitud POST directamente
-    const response = await fetch(url, {
+    // Usamos "no-cors" para evitar que se dispare la preflight request
+    await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(datos)
+      body: JSON.stringify(datos),
+      mode: 'no-cors'
     });
     
-    // Manejar errores HTTP
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Error del servidor (${response.status})`);
-    }
-    
-    // Verificar que la respuesta sea JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Formato de respuesta inválido');
-    }
-    
-    // Procesar respuesta
-    const resultado = await response.json();
-    if (!resultado.success) {
-      throw new Error(resultado.error || 'Error desconocido');
-    }
-    
+    // En modo "no-cors", la respuesta es opaca, así que asumimos éxito
     return true;
     
   } catch (error) {
     console.error('Error completo:', error);
-    
-    const mensajesPersonalizados = {
-      'Failed to fetch': 'No se pudo conectar al servidor. Verifica tu conexión a internet',
-      'NetworkError': 'Error de red. Intenta nuevamente',
-      'Formato de respuesta inválido': 'El servidor respondió en formato incorrecto'
-    };
-    
-    throw new Error(mensajesPersonalizados[error.message] || error.message);
+    throw new Error('No se pudo conectar al servidor. Intenta nuevamente.');
   }
 }
 
@@ -946,24 +923,21 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
     }
     
   } catch (error) {
-    // Mostrar error en el formulario
     const errorContainer = document.getElementById('error-mensaje') || createErrorContainer();
     errorContainer.textContent = error.message;
     errorContainer.style.display = 'block';
     
-    // Auto-ocultar mensaje de error
     setTimeout(() => {
       errorContainer.style.display = 'none';
     }, 5000);
     
   } finally {
-    // Restaurar botón
     boton.disabled = false;
     boton.innerHTML = 'Enviar mensaje';
   }
 });
 
-// Función auxiliar para crear el contenedor de errores
+// Función auxiliar para crear contenedor de errores
 function createErrorContainer() {
   const div = document.createElement('div');
   div.id = 'error-mensaje';
