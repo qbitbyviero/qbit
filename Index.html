@@ -479,24 +479,68 @@
         margin-top: 40px;
         text-align: center;
     }
+     /* Estilos para el botón de hamburguesa */
+     .hamburger {
+            display: none; /* Oculto por defecto */
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #ff4500; /* Color cobrizo */
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Estilos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block; /* Mostrar el botón en móviles */
+            }
+
+            .menu {
+                display: none; /* Ocultar el menú por defecto en móviles */
+                flex-direction: column;
+                background: rgba(26, 26, 26, 0.95); /* Fondo oscuro con transparencia */
+                backdrop-filter: blur(10px);
+                position: fixed;
+                top: 70px;
+                right: 20px;
+                width: 200px;
+                padding: 1rem;
+                border-radius: 10px;
+                border: 1px solid #ff4500; /* Borde cobrizo */
+                box-shadow: 0 2px 15px rgba(255, 69, 0, 0.3); /* Sombra cobriza */
+            }
+
+            .menu.active {
+                display: flex; /* Mostrar el menú cuando está activo */
+            }
+
+            .lema {
+                font-size: 1em; /* Reducir el tamaño del lema en móviles */
+                white-space: normal; /* Permitir que el lema se divida en varias líneas */
+            }
+        }
 </style>
 </head>
 <body>
     <!-- Fondo animado -->
     <div id="circuit-background"></div>
-
-    <!-- Menú superior -->
     <nav>
         <!-- Logo a la izquierda -->
         <div class="logo">
             <img src="logo.jpg" alt="Qbit Logo">
         </div>
-         <!-- Lema en el centro -->
-         <div class="lema-container">
+
+        <!-- Lema en el centro -->
+        <div class="lema-container">
             <p class="lema typed">Donde la inteligencia y la creatividad se encuentran.</p>
         </div>
+
+        <!-- Botón de hamburguesa (solo en móviles) -->
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+
         <!-- Menú a la derecha -->
-        <div class="menu">
+        <div class="menu" id="menu">
             <a href="#inicio">Inicio</a>
             <a href="#acerca">Acerca de</a>
             <a href="#portafolio">Portafolio</a>
@@ -655,10 +699,10 @@
     </section>
     <section id="contacto">
         <h2>Contacto</h2>
-        <form class="contact-form">
-            <input type="text" placeholder="Nombre" required>
-            <input type="email" placeholder="Email" required>
-            <textarea placeholder="Mensaje" rows="5" required></textarea>
+        <form class="contact-form" id="contactForm">
+            <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
+            <input type="email" name="email" id="email" placeholder="Email" required>
+            <textarea name="mensaje" id="mensaje" placeholder="Mensaje" rows="5" required></textarea>
             <button type="submit" class="btn">Enviar</button>
         </form>
         <div class="social-icons" style="margin-top: 30px;">
@@ -734,6 +778,53 @@ lema.addEventListener('animationend', () => {
     lema.classList.remove('typed');
     lema.classList.add('final-effect');
         });
+        // Función para alternar el menú de hamburguesa
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+
+        // Cerrar el menú al hacer clic fuera de él
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('menu');
+            const hamburger = document.querySelector('.hamburger');
+
+            if (event.target !== hamburger && !menu.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+    const nombre = document.getElementById('nombre').value;
+    const email = document.getElementById('email').value;
+    const mensaje = document.getElementById('mensaje').value;
+
+    const data = {
+        nombre: nombre,
+        email: email,
+        mensaje: mensaje
+    };
+
+    // URL de tu API de Google Apps Script
+    const apiUrl = "https://script.google.com/macros/s/AKfycbxyFjd9VXj-jVhcUCc6xQGjVDLEig5F_csubjBMAZDd0KSordFNLYhZd77ewFVr-W_jVw/exec";
+
+    fetch(apiUrl, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.text())
+    .then(result => {
+        alert(result); // Muestra el mensaje de éxito o error
+        document.getElementById('contactForm').reset(); // Limpia el formulario
+    })
+    .catch(error => {
+        alert('Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+    });
+});
     </script>
 </body>
 </html>
