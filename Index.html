@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self' https://script.google.com https://apis.google.com;
+               script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+               style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+               connect-src 'self' https://script.google.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qbit - Soluciones Web</title>
@@ -751,7 +756,7 @@
     </section>
     <section id="contacto">
         <h2>Contacto</h2>
-        <form class="contact-form" id="contactForm">
+        <form class="contact-form" id="formulario">
             <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
             <input type="email" name="email" id="email" placeholder="Email" required>
             <textarea name="mensaje" id="mensaje" placeholder="Mensaje" rows="5" required></textarea>
@@ -845,37 +850,54 @@ lema.addEventListener('animationend', () => {
                 menu.classList.remove('active');
             }
         });
-        document.getElementById('contactForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evita que el formulario se envíe de forma tradicional
-
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
-    const mensaje = document.getElementById('mensaje').value;
-
-    const data = {
-        nombre: nombre,
-        email: email,
-        mensaje: mensaje
-    };
-
-    // URL de tu API de Google Apps Script
-    const apiUrl = "https://script.google.com/macros/s/AKfycbz72nd9MfAnFsJtXOaTIRIVW6TSZJLTQk-OnDnqxyyw30b_p3mRE0OByRWz7paAj43Gvg/exec";
-
-    fetch(apiUrl, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.text())
-    .then(result => {
-        alert(result); // Muestra el mensaje de éxito o error
-        document.getElementById('contactForm').reset(); // Limpia el formulario
-    })
-    .catch(error => {
-        alert('Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+        async function enviarFormulario(datos) {
+  const url = 'https://script.google.com/macros/s/AKfycbzIz2-MksHE9ebDz7snDYqMh-nIUDEN5E5BoYd8bYHNIsdAlrhPTLFRI2-6XMYWQK0KuA/exec';
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datos)
     });
+    
+    if (!response.ok) {
+  throw new Error(`Error HTTP! estado: ${response.status}`);
+}
+const resultado = await response.json();
+    
+    if (!resultado.success) {
+      throw new Error(resultado.error || 'Error desconocido');
+    }
+    
+    console.log('Correo enviado con éxito');
+    return true;
+    
+  } catch (error) {
+    console.error('Error:', error.message);
+    return false;
+  }
+}
+
+// Ejemplo de uso
+document.getElementById('formulario').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const datos = {
+    nombre: document.getElementById('nombre').value,
+    email: document.getElementById('email').value,
+    mensaje: document.getElementById('mensaje').value
+  };
+  
+  const exito = await enviarFormulario(datos);
+  
+  if (exito) {
+    alert('Mensaje enviado con éxito');
+    e.target.reset();
+  } else {
+    alert('Error al enviar el mensaje');
+  }
 });
     </script>
 </body>
