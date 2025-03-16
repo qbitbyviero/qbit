@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.google.com;
-               script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-               style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
-               font-src 'self' https://fonts.gstatic.com;
-               connect-src 'self' https://script.google.com;
-               frame-src https://*.google.com;">
+    content="default-src 'self' https://*.googleapis.com https://*.gstatic.com;
+             script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+             style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+             font-src 'self' https://fonts.gstatic.com;
+             connect-src 'self' https://script.google.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qbit - Soluciones Web</title>
@@ -853,7 +852,7 @@ lema.addEventListener('animationend', () => {
             }
         });
         async function enviarFormulario(datos) {
-  const url = 'https://script.google.com/macros/s/AKfycbyVne-Fizi83DXa77MTFG5QIPLk2ORCwHV7UlNZ-oe4lurpj1kAWuSvZJrzLn-csfLlkg/exec';
+  const url = 'https://script.google.com/macros/s/AKfycbwq9Uf1wTfkGAn_D-P73r4G-RQ5Olxk5QEbXSjd8zveTIiPQl9Rec8dgilXTEFafbJ5KA/exec';
   
   try {
     const response = await fetch(url, {
@@ -861,44 +860,66 @@ lema.addEventListener('animationend', () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(datos)
+      body: JSON.stringify(datos),
+      mode: 'cors' // Añadir modo CORS explícito
     });
-    
+
+    // Manejar errores de red
     if (!response.ok) {
-  throw new Error(`Error HTTP! estado: ${response.status}`);
-}
-const resultado = await response.json();
-    
-    if (!resultado.success) {
-      throw new Error(resultado.error || 'Error desconocido');
+      const errorText = await response.text();
+      throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
     }
-    
-    console.log('Correo enviado con éxito');
+
+    // Verificar tipo de contenido
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Respuesta no válida del servidor');
+    }
+
+    const resultado = await response.json();
+
+    if (!resultado.success) {
+      throw new Error(resultado.error || 'Error desconocido del servidor');
+    }
+
     return true;
     
   } catch (error) {
-    console.error('Error:', error.message);
-    return false;
+    console.error('Error detallado:', error);
+    // Mostrar error más descriptivo
+    const mensajeError = error.message.includes('Failed to fetch') 
+      ? 'Error de conexión: Verifica tu internet' 
+      : error.message;
+    throw new Error(mensajeError); // Propagar el error modificado
   }
 }
 
-// Ejemplo de uso
+// Manejo del formulario mejorado
 document.getElementById('formulario').addEventListener('submit', async (e) => {
   e.preventDefault();
   
-  const datos = {
-    nombre: document.getElementById('nombre').value,
-    email: document.getElementById('email').value,
-    mensaje: document.getElementById('mensaje').value
-  };
-  
-  const exito = await enviarFormulario(datos);
-  
-  if (exito) {
-    alert('Mensaje enviado con éxito');
-    e.target.reset();
-  } else {
-    alert('Error al enviar el mensaje');
+  try {
+    const datos = {
+      nombre: document.getElementById('nombre').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      mensaje: document.getElementById('mensaje').value.trim()
+    };
+
+    // Validación básica en cliente
+    if (!datos.nombre || !datos.email || !datos.mensaje) {
+      throw new Error('Por favor completa todos los campos');
+    }
+
+    const exito = await enviarFormulario(datos);
+    
+    if (exito) {
+      alert('Mensaje enviado con éxito ✅\nNos pondremos en contacto pronto');
+      e.target.reset();
+    }
+    
+  } catch (error) {
+    console.error('Error en el proceso:', error);
+    alert(`⚠️ Error al enviar: ${error.message}`);
   }
 });
     </script>
