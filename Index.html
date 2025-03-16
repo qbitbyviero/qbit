@@ -889,29 +889,52 @@ lema.addEventListener('animationend', () => {
                 menu.classList.remove('active');
             }
         });
-        // Función para mostrar el modal de agradecimiento y enviar el formulario
-        async function showThankYouModal(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
+         // Función para mostrar el modal de agradecimiento y enviar el formulario
+    async function showThankYouModal(event) {
+        event.preventDefault(); // Evita que el formulario se envíe de manera tradicional
 
-            try {
-                const response = await fetch("https://formsubmit.co/ajax/qbit.by.fjmg@gmail.com", {
-                    method: "POST",
-                    body: formData, // Usamos FormData directamente
-                });
+        const form = event.target;
+        const formData = new FormData(form);
 
-                if (response.ok) {
-                    openModal('thank-you-modal'); // Muestra el modal de agradecimiento
-                    form.reset(); // Limpia el formulario
-                } else {
-                    alert("Error al enviar. Intenta nuevamente.");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Error de conexión.");
+        try {
+            const response = await fetch("https://formsubmit.co/ajax/qbit.by.fjmg@gmail.com", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData)), // Convertir FormData a JSON
+            });
+
+            if (response.ok) {
+                openModal('thank-you-modal'); // Muestra el modal de agradecimiento
+                form.reset(); // Limpia el formulario
+            } else {
+                alert("Error al enviar. Intenta nuevamente.");
             }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error de conexión.");
         }
+    }
+
+    // Funciones para abrir y cerrar modales
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.add('active');
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        modal.classList.remove('active');
+    }
+
+    // Cerrar modal al hacer clic fuera
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.remove('active');
+        }
+    };
     </script>
    </body>
 </html>
