@@ -857,34 +857,33 @@ lema.addEventListener('animationend', () => {
   const url = 'https://script.google.com/macros/s/AKfycby9yw9OUl1r-K1RN1Pf9ipBrwmtPprb1Yhnxzu7r96aOnIji849PHUAbjA7TSn8S7X4FQ/exec';
   
   try {
-    // Enviar la solicitud principal
+    // Enviar la solicitud POST directamente
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(datos)
     });
-
+    
     // Manejar errores HTTP
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `Error del servidor (${response.status})`);
     }
-
-    // Verificar formato de respuesta
+    
+    // Verificar que la respuesta sea JSON
     const contentType = response.headers.get('content-type');
-    if (!contentType?.includes('application/json')) {
+    if (!contentType || !contentType.includes('application/json')) {
       throw new Error('Formato de respuesta inválido');
     }
-
+    
     // Procesar respuesta
     const resultado = await response.json();
-    
     if (!resultado.success) {
       throw new Error(resultado.error || 'Error desconocido');
     }
-
+    
     return true;
     
   } catch (error) {
@@ -900,7 +899,7 @@ lema.addEventListener('animationend', () => {
   }
 }
 
-// Manejo del formulario mejorado con feedback visual
+// Manejo del formulario con feedback visual
 document.getElementById('formulario').addEventListener('submit', async (e) => {
   e.preventDefault();
   
@@ -909,7 +908,7 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
   const loader = '<div class="spinner"></div> Enviando...';
   
   try {
-    // Estado de carga
+    // Mostrar estado de carga
     boton.innerHTML = loader;
     boton.disabled = true;
 
@@ -937,7 +936,6 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
     const exito = await enviarFormulario(datos);
     
     if (exito) {
-      // Feedback visual de éxito
       form.classList.add('enviado-exito');
       setTimeout(() => {
         form.reset();
@@ -965,7 +963,7 @@ document.getElementById('formulario').addEventListener('submit', async (e) => {
   }
 });
 
-// Función auxiliar para crear contenedor de errores
+// Función auxiliar para crear el contenedor de errores
 function createErrorContainer() {
   const div = document.createElement('div');
   div.id = 'error-mensaje';
