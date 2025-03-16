@@ -520,6 +520,49 @@
                 white-space: normal; /* Permitir que el lema se divida en varias líneas */
             }
         }
+        /* Estilos para el contenedor del video */
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Ajusta el ancho máximo del video */
+    margin: 0 auto 40px; /* Centrar el video y agregar margen inferior */
+    overflow: hidden;
+    border-radius: 15px;
+    border: 2px solid #ff4500; /* Borde cobrizo */
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
+}
+
+.video-container video {
+    width: 100%;
+    height: auto; /* Mantener la proporción del video */
+    display: block;
+}
+
+/* Estilos para los botones (ya los tienes en tu código) */
+.about-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.about-btn {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid #ff4500; /* Borde cobrizo */
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.about-btn:hover {
+    background: #ff4500; /* Color cobrizo */
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
+}
 </style>
 </head>
 <body>
@@ -570,13 +613,22 @@
 
     <section id="acerca">
         <h2>Acerca de Nosotros</h2>
+    
+        <!-- Video incrustado -->
+        <div class="video-container">
+            <video controls width="100%">
+                <source src="inicio.mp4" type="video/mp4">
+                Tu navegador no soporta la reproducción de video.
+            </video>
+        </div>
+    
+        <!-- Botones -->
         <div class="about-buttons">
             <div class="about-btn" onclick="openModal('mision')">Misión</div>
             <div class="about-btn" onclick="openModal('vision')">Visión</div>
             <div class="about-btn" onclick="openModal('objetivo')">Objetivo</div>
             <div class="about-btn" onclick="openModal('equipo')">Equipo</div>
         </div>
-
         <!-- Modales -->
         <div id="mision" class="modal">
             <div class="modal-content">
