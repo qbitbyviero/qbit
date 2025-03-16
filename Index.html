@@ -852,42 +852,33 @@ lema.addEventListener('animationend', () => {
                 menu.classList.remove('active');
             }
         });
+        //funcion para enviar el formulario
         async function enviarFormulario(datos) {
-  const url = 'https://script.google.com/macros/s/AKfycbxF__3czTgZ1PnLPOTSO-oIBwlCkWm6yhYktMHvZZlQ84FvhpmTwhO8lktAKnbJK5COJg/exec';
+  const url = 'https://script.google.com/macros/s/AKfycby9yw9OUl1r-K1RN1Pf9ipBrwmtPprb1Yhnxzu7r96aOnIji849PHUAbjA7TSn8S7X4FQ/exec';
   
   try {
-    // 1. Enviar preflight request primero
-    await fetch(url, {
-      method: 'OPTIONS',
-      headers: {
-        'Access-Control-Request-Method': 'POST',
-        'Access-Control-Request-Headers': 'Content-Type'
-      }
-    });
-
-    // 2. Enviar la solicitud principal
+    // Enviar la solicitud principal
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(datos),
-      mode: 'cors'
+      body: JSON.stringify(datos)
     });
 
-    // 3. Manejar errores HTTP
+    // Manejar errores HTTP
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || `Error del servidor (${response.status})`);
     }
 
-    // 4. Verificar formato de respuesta
+    // Verificar formato de respuesta
     const contentType = response.headers.get('content-type');
     if (!contentType?.includes('application/json')) {
       throw new Error('Formato de respuesta inválido');
     }
 
-    // 5. Procesar respuesta
+    // Procesar respuesta
     const resultado = await response.json();
     
     if (!resultado.success) {
@@ -897,7 +888,6 @@ lema.addEventListener('animationend', () => {
     return true;
     
   } catch (error) {
-    // 6. Manejo mejorado de errores
     console.error('Error completo:', error);
     
     const mensajesPersonalizados = {
@@ -983,6 +973,7 @@ function createErrorContainer() {
   document.getElementById('formulario').appendChild(div);
   return div;
 }
+
     </script>
 </body>
 </html>
