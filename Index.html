@@ -758,12 +758,18 @@
     </section>
     <section id="contacto">
         <h2>Contacto</h2>
-        <form class="contact-form" id="formulario">
+        <form class="contact-form" id="formulario" action="https://formsubmit.co/qbit.by.fjmg@gmail.com" method="POST">
             <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
             <input type="email" name="email" id="email" placeholder="Email" required>
             <textarea name="mensaje" id="mensaje" placeholder="Mensaje" rows="5" required></textarea>
+            <!-- Opcional: Establece el asunto del correo -->
+            <input type="hidden" name="_subject" value="Nuevo mensaje desde Qbit">
+            <!-- Opcional: Redirige a una página de "Gracias" después del envío
+                 Descomenta la siguiente línea cuando tengas creada tu página de agradecimiento.
+            <input type="hidden" name="_next" value="https://qbitbyviero.github.io/thank-you.html">
+            -->
             <button type="submit" class="btn">Enviar</button>
-        </form>
+        </form>        
         <div class="social-icons" style="margin-top: 30px;">
             <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-facebook"></i></a>
             <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-instagram"></i></a>
@@ -852,100 +858,6 @@ lema.addEventListener('animationend', () => {
                 menu.classList.remove('active');
             }
         });
-        //funcion para enviar el formulario
-        async function enviarFormulario(datos) {
-  const url = 'https://script.google.com/macros/s/AKfycbyzOyYCXaJVVT2p9y_nN8mqmt7iz6RoUnl5H9qmbFR7w9F-latSRNyhr2kmJcxPG1vAFQ/exec';
-  
-  try {
-    // Usamos "no-cors" para evitar que se dispare la preflight request
-    await fetch(url, {
-      method: 'POST',
-      headers: {
-         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(datos),
-      mode: 'no-cors'
-    });
-    
-    // En modo "no-cors", la respuesta es opaca, así que asumimos éxito
-    return true;
-    
-  } catch (error) {
-    console.error('Error completo:', error);
-    throw new Error('No se pudo conectar al servidor. Intenta nuevamente.');
-  }
-}
-
-// Manejo del formulario con feedback visual
-document.getElementById('formulario').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const form = e.target;
-  const boton = form.querySelector('button[type="submit"]');
-  const loader = '<div class="spinner"></div> Enviando...';
-  
-  try {
-    // Mostrar estado de carga
-    boton.innerHTML = loader;
-    boton.disabled = true;
-
-    // Validación en cliente
-    const datos = {
-      nombre: document.getElementById('nombre').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      mensaje: document.getElementById('mensaje').value.trim()
-    };
-
-    const errores = [];
-    if (!datos.nombre) errores.push('El nombre es requerido');
-    if (!datos.email) {
-      errores.push('El email es requerido');
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) {
-      errores.push('El email no es válido');
-    }
-    if (!datos.mensaje) errores.push('El mensaje es requerido');
-    
-    if (errores.length > 0) {
-      throw new Error(errores.join('\n'));
-    }
-
-    // Enviar formulario
-    const exito = await enviarFormulario(datos);
-    
-    if (exito) {
-      form.classList.add('enviado-exito');
-      setTimeout(() => {
-        form.reset();
-        form.classList.remove('enviado-exito');
-      }, 2000);
-      
-      alert('✅ Mensaje enviado correctamente\nTe responderemos en menos de 24 horas');
-    }
-    
-  } catch (error) {
-    const errorContainer = document.getElementById('error-mensaje') || createErrorContainer();
-    errorContainer.textContent = error.message;
-    errorContainer.style.display = 'block';
-    
-    setTimeout(() => {
-      errorContainer.style.display = 'none';
-    }, 5000);
-    
-  } finally {
-    boton.disabled = false;
-    boton.innerHTML = 'Enviar mensaje';
-  }
-});
-
-// Función auxiliar para crear contenedor de errores
-function createErrorContainer() {
-  const div = document.createElement('div');
-  div.id = 'error-mensaje';
-  div.style = 'color: #ff4444; padding: 10px; margin-top: 15px; border: 1px solid #ff4444; border-radius: 5px;';
-  document.getElementById('formulario').appendChild(div);
-  return div;
-}
-
     </script>
 </body>
 </html>
