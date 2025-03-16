@@ -2,11 +2,12 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Security-Policy" 
-    content="default-src 'self' https://*.googleapis.com https://*.gstatic.com;
-             script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-             style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
-             font-src 'self' https://fonts.gstatic.com;
-             connect-src 'self' https://script.google.com;">
+      content="default-src 'self' https://*.googleapis.com https://*.gstatic.com;
+               script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+               style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+               font-src 'self' https://fonts.gstatic.com;
+               connect-src 'self' https://script.google.com;
+               img-src 'self' https://ssl.gstatic.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qbit - Soluciones Web</title>
@@ -855,73 +856,133 @@ lema.addEventListener('animationend', () => {
   const url = 'https://script.google.com/macros/s/AKfycbxF__3czTgZ1PnLPOTSO-oIBwlCkWm6yhYktMHvZZlQ84FvhpmTwhO8lktAKnbJK5COJg/exec';
   
   try {
+    // 1. Enviar preflight request primero
+    await fetch(url, {
+      method: 'OPTIONS',
+      headers: {
+        'Access-Control-Request-Method': 'POST',
+        'Access-Control-Request-Headers': 'Content-Type'
+      }
+    });
+
+    // 2. Enviar la solicitud principal
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(datos),
-      mode: 'cors' // Añadir modo CORS explícito
+      mode: 'cors'
     });
 
-    // Manejar errores de red
+    // 3. Manejar errores HTTP
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Error del servidor (${response.status})`);
     }
 
-    // Verificar tipo de contenido
+    // 4. Verificar formato de respuesta
     const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Respuesta no válida del servidor');
+    if (!contentType?.includes('application/json')) {
+      throw new Error('Formato de respuesta inválido');
     }
 
+    // 5. Procesar respuesta
     const resultado = await response.json();
-
+    
     if (!resultado.success) {
-      throw new Error(resultado.error || 'Error desconocido del servidor');
+      throw new Error(resultado.error || 'Error desconocido');
     }
 
     return true;
     
   } catch (error) {
-    console.error('Error detallado:', error);
-    // Mostrar error más descriptivo
-    const mensajeError = error.message.includes('Failed to fetch') 
-      ? 'Error de conexión: Verifica tu internet' 
-      : error.message;
-    throw new Error(mensajeError); // Propagar el error modificado
+    // 6. Manejo mejorado de errores
+    console.error('Error completo:', error);
+    
+    const mensajesPersonalizados = {
+      'Failed to fetch': 'No se pudo conectar al servidor. Verifica tu conexión a internet',
+      'NetworkError': 'Error de red. Intenta nuevamente',
+      'Formato de respuesta inválido': 'El servidor respondió en formato incorrecto'
+    };
+    
+    throw new Error(mensajesPersonalizados[error.message] || error.message);
   }
 }
 
-// Manejo del formulario mejorado
+// Manejo del formulario mejorado con feedback visual
 document.getElementById('formulario').addEventListener('submit', async (e) => {
   e.preventDefault();
   
+  const form = e.target;
+  const boton = form.querySelector('button[type="submit"]');
+  const loader = '<div class="spinner"></div> Enviando...';
+  
   try {
+    // Estado de carga
+    boton.innerHTML = loader;
+    boton.disabled = true;
+
+    // Validación en cliente
     const datos = {
       nombre: document.getElementById('nombre').value.trim(),
       email: document.getElementById('email').value.trim(),
       mensaje: document.getElementById('mensaje').value.trim()
     };
 
-    // Validación básica en cliente
-    if (!datos.nombre || !datos.email || !datos.mensaje) {
-      throw new Error('Por favor completa todos los campos');
+    const errores = [];
+    if (!datos.nombre) errores.push('El nombre es requerido');
+    if (!datos.email) {
+      errores.push('El email es requerido');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos.email)) {
+      errores.push('El email no es válido');
+    }
+    if (!datos.mensaje) errores.push('El mensaje es requerido');
+    
+    if (errores.length > 0) {
+      throw new Error(errores.join('\n'));
     }
 
+    // Enviar formulario
     const exito = await enviarFormulario(datos);
     
     if (exito) {
-      alert('Mensaje enviado con éxito ✅\nNos pondremos en contacto pronto');
-      e.target.reset();
+      // Feedback visual de éxito
+      form.classList.add('enviado-exito');
+      setTimeout(() => {
+        form.reset();
+        form.classList.remove('enviado-exito');
+      }, 2000);
+      
+      alert('✅ Mensaje enviado correctamente\nTe responderemos en menos de 24 horas');
     }
     
   } catch (error) {
-    console.error('Error en el proceso:', error);
-    alert(`⚠️ Error al enviar: ${error.message}`);
+    // Mostrar error en el formulario
+    const errorContainer = document.getElementById('error-mensaje') || createErrorContainer();
+    errorContainer.textContent = error.message;
+    errorContainer.style.display = 'block';
+    
+    // Auto-ocultar mensaje de error
+    setTimeout(() => {
+      errorContainer.style.display = 'none';
+    }, 5000);
+    
+  } finally {
+    // Restaurar botón
+    boton.disabled = false;
+    boton.innerHTML = 'Enviar mensaje';
   }
 });
+
+// Función auxiliar para crear contenedor de errores
+function createErrorContainer() {
+  const div = document.createElement('div');
+  div.id = 'error-mensaje';
+  div.style = 'color: #ff4444; padding: 10px; margin-top: 15px; border: 1px solid #ff4444; border-radius: 5px;';
+  document.getElementById('formulario').appendChild(div);
+  return div;
+}
     </script>
 </body>
 </html>
