@@ -286,27 +286,49 @@
             transform: scale(1.1);
             box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
         }
-
+        /* Contenedor del formulario */
+.contact-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
         /* Formulario */
-        .contact-form {
-            display: grid;
-            gap: 20px;
-            max-width: 500px;
-            margin-top: 30px;
-        }
+.contact-form {
+    display: grid;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px; /* Ancho máximo del formulario */
+}
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ff4500;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+.contact-form textarea {
+    resize: vertical;
+}
 
-        input, textarea {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ff4500; /* Borde cobrizo */
-            padding: 15px;
-            color: #fff;
-            border-radius: 5px;
-        }
+.contact-form button {
+    background: #ff4500;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-        textarea {
-            resize: vertical;
-        }
-
+.contact-form button:hover {
+    background: #ff6347;
+}
         /* Efectos especiales */
         .glow {
             box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
@@ -709,6 +731,28 @@
 .news-video-container {
     width: 100%; /* Ocupa todo el ancho de la tarjeta */
     aspect-ratio: 1
+    /* Iconos sociales */
+.social-icons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espacio entre iconos */
+}
+
+.social-icons a {
+    color: #ff4500; /* Color cobrizo */
+    font-size: 2em; /* Tamaño más grande */
+    transition: 0.3s;
+}
+
+.social-icons a:visited {
+    color: #ff4500; /* Mantener el mismo color después de visitar */
+}
+
+.social-icons a:hover {
+    color: #ff6347; /* Color al pasar el mouse */
+    transform: scale(1.1); /* Efecto de escala al pasar el mouse */
+}
 </style>
 </head>
 <body>
@@ -910,8 +954,7 @@
             <p>"En Qbit no vendemos soluciones prefabricadas - construimos herramientas que realmente resuelven tus desafíos únicos"</p>
         </div>
     </div>
-</section>
-   <section id="contacto">
+<section id="contacto">
     <h2>Contacto</h2>
     <div class="contact-container">
         <form class="contact-form" id="formulario" onsubmit="showThankYouModal(event)">
@@ -928,17 +971,17 @@
             <a href="https://wa.me/527716995004"><i class="fab fa-whatsapp"></i></a>
         </div>
     </div>
-<!-- Modal de agradecimiento -->
-<div id="thank-you-modal" class="modal">
-    <div class="modal-content">
-        <div class="close-modal" onclick="closeModal('thank-you-modal')">&times;</div>
-        <div class="thank-you-container">
-            <img src="logo.jpg" alt="Qbit Logo">
-            <p class="thank-you-message">¡Muchas gracias!<br>El equipo de Qbit se pondrá en contacto con usted a la brevedad posible.</p>
+    <!-- Modal de agradecimiento -->
+    <div id="thank-you-modal" class="modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal('thank-you-modal')">&times;</div>
+            <div class="thank-you-container">
+                <img src="logo.jpg" alt="Qbit Logo">
+                <p class="thank-you-message">¡Muchas gracias!<br>El equipo de Qbit se pondrá en contacto con usted a la brevedad posible.</p>
+            </div>
         </div>
     </div>
-</div>
-    </section>
+</section>
     <script>
         // Crear líneas dinámicas para el fondo
         const circuitBackground = document.getElementById('circuit-background');
