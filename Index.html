@@ -183,11 +183,14 @@
 }
 
 .news-video-container {
-    width: 100%;
+    width: 300px; /* Aumenta este valor */
+    height: 300px; /* Aumenta proporcionalmente */;
     aspect-ratio: 1/1; /* Relación cuadrada */
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 15px;
+    background: transparent; /* Fondo transparente */
+
 }
 
 .news-video {
@@ -667,10 +670,12 @@
 }
 
 .news-card {
-    background: rgba(255,255,255,0.9);
+    background: transparent; /* Fondo transparente */
+    border: 2px solid #ff0000; /* Borde rojo brillante */
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Sombra roja para resaltar */
+    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado (opcional) */
 }
 
 .news-video-container {
