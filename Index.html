@@ -600,6 +600,21 @@
         text-shadow: 0 0 20px rgba(255, 69, 0, 0.9), 0 0 30px rgba(255, 69, 0, 0.7), 0 0 40px rgba(255, 69, 0, 0.5);
     }
 }
+.video-container {
+    max-width: 300px; /* Tamaño más compacto */
+    margin: 0 auto 15px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.project-video {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* Mantiene la relación de aspecto */
+    background: #000; /* Fondo negro para posibles letterboxing */
+}
 </style>
 </head>
 <body>
@@ -724,15 +739,23 @@
                     <h3>En construcción 🚧</h3>
                 </div>
                 <div class="portfolio-content">
-                    <h3>DJ Station</h3>
-                    <p>Sistema de gestión para eventos musicales con agenda interactiva y gestión de recursos en tiempo real.</p>
-                    <div class="tech-badges">
-                        <span class="tech-badge">Angular</span>
-                        <span class="tech-badge">Firebase</span>
-                        <span class="tech-badge">WebSockets</span>
+                    <div class="project">
+                        <!-- Contenedor del video -->
+                        <div class="video-container">
+                            <video class="project-video" controls muted playsinline preload="metadata"></video>
+                                <source src="DistanceDJ.mp4" type="video/mp4">
+                                Tu navegador no soporta el elemento de video.
+                            </video>
+                        </div>
+                    
+                        <h3>DJ Station</h3>
+                        <p>Sistema de gestión para eventos musicales con agenda interactiva y gestión de recursos en tiempo real.</p>
+                        <div class="tech-badges">
+                            <span class="tech-badge">Angular</span>
+                            <span class="tech-badge">Firebase</span>
+                            <span class="tech-badge">WebSockets</span>
+                        </div>
                     </div>
-                </div>
-            </div>
     
             <!-- Puntos de venta -->
             <div class="portfolio-item">
