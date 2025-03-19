@@ -628,17 +628,17 @@
 
 /* Contenedor del video en NOTICIAS (deliciaslogo.mp4) */
 .news-video-container {
-    width: 100%;
-    aspect-ratio: 1/1; /* Relación cuadrada (1:1) */
+    width: 25%; /* Ancho al 25% del contenedor padre */
+    aspect-ratio: 1/1; /* Mantenemos la relación cuadrada */
     overflow: hidden;
     border-radius: 8px;
-    margin-bottom: 15px;
+    margin: 0 auto 15px; /* Centrado */
 }
 
 .news-video {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Muestra todo el video sin recortar */
+    object-fit: cover; 
     background: #000;
 }
 </style>
