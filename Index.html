@@ -455,51 +455,71 @@
             box-shadow: 0 0 10px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
             transform: translateY(-2px);
         }
-   /* Estilos para el portafolio */
-   .portfolio-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-        margin-top: 40px;
-    }
-
-    .portfolio-item {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 15px;
-        overflow: hidden;
-        border: 2px solid #ff4500;
-        transition: transform 0.3s;
-    }
+  /* Contenedor principal del portafolio */
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+    /* Tarjetas de proyectos */
+.portfolio-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 2px solid #ff4500;
+    transition: transform 0.3s;
+}
 
     .portfolio-item:hover {
-        transform: translateY(-10px);
-    }
+    transform: translateY(-10px);
+}
 
-    .construction-overlay {
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 200px;
-    }
+.construction-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
 
-    .portfolio-content {
-        padding: 20px;
-    }
+  .portfolio-content {
+    padding: 20px;
+    text-align: center;
+}
 
     .tech-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin: 15px 0;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
 
-    .tech-badge {
-        background: rgba(255, 69, 0, 0.2);
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 0.9em;
-    }
+.tech-badge {
+    background: rgba(255, 69, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+/* Mensaje personalizado */
+.custom-message {
+    grid-column: 1 / -1; /* Ocupa todo el ancho */
+    text-align: center;
+    margin-top: 40px;
+}
+
+.custom-message ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.custom-message ul li {
+    margin: 10px 0;
+}
 
     .custom-solution {
         background: linear-gradient(45deg, #ff4500, #ff8c00);
@@ -801,100 +821,99 @@
                 <p>Francisco Javier Martínez Gutiérrez es el fundador y director creativo de Qbit, una empresa emergente en el sector tecnológico. Con una gran pasión por la innovación y el aprendizaje constante, Qbit se distingue por su enfoque fresco y dinámico en el desarrollo de soluciones digitales. La compañía se compromete a transformar ideas en productos funcionales y eficientes, trabajando de la mano con sus clientes para crecer juntos en un entorno en constante evolución.</p>
             </div>
         </div>
-    </section>
-
-    <section id="portafolio">
-        <h2>Portafolio</h2>
-        <div class="portfolio-grid">
-            <!-- Proyectos web -->
-            <div class="portfolio-item">
-                <div class="construction-overlay">
-                    <h3>En construcción 🚧</h3>
-                </div>
-                <div class="portfolio-content">
-                    <h3>Zentik</h3>
-                    <p>Plataforma e-commerce innovadora con integraciones de pago avanzadas y diseño centrado en el usuario.</p>
-                    <div class="tech-badges">
-                        <span class="tech-badge">React</span>
-                        <span class="tech-badge">Node.js</span>
-                        <span class="tech-badge">AWS</span>
-                    </div>
-                </div>
+<section id="portafolio">
+    <h2>Portafolio</h2>
+    <div class="portfolio-grid">
+        <!-- Proyecto 1 - Zentik -->
+        <div class="portfolio-item">
+            <div class="construction-overlay">
+                <h3>En construcción 🚧</h3>
             </div>
-                <div class="portfolio-content">
-                    <div class="project">
-                        <!-- Contenedor del video -->
-                        <div class="video-container">
-                            <video class="project-video" controls muted playsinline preload="metadata"></video>
-                                <source src="DistanceDJ.mp4" type="video/mp4">
-                                Tu navegador no soporta el elemento de video.
-                            </video>
-                        </div>
-                    
-                        <h3>DJ Station</h3>
-                        <p>Sistema de gestión para eventos musicales con agenda interactiva y gestión de recursos en tiempo real.</p>
-                        <div class="tech-badges">
-                            <span class="tech-badge">Angular</span>
-                            <span class="tech-badge">Firebase</span>
-                            <span class="tech-badge">WebSockets</span>
-                        </div>
-                    </div>
-    
-            <!-- Puntos de venta -->
-            <div class="portfolio-item">
-                <div class="portfolio-content">
-                    <h3>🛠️ Soluciones POS Personalizadas</h3>
-                    <p>Sistemas de punto de venta totalmente adaptados a sus necesidades con:</p>
-                    <ul style="text-align: left; margin: 15px 0;">
-                        <li>Integración con Google Sheets</li>
-                        <li>Automatización con Google Apps Script</li>
-                        <li>Reportes en tiempo real</li>
-                        <li>Multiplataforma</li>
-                    </ul>
-                    <div class="tech-badges">
-                        <span class="tech-badge">GAS</span>
-                        <span class="tech-badge">API REST</span>
-                        <span class="tech-badge">Data Studio</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Sección de conocimientos -->
-        <div class="custom-solution">
-            <h3>🔧 Stack Tecnológico Completo</h3>
-            <p>Dominio avanzado de tecnologías modernas:</p>
-            <div class="tech-badges" style="justify-content: center; margin: 20px 0;">
-                <span class="tech-badge">HTML5</span>
-                <span class="tech-badge">CSS3/Sass</span>
-                <span class="tech-badge">JavaScript ES6+</span>
-                <span class="tech-badge">React/Redux</span>
-                <span class="tech-badge">Node.js</span>
-                <span class="tech-badge">Python</span>
-                <span class="tech-badge">SQL/NoSQL</span>
-                <span class="tech-badge">AWS/GCP</span>
-            </div>
-            <p>+20 frameworks y tecnologías adicionales</p>
-        </div>
-    
-        <!-- Mensaje personalizado -->
-        <div class="portfolio-item" style="margin-top: 40px; text-align: center;">
             <div class="portfolio-content">
-                <h3>🌟 Soluciones a Medida</h3>
-                <p>¿No encuentras lo que necesitas? Lo creamos para ti:</p>
-                <ul style="list-style: none; padding: 0;">
-                    <li>✔️ Desarrollo personalizado</li>
-                    <li>✔️ Adaptado a tu presupuesto</li>
-                    <li>✔️ Asesoría técnica especializada</li>
-                    <li>✔️ Soporte 360°</li>
-                </ul>
-                <p style="margin-top: 20px;">"En Qbit no vendemos soluciones prefabricadas - construimos herramientas que realmente resuelven tus desafíos únicos"</p>
+                <h3>Zentik</h3>
+                <p>Plataforma e-commerce innovadora con integraciones de pago avanzadas y diseño centrado en el usuario.</p>
+                <div class="tech-badges">
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">AWS</span>
+                </div>
             </div>
         </div>
-    </section>
-    <section id="contacto">
-        <h2>Contacto</h2>
-        <!-- Formulario de contacto -->
+
+        <!-- Proyecto 2 - DJ Station -->
+        <div class="portfolio-item">
+            <div class="video-container">
+                <video controls class="project-video">
+                    <source src="DistanceDJ.mp4" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                </video>
+            </div>
+            <div class="portfolio-content">
+                <h3>DJ Station</h3>
+                <p>Sistema de gestión para eventos musicales con agenda interactiva y gestión de recursos en tiempo real.</p>
+                <div class="tech-badges">
+                    <span class="tech-badge">Angular</span>
+                    <span class="tech-badge">Firebase</span>
+                    <span class="tech-badge">WebSockets</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proyecto 3 - Soluciones POS -->
+        <div class="portfolio-item">
+            <div class="portfolio-content">
+                <h3>🛠️ Soluciones POS Personalizadas</h3>
+                <p>Sistemas de punto de venta totalmente adaptados a sus necesidades con:</p>
+                <ul>
+                    <li>Integración con Google Sheets</li>
+                    <li>Automatización con Google Apps Script</li>
+                    <li>Reportes en tiempo real</li>
+                    <li>Multiplataforma</li>
+                </ul>
+                <div class="tech-badges">
+                    <span class="tech-badge">GAS</span>
+                    <span class="tech-badge">API REST</span>
+                    <span class="tech-badge">Data Studio</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stack Tecnológico -->
+    <div class="custom-solution">
+        <h3>🔧 Stack Tecnológico Completo</h3>
+        <p>Dominio avanzado de tecnologías modernas:</p>
+        <div class="tech-badges">
+            <span class="tech-badge">HTML5</span>
+            <span class="tech-badge">CSS3/Sass</span>
+            <span class="tech-badge">JavaScript ES6+</span>
+            <span class="tech-badge">React/Redux</span>
+            <span class="tech-badge">Node.js</span>
+            <span class="tech-badge">Python</span>
+            <span class="tech-badge">SQL/NoSQL</span>
+            <span class="tech-badge">AWS/GCP</span>
+        </div>
+        <p>+20 frameworks y tecnologías adicionales</p>
+    </div>
+
+    <!-- Mensaje personalizado -->
+    <div class="portfolio-item custom-message">
+        <div class="portfolio-content">
+            <h3>🌟 Soluciones a Medida</h3>
+            <p>¿No encuentras lo que necesitas? Lo creamos para ti:</p>
+            <ul>
+                <li>✔️ Desarrollo personalizado</li>
+                <li>✔️ Adaptado a tu presupuesto</li>
+                <li>✔️ Asesoría técnica especializada</li>
+                <li>✔️ Soporte 360°</li>
+            </ul>
+            <p>"En Qbit no vendemos soluciones prefabricadas - construimos herramientas que realmente resuelven tus desafíos únicos"</p>
+        </div>
+    </div>
+</section>
+   <section id="contacto">
+    <h2>Contacto</h2>
+    <div class="contact-container">
         <form class="contact-form" id="formulario" onsubmit="showThankYouModal(event)">
             <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
             <input type="email" name="email" id="email" placeholder="Email" required>
@@ -902,12 +921,13 @@
             <input type="hidden" name="_subject" value="Nuevo mensaje desde Qbit">
             <button type="submit" class="btn">Enviar</button>
         </form>
-        <div class="social-icons" style="margin-top: 30px;">
-            <a href="https://www.facebook.com/profile.php?id=61574203261500" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-facebook"></i></a>
-            <a href="https://www.instagram.com/qbit.by.fjmg/" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-instagram"></i></a>
-            <a href="https://x.com/FjmgByqbit" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-x-twitter"></i></a>
-            <a href="https://wa.me/527716995004" style="color: #ff4500; font-size: 1.5em;"><i class="fab fa-whatsapp"></i></a>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/profile.php?id=61574203261500"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/qbit.by.fjmg/"><i class="fab fa-instagram"></i></a>
+            <a href="https://x.com/FjmgByqbit"><i class="fab fa-x-twitter"></i></a>
+            <a href="https://wa.me/527716995004"><i class="fab fa-whatsapp"></i></a>
         </div>
+    </div>
 <!-- Modal de agradecimiento -->
 <div id="thank-you-modal" class="modal">
     <div class="modal-content">
