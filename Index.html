@@ -799,8 +799,8 @@
         <div class="social-icons" style="margin-top: 30px;">
             <a href="https://www.facebook.com/profile.php?id=61574203261500" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-facebook"></i></a>
             <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-instagram"></i></a>
-            <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-twitter"></i></a>
-            <a href="#" style="color: #ff4500; font-size: 1.5em;"><i class="fab fa-linkedin"></i></a>
+            <a href="#" style="color: #ff4500; margin-right: 15px; font-size: 1.5em;"><i class="fab fa-x-twitter"></i></a>
+            <a href="https://wa.me/527716995004" style="color: #ff4500; font-size: 1.5em;"><i class="fab fa-whatsapp"></i></a>
         </div>
 <!-- Modal de agradecimiento -->
 <div id="thank-you-modal" class="modal">
@@ -902,14 +902,14 @@ lema.addEventListener('animationend', () => {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch("https://formsubmit.co/ajax/qbit.by.fjmg@gmail.com", {
+            const response = await fetch("https://usebasin.com/f/1069c7a14256", {
                 method: "POST",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(Object.fromEntries(formData)), // Convertir FormData a JSON
-            });
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(Object.fromEntries(formData)), 
+});
 
             if (response.ok) {
                 openModal('thank-you-modal'); // Muestra el modal de agradecimiento
