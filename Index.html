@@ -600,31 +600,45 @@
         text-shadow: 0 0 20px rgba(255, 69, 0, 0.9), 0 0 30px rgba(255, 69, 0, 0.7), 0 0 40px rgba(255, 69, 0, 0.5);
     }
 }
+/* Contenedor del video PRINCIPAL (inicio.mp4) */
 .video-container {
-    max-width: 800px; /* Ancho máximo (ajusta según tu diseño) */
-    margin: 0 auto; /* Centrado */
+    max-width: 800px; /* Ancho máximo más grande */
+    margin: 0 auto 20px; /* Centrado con margen inferior */
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    aspect-ratio: 16/9; /* Relación de aspecto horizontal (como YouTube) */
 }
 
 .video-container video {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16/9; /* Relación de aspecto horizontal (como YouTube) */
+    height: 100%;
+    object-fit: contain; /* Muestra todo el video sin recortar */
+    background: #000;
 }
-/* Contenedor para mantener la proporción */
-.news-video-container {
+
+/* Contenedor del video en PROYECTOS (DistanceDJ.mp4) */
+.project-video {
     width: 100%;
-    aspect-ratio: 1/1; /* Relación cuadrada (ajusta según el video) */
-    overflow: hidden;
+    height: 100%;
+    object-fit: cover; /* Cubre el espacio recortando bordes si es necesario */
+    background: #000;
     border-radius: 8px;
 }
 
-.news-video-container video {
+/* Contenedor del video en NOTICIAS (deliciaslogo.mp4) */
+.news-video-container {
+    width: 100%;
+    aspect-ratio: 1/1; /* Relación cuadrada (1:1) */
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.news-video {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Cubre el espacio sin deformar */
+    object-fit: contain; /* Muestra todo el video sin recortar */
     background: #000;
 }
 </style>
