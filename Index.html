@@ -165,22 +165,34 @@
         }
 
         /* Noticias */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-
-        .news-card {
-    width: fit-content; /* Ajusta el ancho al contenido */
-    padding: 20px; /* Reduce si hay mucho espacio interno */
-    margin: 10px auto; /* Centrado y espacio exterior */
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+     .news-grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 20px 0;
 }
 
+/* Tarjetas individuales */
+.news-card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+        /* Contenedor de video */
+.news-video-container {
+    width: 100%;
+    aspect-ratio: 16/9; /* Relación horizontal estándar */
+    background: transparent; /* Fondo transparente */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+}
         .news-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(255, 69, 0, 0.2); /* Sombra cobriza */
@@ -633,10 +645,24 @@
     height: 150px;
     margin: 0 auto 10px; /* Menos espacio debajo */
 }
+/* Video adaptativo */
 .news-video {
-    object-fit: contain !important; /* Muestra TODO el video */
     width: 100%;
     height: 100%;
+    object-fit: contain; /* Muestra todo el video */
+}
+        /* Placeholder para futuros videos */
+.news-video-container.placeholder {
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(0, 0, 0, 0.1);
+}
+
+.news-video-container.placeholder p {
+    color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
 }
 </style>
 </head>
@@ -675,16 +701,25 @@
             </div>
         </div>
         <div class="news-grid">
-            <div class="news-card">
-                <div class="news-video-container">
-                    <video controls class="news-video">
-                        <source src="deliciaslogo.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <h3>Últimas noticias</h3>
-                <p>Texto de ejemplo...</p>
-            </div>
+    <!-- Tarjeta 1 - Actualización de Logo -->
+    <div class="news-card">
+        <div class="news-video-container">
+            <video controls class="news-video">
+                <source src="deliciaslogo.mp4" type="video/mp4">
+            </video>
         </div>
+        <h3>Actualización de Logo</h3>
+        <p>Totalmente Nuevo y mejorado</p>
+    </div>   <!-- Tarjeta 2 - Nuevos Proyectos -->
+    <div class="news-card">
+        <!-- Espacio reservado para futuro video/imagen -->
+        <div class="news-video-container placeholder">
+            <p>Próximamente...</p>
+        </div>
+        <h3>Nuevos proyectos</h3>
+        <p>Estamos trabajando en emocionantes desarrollos...</p>
+    </div>
+</div>
                         <h3>Actualización de Logo</h3>
                         <p>Totalmente Nuevo y mejorado</p>
                     </div>
