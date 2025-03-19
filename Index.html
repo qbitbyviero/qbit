@@ -662,54 +662,33 @@
 /* ------------------------------- */
 /* SECCIÓN DE NOTICIAS */
 /* ------------------------------- */
+/* Contenedor principal */
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+    gap: 20px; /* Espacio entre tarjetas */
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* Tarjetas */
 .news-card {
-    background: transparent; /* Fondo transparente */
+    background: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
     border: 2px solid #ff0000; /* Borde rojo brillante */
     border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Sombra roja para resaltar */
-    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado (opcional) */
-}
-
-.news-video-container {
-    width: 100%;
-    max-width: 200px; /* Tamaño máximo para mantener proporción */
-    margin: 0 auto 15px;
-    aspect-ratio: 1/1; /* Contenedor cuadrado */
-    border-radius: 8px;
-    overflow: hidden;
-    background: transparent; /* Fondo transparente */
-}
-
-.news-video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Muestra video completo */
-}
-
-/* ------------------------------- */
-/* PLACEHOLDER */
-/* ------------------------------- */
-.news-video-container.placeholder {
-    background: rgba(0,0,0,0.03);
-    border: 2px dashed rgba(0,0,0,0.1);
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); /* Sombra roja */
+    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado */
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
-.news-video-container.placeholder p {
-    color: rgba(0,0,0,0.4);
-    font-style: italic;
-    margin: 0;
-}
+/* Contenedor del video */
+.news-video-container {
+    width: 100%; /* Ocupa todo el ancho de la tarjeta */
+    aspect-ratio: 1
 </style>
 </head>
 <body>
@@ -746,7 +725,7 @@
                 <div class="carousel-item" style="background-image: url('carru3.jpg')"></div>
             </div>
         </div>
-      <div class="news-grid">
+     <div class="news-grid">
     <!-- Tarjeta 1 - Actualización de Logo -->
     <div class="news-card">
         <div class="news-video-container">
@@ -754,8 +733,10 @@
                 <source src="deliciaslogo.mp4" type="video/mp4">
             </video>
         </div>
-        <h3>Actualización de Logo</h3>
-        <p>Totalmente Nuevo y mejorado</p>
+        <div class="news-content">
+            <h3>Actualización de Logo</h3>
+            <p>Totalmente Nuevo y mejorado</p>
+        </div>
     </div>
 
     <!-- Tarjeta 2 - Nuevos Proyectos -->
@@ -763,8 +744,10 @@
         <div class="news-video-container placeholder">
             <p>Próximamente...</p>
         </div>
-        <h3>Nuevos proyectos</h3>
-        <p>Estamos trabajando en emocionantes desarrollos...</p>
+        <div class="news-content">
+            <h3>Nuevos proyectos</h3>
+            <p>Estamos trabajando en emocionantes desarrollos...</p>
+        </div>
     </div>
 </div>
     </section>
