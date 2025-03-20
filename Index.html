@@ -234,37 +234,35 @@
         }
 
         /* Modales */
-        .modal {
+     .modal {
     display: none;
-    position: fixed; /* Mantiene el modal en la ventana gráfica */
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Ocupa todo el ancho visible */
-    height: 100vh; /* Ocupa toda la altura visible */
-    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.8);
     z-index: 9999;
-    /* Centrado flexible: */
+    overflow-y: auto;
+    /* Centrado flexible mejorado: */
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Cambiado a flex-start para mejor manejo de scroll */
-    padding: 20px;
+    align-items: center; /* Cambiado a center */
 }
 
         .modal.active {
             display: flex;
             opacity: 1;
         }
-
-        .modal-content {
+.modal-content {
     background: rgba(26, 26, 26, 0.9);
     padding: 30px;
     border-radius: 15px;
     max-width: 600px;
     width: 90%;
-    margin-top: 20vh; /* Asegura que el contenido empiece desde el centro vertical */
-    transform: translateY(-50%); /* Ajuste fino para centrar exactamente */
+    margin: 20px; /* Margen mínimo */
     position: relative;
+    /* Eliminar transform: translateY */
 }
 
         .close-modal {
@@ -1027,36 +1025,39 @@
         }, 5000);
 
         // Funciones para modales
-    function openModal(id) {
+   // ACTUALIZAR openModal
+function openModal(id) {
     const modal = document.getElementById(id);
     modal.classList.add('active');
-    
-    // Forzar el scroll al inicio del modal
-    window.scrollTo({
-        top: 0,
-        behavior: 'instant'
-    });
+    handleScrollResize(); // Forzar cálculo inicial
 }
-
-// Actualiza la posición al hacer scroll/resize
-window.addEventListener('scroll', centerModals);
-window.addEventListener('resize', centerModals);
-
-function centerModals() {
+function handleScrollResize() {
     document.querySelectorAll('.modal.active').forEach(modal => {
         const content = modal.querySelector('.modal-content');
         const viewportHeight = window.innerHeight;
-        const contentHeight = content.offsetHeight;
-        
-        content.style.marginTop = `${Math.max(20, (viewportHeight - contentHeight) / 2)}px`;
+        content.style.marginTop = `${Math.max(20, (viewportHeight - content.offsetHeight)/3}px`;
     });
 }
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function (event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        };
+
+// ACTUALIZAR EVENTOS
+window.addEventListener('scroll', handleScrollResize);
+window.addEventListener('resize', handleScrollResize);
+
+       // FUNCIÓN CERRAR MODAL CORREGIDA
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('active'); // Elimina la clase 'active'
+    
+    // Detiene la propagación del evento
+    event.stopPropagation();
+}
+
+// CERRAR AL HACER CLIC FUERA (actualizado)
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('active');
+    }
+};
       // Script para manejar la animación del lema
       const lema = document.querySelector('.lema');
 
