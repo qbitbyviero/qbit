@@ -1021,38 +1021,36 @@
             carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
         }, 5000);
 
-        // Funciones para modales
-   // ACTUALIZAR openModal
-// Función openModal actualizada
+     // Función para abrir un modal y cerrar los demás
 function openModal(id) {
-    const modal = document.getElementById(id);
-    modal.classList.add('active');
-    handleScrollResize(); // Typo en el nombre de la función
-}
-
-// Corregir nombre de función y sintaxis
-function handleScrollResize() {
+    // Cerrar cualquier modal abierto antes de abrir uno nuevo
     document.querySelectorAll('.modal.active').forEach(modal => {
-        const content = modal.querySelector('.modal-content');
-        const viewportHeight = window.innerHeight;
-        content.style.marginTop = `${Math.max(20, (viewportHeight - content.offsetHeight) / 3)}px`; // Paréntesis correctos
+        modal.classList.remove('active');
     });
-}
 
-// Función closeModal corregida
-function closeModal(id, event) { // Añadir parámetro event
-    event.stopPropagation();
+    // Abrir el modal seleccionado
     const modal = document.getElementById(id);
-    modal.classList.remove('active');
+    if (modal) {
+        modal.classList.add('active');
+    }
 }
 
-// CERRAR AL HACER CLIC FUERA (actualizado)
+// Función para cerrar un modal específico
+function closeModal(id, event) {
+    event.stopPropagation(); // Evita que se dispare el evento del modal de fondo
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// Cerrar modal al hacer clic fuera de él
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.classList.remove('active');
     }
 };
-      // Script para manejar la animación del lema
+     // Script para manejar la animación del lema
       const lema = document.querySelector('.lema');
 
 // Cuando termine la animación de escritura, agregar el efecto final
