@@ -242,7 +242,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 1001;
+            z-index: 9999 !important; /* Asegura que esté por encima de todo */
             justify-content: center;
             align-items: center;
             opacity: 0;
@@ -954,6 +954,7 @@
             <p>"En Qbit no vendemos soluciones prefabricadas - construimos herramientas que realmente resuelven tus desafíos únicos"</p>
         </div>
     </div>
+    </section> 
 <section id="contacto">
     <h2>Contacto</h2>
     <div class="contact-container">
@@ -1091,18 +1092,6 @@ lema.addEventListener('animationend', () => {
             alert("Error de conexión.");
         }
     }
-
-    // Funciones para abrir y cerrar modales
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        modal.classList.add('active');
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        modal.classList.remove('active');
-    }
-
     // Cerrar modal al hacer clic fuera
     window.onclick = function (event) {
         if (event.target.classList.contains('modal')) {
