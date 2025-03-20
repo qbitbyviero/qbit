@@ -243,16 +243,14 @@
     background: rgba(0, 0, 0, 0.8);
     z-index: 9999;
     overflow-y: auto;
-    /* Centrado flexible mejorado: */
-    display: flex;
     justify-content: center;
-    align-items: center; /* Cambiado a center */
+    align-items: center;
 }
 
-       .modal.active {
-        display: flex; /* Clase separada para estado activo */
-        opacity: 1;
-        }
+.modal.active {
+    display: flex;
+    opacity: 1;
+}
 .modal-content {
     background: rgba(26, 26, 26, 0.9);
     padding: 30px;
