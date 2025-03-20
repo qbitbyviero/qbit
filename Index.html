@@ -236,7 +236,6 @@
         /* Modales */
      .modal {
     display: none;
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -250,9 +249,9 @@
     align-items: center; /* Cambiado a center */
 }
 
-        .modal.active {
-            display: flex;
-            opacity: 1;
+       .modal.active {
+        display: flex; /* Clase separada para estado activo */
+        opacity: 1;
         }
 .modal-content {
     background: rgba(26, 26, 26, 0.9);
@@ -836,7 +835,7 @@
         <!-- Modales -->
         <div id="mision" class="modal">
             <div class="modal-content">
-                <div class="close-modal" onclick="closeModal('mision')">&times;</div>
+               <div class="close-modal" onclick="closeModal('mision', event)">&times;</div>
                 <h3>Misión</h3>
                 <p>En Qbit nuestra misión es proporcionar soluciones digitales innovadoras y personalizadas que impulsen el crecimiento de nuestros clientes. Utilizamos tecnología de vanguardia para transformar ideas en herramientas prácticas, optimizando procesos y mejorando la presencia digital de cada negocio. Creemos firmemente en la colaboración estrecha con nuestros clientes para alcanzar el éxito compartido.</p>
             </div>
@@ -1026,30 +1025,27 @@
 
         // Funciones para modales
    // ACTUALIZAR openModal
+// Función openModal actualizada
 function openModal(id) {
     const modal = document.getElementById(id);
     modal.classList.add('active');
-    handleScrollResize(); // Forzar cálculo inicial
+    handleScrollResize(); // Typo en el nombre de la función
 }
+
+// Corregir nombre de función y sintaxis
 function handleScrollResize() {
     document.querySelectorAll('.modal.active').forEach(modal => {
         const content = modal.querySelector('.modal-content');
         const viewportHeight = window.innerHeight;
-        content.style.marginTop = `${Math.max(20, (viewportHeight - content.offsetHeight)/3}px`;
+        content.style.marginTop = `${Math.max(20, (viewportHeight - content.offsetHeight) / 3)}px`; // Paréntesis correctos
     });
 }
 
-// ACTUALIZAR EVENTOS
-window.addEventListener('scroll', handleScrollResize);
-window.addEventListener('resize', handleScrollResize);
-
-       // FUNCIÓN CERRAR MODAL CORREGIDA
-function closeModal(id) {
-    const modal = document.getElementById(id);
-    modal.classList.remove('active'); // Elimina la clase 'active'
-    
-    // Detiene la propagación del evento
+// Función closeModal corregida
+function closeModal(id, event) { // Añadir parámetro event
     event.stopPropagation();
+    const modal = document.getElementById(id);
+    modal.classList.remove('active');
 }
 
 // CERRAR AL HACER CLIC FUERA (actualizado)
