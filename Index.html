@@ -234,15 +234,16 @@
         }
 
         /* Modales */
-     .modal {
+    /* Modales */
+.modal {
     display: none;
+    position: fixed; /* Flotante */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.8); /* Oscurecer fondo */
     z-index: 9999;
-    overflow-y: auto;
     justify-content: center;
     align-items: center;
 }
@@ -251,38 +252,39 @@
     display: flex;
     opacity: 1;
 }
+
 .modal-content {
     background: rgba(26, 26, 26, 0.9);
     padding: 30px;
     border-radius: 15px;
     max-width: 600px;
     width: 90%;
-    margin: 20px; /* Margen mínimo */
     position: relative;
-    /* Eliminar transform: translateY */
 }
 
-        .close-modal {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            background: #ff4500; /* Color cobrizo */
-            color: #000;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+/* Botón de cerrar */
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff4500;
+    color: #000;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
 
-        .close-modal:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); /* Sombra cobriza */
-        }
+.close-modal:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+}
+
         /* Contenedor del formulario */
 .contact-container {
     max-width: 600px;
