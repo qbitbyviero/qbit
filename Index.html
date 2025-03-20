@@ -1026,9 +1026,10 @@
 
         // Funciones para modales
         function openModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.add('active');
-        }
+    console.log("Abriendo modal:", id); // Depuración
+    const modal = document.getElementById(id);
+    modal.classList.add('active');
+}
 
         function closeModal(id) {
             const modal = document.getElementById(id);
