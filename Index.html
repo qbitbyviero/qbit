@@ -235,20 +235,20 @@
 
         /* Modales */
    .modal {
-    display: none;
-    position: fixed; /* Se asegura que esté en el centro de la pantalla */
+    display: none; /* Ocultos por defecto */
+    position: fixed; /* Se muestra centrado en toda la pantalla */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 9999;
+    background: rgba(0, 0, 0, 0.8); /* Fondo semitransparente */
+    z-index: 9999; /* Asegura que esté por encima de todo */
     justify-content: center;
     align-items: center;
 }
+
 .modal.active {
-    display: flex;
-    opacity: 1;
+    display: flex; /* Hace que se muestre */
 }
 
 .modal-content {
@@ -260,7 +260,7 @@
     position: relative;
 }
 
-/* Botón de cerrar */
+/* Asegurar que el botón de cerrar funcione bien */
 .close-modal {
     position: absolute;
     top: 10px;
@@ -282,7 +282,6 @@
     transform: scale(1.1);
     box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
 }
-
         /* Contenedor del formulario */
 .contact-container {
     max-width: 600px;
@@ -824,41 +823,44 @@
 
     <!-- Botones -->
     <div class="about-buttons">
-        <div class="about-btn" onclick="openModal('mision')">Misión</div>
-        <div class="about-btn" onclick="openModal('vision')">Visión</div>
-        <div class="about-btn" onclick="openModal('objetivo')">Objetivo</div>
-        <div class="about-btn" onclick="openModal('equipo')">Equipo</div>
-    </div>
+    <div class="about-btn" onclick="openModal('mision')">Misión</div>
+    <div class="about-btn" onclick="openModal('vision')">Visión</div>
+    <div class="about-btn" onclick="openModal('objetivo')">Objetivo</div>
+    <div class="about-btn" onclick="openModal('equipo')">Equipo</div>
+</div>
 
     <!-- 🔹 Modales dentro de la sección "Acerca de Nosotros" -->
-    <div id="mision" class="modal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('mision', event)">&times;</div>
-            <h3>Misión</h3>
-            <p>Proporcionar soluciones digitales innovadoras...</p>
-        </div>
+  <div id="mision" class="modal">
+    <div class="modal-content">
+        <div class="close-modal" onclick="closeModal('mision', event)">&times;</div>
+        <h3>Misión</h3>
+        <p>Proporcionar soluciones digitales innovadoras...</p>
     </div>
-    <div id="vision" class="modal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('vision', event)">&times;</div>
-            <h3>Visión</h3>
-            <p>Aspiramos a consolidarnos como una empresa líder...</p>
-        </div>
+</div>
+
+<div id="vision" class="modal">
+    <div class="modal-content">
+        <div class="close-modal" onclick="closeModal('vision', event)">&times;</div>
+        <h3>Visión</h3>
+        <p>Aspiramos a consolidarnos como una empresa líder...</p>
     </div>
-    <div id="objetivo" class="modal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('objetivo', event)">&times;</div>
-            <h3>Objetivo</h3>
-            <p>Desarrollar herramientas digitales accesibles...</p>
-        </div>
+</div>
+
+<div id="objetivo" class="modal">
+    <div class="modal-content">
+        <div class="close-modal" onclick="closeModal('objetivo', event)">&times;</div>
+        <h3>Objetivo</h3>
+        <p>Desarrollar herramientas digitales accesibles...</p>
     </div>
-    <div id="equipo" class="modal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="closeModal('equipo', event)">&times;</div>
-            <h3>Equipo</h3>
-            <p>Francisco Javier Martínez Gutiérrez es el fundador...</p>
-        </div>
+</div>
+
+<div id="equipo" class="modal">
+    <div class="modal-content">
+        <div class="close-modal" onclick="closeModal('equipo', event)">&times;</div>
+        <h3>Equipo</h3>
+        <p>Francisco Javier Martínez Gutiérrez es el fundador...</p>
     </div>
+</div>
 </section>
 
 <section id="portafolio">
@@ -1020,7 +1022,7 @@
             carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
         }, 5000);
 
-     // Función para abrir un modal y cerrar los demás
+// Función para abrir un modal y cerrar cualquier otro que esté abierto
 function openModal(id) {
     // Cerrar cualquier modal abierto antes de abrir uno nuevo
     document.querySelectorAll('.modal.active').forEach(modal => {
@@ -1036,19 +1038,19 @@ function openModal(id) {
 
 // Función para cerrar un modal específico
 function closeModal(id, event) {
-    event.stopPropagation(); // Evita que se dispare el evento del modal de fondo
+    if (event) event.stopPropagation(); // Evita que el clic en el botón de cerrar propague el evento
     const modal = document.getElementById(id);
     if (modal) {
         modal.classList.remove('active');
     }
 }
 
-// Cerrar modal al hacer clic fuera de él
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.classList.remove('active');
+// Cerrar modal al hacer clic fuera de la ventana
+document.addEventListener("click", function (event) {
+    if (event.target.classList.contains("modal")) {
+        event.target.classList.remove("active");
     }
-};
+});
      // Script para manejar la animación del lema
       const lema = document.querySelector('.lema');
 
