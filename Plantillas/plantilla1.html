@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio | TechBlue Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Paleta de azules mejorada */
+        :root {
+            --azul-oscuro: #0a2463;
+            --azul-medio: #3e92cc;
+            --azul-claro: #d6f1ff;
+            --azul-neon: #00f2ff;
+            --blanco: #ffffff;
+            --negro: #1e1e1e;
+            --sombra-azul: 0 0 15px rgba(62, 146, 204, 0.5);
+        }
+
+        /* Estilos base con fondo dinámico */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a2463, #1a3a7a);
+            color: var(--blanco);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Efecto vidrio dinámico */
+        .efecto-vidrio {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(62, 146, 204, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 70% 70%, rgba(214, 241, 255, 0.1) 0%, transparent 20%);
+            z-index: -1;
+            pointer-events: none;
+            animation: movimiento-vidrio 20s infinite alternate;
+        }
+
+        @keyframes movimiento-vidrio {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(5%, 5%); }
+        }
+
+        /* Menú izquierdo estilizado */
+        .menu-izquierdo {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(10, 36, 99, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 30px 20px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(62, 146, 204, 0.3);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-izquierdo.mostrar {
+            transform: translateX(0);
+        }
+
+        .logo-empresa {
+            position: relative;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .nombre-empresa {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--blanco);
+            text-shadow: 
+                0 0 10px var(--azul-neon),
+                0 0 20px var(--azul-neon),
+                0 0 30px rgba(0, 242, 255, 0.3);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+            animation: brillo-neon 2s infinite alternate;
+        }
+
+        @keyframes brillo-neon {
+            0% { text-shadow: 0 0 10px var(--azul-neon), 0 0 20px var(--azul-neon); }
+            100% { text-shadow: 0 0 15px var(--azul-neon), 0 0 30px var(--azul-neon), 0 0 45px rgba(0, 242, 255, 0.5); }
+        }
+
+        .menu-izquierdo ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-izquierdo li {
+            margin-bottom: 15px;
+        }
+
+        .menu-izquierdo li a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 12px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-izquierdo li a:hover {
+            background: rgba(62, 146, 204, 0.3);
+            transform: translateX(10px);
+        }
+
+        .menu-izquierdo li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--azul-neon);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            transform-origin: bottom;
+        }
+
+        .menu-izquierdo li a:hover::before {
+            transform: scaleY(1);
+            transform-origin: top;
+        }
+
+        /* Botón para abrir menú */
+        .menu-btn {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            background: var(--azul-oscuro);
+            color: var(--blanco);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: var(--sombra-azul);
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+            background: var(--azul-medio);
+        }
+
+        /* Contenido principal */
+        .contenido-principal {
+            margin-left: 0;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+        }
+
+        .contenido-principal.menu-abierto {
+            margin-left: 280px;
+        }
+
+        /* Carrusel mejorado */
+        .carrusel {
+            position: relative;
+            max-width: 900px;
+            margin: 30px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .slide {
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        .slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(10, 36, 99, 0.7);
+            color: var(--blanco);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+
+        .prev:hover, .next:hover {
+            background: var(--azul-medio);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        /* Banners transparentes con efecto 3D */
+        .banners {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 50px auto;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .banner {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            width: 280px;
+            padding: 25px;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .banner:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(62, 146, 204, 0.4);
+        }
+
+        .banner i {
+            font-size: 2rem;
+            color: var(--azul-neon);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .banner h3 {
+            margin: 0 0 10px;
+            font-size: 1.3rem;
+            color: var(--blanco);
+        }
+
+        .banner p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--azul-claro);
+        }
+
+        /* Sección Nosotros mejorada */
+        .nosotros-contenido {
+            background: linear-gradient(145deg, rgba(10, 36, 99, 0.9), rgba(26, 58, 122, 0.9));
+            color: var(--blanco);
+            padding: 60px;
+            border-radius: 20px;
+            margin: 80px auto;
+            max-width: 1000px;
+            box-shadow: var(--sombra-azul);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nosotros-contenido::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(0, 242, 255, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 30% 70%, rgba(214, 241, 255, 0.05) 0%, transparent 30%);
+            animation: rotacion 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotacion {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .nosotros-contenido h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .nosotros-contenido h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--azul-neon);
+            box-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        .nosotros-info {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .nosotros-texto {
+            flex: 1;
+        }
+
+        .nosotros-texto p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .nosotros-imagen {
+            flex: 1;
+            position: relative;
+        }
+
+        .nosotros-imagen img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .nosotros-imagen:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Galería de productos */
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .item-galeria {
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(62, 146, 204, 0.2);
+        }
+
+        .item-galeria img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .item-galeria img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .item-galeria:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Modal de productos mejorado */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow-y: auto;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-contenido {
+            background: var(--azul-oscuro);
+            margin: 50px auto;
+            width: 85%;
+            max-width: 1000px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (min-width: 992px) {
+            .modal-contenido {
+                flex-direction: row;
+            }
+        }
+
+        .modal-imagen {
+            flex: 1;
+            min-height: 400px;
+            background: var(--negro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-imagen img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .modal-info {
+            flex: 1;
+            padding: 30px;
+            color: var(--blanco);
+            position: relative;
+        }
+
+        .modal-info h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--azul-neon);
+        }
+
+        .modal-info p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .cerrar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--blanco);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            backdrop-filter: blur(3px);
+        }
+
+        .cerrar:hover {
+            transform: rotate(90deg);
+            color: var(--azul-neon);
+        }
+
+        /* Sección Contacto estilo postal */
+        .postal-contacto {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(62, 146, 204, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 600px;
+            margin: 80px auto;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 0 20px rgba(0, 242, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .postal-contacto::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, transparent 65%, rgba(0, 242, 255, 0.05) 100%),
+                linear-gradient(-135deg, transparent 65%, rgba(214, 241, 255, 0.05) 100%);
+            pointer-events: none;
+        }
+
+        .postal-contacto h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--blanco);
+            position: relative;
+            display: inline-block;
+        }
+
+        .postal-contacto h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--azul-neon);
+            box-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        .datos-empresa {
+            font-size: 1.2rem;
+        }
+
+        .datos-empresa p {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .datos-empresa i {
+            color: var(--azul-neon);
+            margin-right: 15px;
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+
+        /* Footer profesional */
+        footer {
+            background: rgba(10, 36, 99, 0.9);
+            color: var(--blanco);
+            text-align: center;
+            padding: 25px;
+            font-size: 1rem;
+            margin-top: 100px;
+            position: relative;
+            backdrop-filter: blur(3px);
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--azul-neon), transparent);
+        }
+
+        footer p {
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        footer strong {
+            color: var(--azul-neon);
+            font-weight: 600;
+        }
+
+        footer em {
+            font-style: normal;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* Efectos de scroll y secciones */
+        .seccion-oculta {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .seccion-activa {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nosotros-info {
+                flex-direction: column;
+            }
+            
+            .menu-izquierdo {
+                width: 250px;
+            }
+            
+            .contenido-principal.menu-abierto {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banners {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .banner {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .nosotros-contenido {
+                padding: 40px 20px;
+            }
+            
+            .modal-contenido {
+                width: 95%;
+            }
+        }
+        .efecto-cristales {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .cristal {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(62, 146, 204, 0.15);
+            backdrop-filter: blur(1px);
+            border-radius: 10px;
+            animation: flotar 15s infinite linear;
+            box-shadow: 
+                inset 0 0 20px rgba(214, 241, 255, 0.1),
+                0 0 20px rgba(62, 146, 204, 0.1);
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Efecto vidrio dinámico -->
+    <div class="efecto-cristales" id="efectoCristales"></div>
+
+    <!-- Botón para menú móvil -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menú izquierdo -->
+    <nav class="menu-izquierdo" id="menuIzquierdo">
+        <div class="logo-empresa">
+            <div class="nombre-empresa">TechBlue</div>
+        </div>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="contenido-principal" id="contenidoPrincipal">
+        <!-- Sección Inicio -->
+        <section id="inicio" class="seccion-activa">
+            <div class="carrusel">
+                <div class="slide active">
+                    <img src="img1plant.jpeg" alt="Productos TechBlue">
+                </div>
+                <div class="slide">
+                    <img src="img2plant.jpeg" alt="Innovación">
+                </div>
+                <div class="slide">
+                    <img src="img3plant.jpeg" alt="Soluciones profesionales">
+                </div>
+                <button class="prev" onclick="cambiarSlide(-1)">&#10094;</button>
+                <button class="next" onclick="cambiarSlide(1)">&#10095;</button>
+            </div>
+
+            <!-- Banners de noticias -->
+            <div class="banners">
+                <div class="banner">
+                    <i class="fas fa-tag"></i>
+                    <h3>¡Ofertas Especiales!</h3>
+                    <p>Descuentos exclusivos en nuestra línea premium.</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>Novedades</h3>
+                    <p>Descubre nuestros últimos lanzamientos tecnológicos.</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Eventos</h3>
+                    <p>Participa en nuestros próximos webinars exclusivos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="seccion-oculta">
+            <div class="nosotros-contenido">
+                <h2>¿Quiénes Somos?</h2>
+                <div class="nosotros-info">
+                    <div class="nosotros-texto">
+                        <p>En <strong>TechBlue Solutions</strong> somos pioneros en innovación tecnológica. Desde 2010, hemos estado proporcionando soluciones digitales de vanguardia para empresas de todos los tamaños.</p>
+                        <p>Nuestro equipo de expertos combina creatividad y conocimiento técnico para ofrecer productos que realmente marcan la diferencia en el mercado.</p>
+                        <p>Creemos en la tecnología como herramienta de transformación y nos apasiona ayudar a nuestros clientes a alcanzar sus objetivos.</p>
+                    </div>
+                    <div class="nosotros-imagen">
+                        <img src="img/nosotros.jpg" alt="Equipo TechBlue">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Productos -->
+        <section id="productos" class="seccion-oculta">
+            <h2 style="text-align: center; font-size: 2.5rem; margin: 50px 0 30px; color: var(--blanco);">Nuestros Productos</h2>
+            <div class="galeria">
+                <div class="item-galeria" onclick="abrirModal('img4plant.jpeg', 'Solución Empresarial', 'Paquete completo para gestión de negocios con IA integrada. Incluye análisis predictivo y herramientas de colaboración en tiempo real.')">
+                    <img src="img4plant.jpeg" alt="Producto 1">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img5plant.jpeg', 'Software de Seguridad', 'Protección avanzada contra ciberamenazas con monitoreo 24/7 y respuesta automatizada a incidentes.')">
+                    <img src="img5plant.jpeg" alt="Producto 2">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img6plant.jpeg', 'Plataforma Cloud', 'Almacenamiento seguro escalable con integración multi-dispositivo y cifrado de última generación.')">
+                    <img src="img6plant.jpeg" alt="Producto 3">
+                </div>
+                <!-- Más productos pueden agregarse aquí -->
+            </div>
+        </section>
+
+        <!-- Sección Contacto -->
+        <section id="contacto" class="seccion-oculta">
+            <div class="postal-contacto">
+                <h2>Contáctanos</h2>
+                <div class="datos-empresa">
+                    <p><i class="fas fa-map-marker-alt"></i> Av. Tecnológica 1234, Ciudad Digital</p>
+                    <p><i class="fas fa-phone"></i> +1 234 567 8900</p>
+                    <p><i class="fas fa-envelope"></i> info@techblue.solutions</p>
+                    <p><i class="fas fa-clock"></i> Lunes a Viernes: 9:00 - 18:00</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de productos -->
+    <div class="modal" id="modalProducto">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <div class="modal-imagen">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalTitulo"></h3>
+                <p id="modalDesc"></p>
+                <button class="btn-contacto" onclick="location.href='#contacto'">Consultar sobre este producto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 <strong>Francisco Javier Martrínez Gutiérrez</strong> | <em>TechBlue Solutions</em>. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+       // CONTROL DEL MENÚ - VERIFICAMOS SI LOS ELEMENTOS EXISTEN
+document.addEventListener('DOMContentLoaded', function() {
+    const menuBtn = document.getElementById('menuBtn');
+    const menuIzquierdo = document.getElementById('menuIzquierdo');
+    const contenidoPrincipal = document.getElementById('contenidoPrincipal');
+    
+    if (menuBtn && menuIzquierdo && contenidoPrincipal) {
+        menuBtn.addEventListener('click', function() {
+            menuIzquierdo.classList.toggle('mostrar');
+            contenidoPrincipal.classList.toggle('menu-abierto');
+            
+            if (menuIzquierdo.classList.contains('mostrar')) {
+                menuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+    }
+
+    // CARRUSEL - VERIFICAMOS SI EXISTE
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length > 0) {
+        let slideIndex = 0;
+        mostrarSlide(slideIndex);
+
+        function cambiarSlide(n) {
+            mostrarSlide(slideIndex += n);
+        }
+
+        function mostrarSlide(n) {
+            if (n >= slides.length) { slideIndex = 0; }
+            if (n < 0) { slideIndex = slides.length - 1; }
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[slideIndex].classList.add('active');
+        }
+
+        // Botones del carrusel
+        document.querySelector('.prev')?.addEventListener('click', () => cambiarSlide(-1));
+        document.querySelector('.next')?.addEventListener('click', () => cambiarSlide(1));
+
+        // Auto-avance solo si hay slides
+        setInterval(() => cambiarSlide(1), 5000);
+    }
+
+    // MODAL - VERIFICAMOS SI EXISTE
+    const modal = document.getElementById('modalProducto');
+    if (modal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        });
+    }
+
+    // EFECTO CRISTALES - SOLO SI EXISTE EL CONTENEDOR
+    const efectoCristales = document.getElementById('efectoCristales');
+    if (efectoCristales) {
+        crearCristales();
+    }
+
+    // SCROLL REVEAL
+    revelarSecciones();
+    window.addEventListener('scroll', revelarSecciones);
+});
+
+// FUNCIONES CON VERIFICACIÓN DE ELEMENTOS
+function abrirModal(src, titulo, desc) {
+    const modal = document.getElementById('modalProducto');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitulo = document.getElementById('modalTitulo');
+    const modalDesc = document.getElementById('modalDesc');
+    
+    if (modal && modalImg && modalTitulo && modalDesc) {
+        modalImg.src = src;
+        modalTitulo.textContent = titulo;
+        modalDesc.textContent = desc;
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('modalProducto');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function revelarSecciones() {
+    const secciones = document.querySelectorAll('.seccion-oculta');
+    if (secciones.length > 0) {
+        const windowAltura = window.innerHeight;
+        
+        secciones.forEach(seccion => {
+            const seccionPos = seccion.getBoundingClientRect().top;
+            if (seccionPos < windowAltura - 150) {
+                seccion.classList.add('seccion-activa');
+            }
+        });
+    }
+}
+
+function crearCristales() {
+    const contenedor = document.getElementById('efectoCristales');
+    if (!contenedor) return;
+
+    const cantidad = 15;
+    const colores = [
+        'rgba(62, 146, 204, 0.05)',
+        'rgba(214, 241, 255, 0.04)',
+        'rgba(10, 36, 99, 0.03)'
+    ];
+
+    // Limpiamos cristales existentes primero
+    contenedor.innerHTML = '';
+
+    for (let i = 0; i < cantidad; i++) {
+        const cristal = document.createElement('div');
+        cristal.className = 'cristal';
+        
+        const size = Math.random() * 150 + 50;
+        cristal.style.width = `${size}px`;
+        cristal.style.height = `${size}px`;
+        cristal.style.left = `${Math.random() * 100}%`;
+        cristal.style.top = `${Math.random() * 100}%`;
+        cristal.style.background = colores[Math.floor(Math.random() * colores.length)];
+        cristal.style.animationDuration = `${Math.random() * 10 + 10}s`;
+        cristal.style.animationDelay = `${Math.random() * 5}s`;
+        
+        contenedor.appendChild(cristal);
+    }
+}
+    </script>
+</body>
+</html>

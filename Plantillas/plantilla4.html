@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Solutions | Consultoría Profesional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+        
+        /* Canvas 3D siempre visible */
+        #threejs-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2647;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-item {
+            color: #2c3333;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            background: rgba(10, 38, 71, 0.1);
+        }
+        
+        /* Secciones */
+        section {
+            min-height: 100vh;
+            padding: 8rem 2rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(3px);
+        }
+        
+        /* Hero Section */
+        #inicio {
+            text-align: center;
+            color: white;
+            background-color: transparent !important;
+            backdrop-filter: none;
+        }
+        
+        #inicio h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        #inicio p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Servicios */
+        #servicios {
+            background: rgba(255, 255, 255, 0.65) !important;
+        }
+        
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .service-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            color: #0a2647;
+            margin-bottom: 1rem;
+        }
+        
+        /* Equipo */
+        #equipo {
+            background: rgba(245, 247, 250, 0.7) !important;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .team-member {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .team-member img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        /* Contacto */
+        #contacto {
+            background: rgba(255, 255, 255, 0.65) !important;
+        }
+        
+        .contact-info {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9) !important;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-icon {
+            font-size: 1.5rem;
+            color: #0a2647;
+            margin-right: 1rem;
+            width: 30px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            overflow: hidden;
+            animation: modalOpen 0.3s ease;
+        }
+        
+        @keyframes modalOpen {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            background: #0a2647;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        /* Header 3D */
+        .header-3d {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            z-index: 10;
+        }
+        
+        .header-content {
+            padding: 50px;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .disable-selection {
+             -moz-user-select: none; /* Firefox */
+              -ms-user-select: none; /* Internet Explorer */
+           -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
+          -webkit-user-select: none; /* Chrome, Safari, and Opera */
+          -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin: 1rem 0;
+            }
+            
+            .nav-menu {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            #inicio h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para Three.js -->
+    <div id="threejs-canvas"></div>
+    
+    <header>
+        <nav class="nav-container">
+            <div class="nav-menu">
+                <a href="#inicio" class="nav-item">Inicio</a>
+                <a href="#servicios" class="nav-item">Servicios</a>
+            </div>
+            <a href="#" class="logo">Corporate Solutions</a>
+            <div class="nav-menu">
+                <a href="#equipo" class="nav-item">Equipo</a>
+                <a href="#contacto" class="nav-item">Contacto</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Sección Inicio -->
+        <section id="inicio">
+            <div class="header-3d disable-selection">
+                <div class="header-content">
+                    <h1><strong>Corporate Solutions</strong></h1>
+                    <p>Excelencia en Consultoría Empresarial</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Servicios -->
+        <section id="servicios">
+            <div class="services-container">
+                <h2>Nuestros Servicios</h2>
+                <div class="services-grid">
+                    <!-- Servicio 1 -->
+                    <div class="service-card" onclick="openModal(1)">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Consultoría Estratégica</h3>
+                        <p>Desarrollo de planes estratégicos personalizados para su negocio.</p>
+                    </div>
+                    
+                    <!-- Servicio 2 -->
+                    <div class="service-card" onclick="openModal(2)">
+                        <div class="service-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h3>Optimización de Procesos</h3>
+                        <p>Mejora de eficiencia operativa y reducción de costos.</p>
+                    </div>
+                    
+                    <!-- Servicio 3 -->
+                    <div class="service-card" onclick="openModal(3)">
+                        <div class="service-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3>Asesoría Financiera</h3>
+                        <p>Soluciones inteligentes para la gestión de sus recursos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Equipo -->
+        <section id="equipo">
+            <h2>Nuestro Equipo</h2>
+            <div class="team-grid">
+                <!-- Miembro 1 -->
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="CEO">
+                    <div style="padding: 1.5rem;">
+                        <h3>John Smith</h3>
+                        <p>CEO & Fundador</p>
+                    </div>
+                </div>
+                
+                <!-- Miembro 2 -->
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="CFO">
+                    <div style="padding: 1.5rem;">
+                        <h3>Sarah Johnson</h3>
+                        <p>Directora Financiera</p>
+                    </div>
+                </div>
+                
+                <!-- Miembro 3 -->
+                <div class="team-member">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="COO">
+                    <div style="padding: 1.5rem;">
+                        <h3>Michael Chen</h3>
+                        <p>Director de Operaciones</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Contacto -->
+        <section id="contacto">
+            <div class="contact-info">
+                <h2>Contáctenos</h2>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <p>Av. Corporativa 1234, Ciudad Empresarial</p>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <p>contacto@corporatesolutions.com</p>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <p>Lunes a Viernes: 9:00 - 18:00</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Título del Servicio</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" class="modal-image" src="" alt="Servicio">
+                <div id="modalDescription">
+                    <p>Descripción detallada del servicio...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    
+    <script>
+        // Datos de los servicios para los modales
+        const servicios = [
+            {
+                id: 1,
+                titulo: "Consultoría Estratégica",
+                imagen: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                descripcion: "<p>Nuestro servicio de Consultoría Estratégica ofrece soluciones personalizadas para el crecimiento sostenible de su organización. Trabajamos con usted para desarrollar un plan estratégico integral que incluye:</p><ul><li>Análisis de mercado completo</li><li>Evaluación competitiva</li><li>Desarrollo de estrategias de crecimiento</li><li>Planificación de implementación</li></ul>"
+            },
+            {
+                id: 2,
+                titulo: "Optimización de Procesos",
+                imagen: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                descripcion: "<p>Mejoramos la eficiencia operativa de su empresa mediante nuestra metodología probada de optimización de procesos que incluye:</p><ul><li>Mapeo de procesos actuales</li><li>Identificación de cuellos de botella</li><li>Rediseño de flujos de trabajo</li><li>Implementación de mejoras</li><li>Capacitación del personal</li></ul>"
+            },
+            {
+                id: 3,
+                titulo: "Asesoría Financiera",
+                imagen: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                descripcion: "<p>Nuestros expertos financieros le ayudarán a tomar decisiones informadas para maximizar sus recursos:</p><ul><li>Análisis financiero completo</li><li>Planificación fiscal estratégica</li><li>Optimización de costos</li><li>Estrategias de inversión</li><li>Gestión de riesgos</li></ul>"
+            }
+        ];
+
+        // Función para abrir el modal
+        function openModal(serviceId) {
+            const servicio = servicios.find(s => s.id === serviceId);
+            if (servicio) {
+                document.getElementById('modalTitle').textContent = servicio.titulo;
+                document.getElementById('modalImage').src = servicio.imagen;
+                document.getElementById('modalDescription').innerHTML = servicio.descripcion;
+                document.getElementById('serviceModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            document.getElementById('serviceModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera del contenido
+        window.onclick = function(event) {
+            const modal = document.getElementById('serviceModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Efecto de reducción del header al hacer scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.padding = '0.5rem 1rem';
+            } else {
+                header.style.padding = '1rem 2rem';
+            }
+        });
+
+        // Smooth scrolling para navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Three JS Template
+        //----------------------------------------------------------------- BASIC parameters
+        var renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.getElementById('threejs-canvas').appendChild( renderer.domElement );
+
+        if (window.innerWidth > 800) {
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.shadowMap.needsUpdate = true;
+        };
+
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        };
+
+        var camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 500 );
+        camera.position.set(0, 2, 14);
+
+        var scene = new THREE.Scene();
+        var city = new THREE.Object3D();
+        var smoke = new THREE.Object3D();
+        var town = new THREE.Object3D();
+
+        var createCarPos = true;
+        var uSpeed = 0.001;
+
+        //----------------------------------------------------------------- FOG background
+        var setcolor = 0x0a2647; // Color que coincide con tu diseño
+        scene.background = new THREE.Color(setcolor);
+        scene.fog = new THREE.Fog(setcolor, 10, 16);
+
+        //----------------------------------------------------------------- RANDOM Function
+        function mathRandom(num = 8) {
+            var numValue = - Math.random() * num + Math.random() * num;
+            return numValue;
+        };
+
+        //----------------------------------------------------------------- CHANGE bluilding colors
+        var setTintNum = true;
+        function setTintColor() {
+            if (setTintNum) {
+                setTintNum = false;
+                var setColor = 0x000000;
+            } else {
+                setTintNum = true;
+                var setColor = 0x000000;
+            };
+            return setColor;
+        };
+
+        //----------------------------------------------------------------- CREATE City
+        function init() {
+            var segments = 2;
+            for (var i = 1; i<100; i++) {
+                var geometry = new THREE.BoxGeometry(1,0,0,segments,segments,segments);
+                var material = new THREE.MeshStandardMaterial({
+                    color:setTintColor(),
+                    wireframe:false,
+                    shading: THREE.SmoothShading,
+                    side:THREE.DoubleSide});
+                var wmaterial = new THREE.MeshLambertMaterial({
+                    color:0xFFFFFF,
+                    wireframe:true,
+                    transparent:true,
+                    opacity: 0.03,
+                    side:THREE.DoubleSide});
+
+                var cube = new THREE.Mesh(geometry, material);
+                var wire = new THREE.Mesh(geometry, wmaterial);
+                var floor = new THREE.Mesh(geometry, material);
+                var wfloor = new THREE.Mesh(geometry, wmaterial);
+                
+                cube.add(wfloor);
+                cube.castShadow = true;
+                cube.receiveShadow = true;
+                cube.rotationValue = 0.1+Math.abs(mathRandom(8));
+                
+                floor.scale.y = 0.05;
+                cube.scale.y = 0.1+Math.abs(mathRandom(8));
+                
+                var cubeWidth = 0.9;
+                cube.scale.x = cube.scale.z = cubeWidth+mathRandom(1-cubeWidth);
+                cube.position.x = Math.round(mathRandom());
+                cube.position.z = Math.round(mathRandom());
+                
+                floor.position.set(cube.position.x, 0, cube.position.z)
+                
+                town.add(floor);
+                town.add(cube);
+            };
+            
+            // Particulas
+            var gmaterial = new THREE.MeshToonMaterial({color:0xFFFF00, side:THREE.DoubleSide});
+            var gparticular = new THREE.CircleGeometry(0.01, 3);
+            var aparticular = 5;
+            
+            for (var h = 1; h<300; h++) {
+                var particular = new THREE.Mesh(gparticular, gmaterial);
+                particular.position.set(mathRandom(aparticular), mathRandom(aparticular),mathRandom(aparticular));
+                particular.rotation.set(mathRandom(),mathRandom(),mathRandom());
+                smoke.add(particular);
+            };
+            
+            var pmaterial = new THREE.MeshPhongMaterial({
+                color:0x000000,
+                side:THREE.DoubleSide,
+                roughness: 10,
+                metalness: 0.6,
+                opacity:0.9,
+                transparent:true});
+            var pgeometry = new THREE.PlaneGeometry(60,60);
+            var pelement = new THREE.Mesh(pgeometry, pmaterial);
+            pelement.rotation.x = -90 * Math.PI / 180;
+            pelement.position.y = -0.001;
+            pelement.receiveShadow = true;
+
+            city.add(pelement);
+        };
+
+        //----------------------------------------------------------------- MOUSE function
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2(), INTERSECTED;
+        var intersected;
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+        
+        function onDocumentTouchStart( event ) {
+            if ( event.touches.length == 1 ) {
+                event.preventDefault();
+                mouse.x = event.touches[ 0 ].pageX -  window.innerWidth / 2;
+                mouse.y = event.touches[ 0 ].pageY - window.innerHeight / 2;
+            };
+        };
+        
+        function onDocumentTouchMove( event ) {
+            if ( event.touches.length == 1 ) {
+                event.preventDefault();
+                mouse.x = event.touches[ 0 ].pageX -  window.innerWidth / 2;
+                mouse.y = event.touches[ 0 ].pageY - window.innerHeight / 2;
+            }
+        }
+        
+        window.addEventListener('mousemove', onMouseMove, false);
+        window.addEventListener('touchstart', onDocumentTouchStart, false );
+        window.addEventListener('touchmove', onDocumentTouchMove, false );
+
+        //----------------------------------------------------------------- Lights
+        var ambientLight = new THREE.AmbientLight(0xFFFFFF, 4);
+        var lightFront = new THREE.SpotLight(0xFFFFFF, 20, 10);
+        var lightBack = new THREE.PointLight(0xFFFFFF, 0.5);
+
+        lightFront.rotation.x = 45 * Math.PI / 180;
+        lightFront.rotation.z = -45 * Math.PI / 180;
+        lightFront.position.set(5, 5, 5);
+        lightFront.castShadow = true;
+        lightFront.shadow.mapSize.width = 6000;
+        lightFront.shadow.mapSize.height = lightFront.shadow.mapSize.width;
+        lightFront.penumbra = 0.1;
+        lightBack.position.set(0,6,0);
+
+        smoke.position.y = 2;
+
+        scene.add(ambientLight);
+        city.add(lightFront);
+        scene.add(lightBack);
+        scene.add(city);
+        city.add(smoke);
+        city.add(town);
+
+        //----------------------------------------------------------------- GRID Helper
+        var gridHelper = new THREE.GridHelper( 60, 120, 0xFF0000, 0x000000);
+        city.add( gridHelper );
+
+        //----------------------------------------------------------------- LINES world
+        var createCars = function(cScale = 2, cPos = 20, cColor = 0xFFFF00) {
+            var cMat = new THREE.MeshToonMaterial({color:cColor, side:THREE.DoubleSide});
+            var cGeo = new THREE.BoxGeometry(1, cScale/40, cScale/40);
+            var cElem = new THREE.Mesh(cGeo, cMat);
+            var cAmp = 3;
+            
+            if (createCarPos) {
+                createCarPos = false;
+                cElem.position.x = -cPos;
+                cElem.position.z = (mathRandom(cAmp));
+
+                gsap.to(cElem.position, {duration: 3, x:cPos, repeat:-1, yoyo:true, delay:mathRandom(3)});
+            } else {
+                createCarPos = true;
+                cElem.position.x = (mathRandom(cAmp));
+                cElem.position.z = -cPos;
+                cElem.rotation.y = 90 * Math.PI / 180;
+            
+                gsap.to(cElem.position, {duration: 5, z:cPos, repeat:-1, yoyo:true, delay:mathRandom(3), ease:"power1.inOut"});
+            };
+            cElem.receiveShadow = true;
+            cElem.castShadow = true;
+            cElem.position.y = Math.abs(mathRandom(5));
+            city.add(cElem);
+        };
+
+        var generateLines = function() {
+            for (var i = 0; i<60; i++) {
+                createCars(0.1, 20);
+            };
+        };
+
+        //----------------------------------------------------------------- ANIMATE
+        var animate = function() {
+            var time = Date.now() * 0.00005;
+            requestAnimationFrame(animate);
+            
+            city.rotation.y -= ((mouse.x * 8) - camera.rotation.y) * uSpeed;
+            city.rotation.x -= (-(mouse.y * 2) - camera.rotation.x) * uSpeed;
+            if (city.rotation.x < -0.05) city.rotation.x = -0.05;
+            else if (city.rotation.x>1) city.rotation.x = 1;
+            
+            smoke.rotation.y += 0.01;
+            smoke.rotation.x += 0.01;
+            
+            camera.lookAt(city.position);
+            renderer.render( scene, camera );  
+        }
+
+        //----------------------------------------------------------------- START functions
+        generateLines();
+        init();
+        animate();
+    </script>
+</body>
+</html>

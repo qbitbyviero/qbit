@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music JD | Neon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Paleta de colores neón */
+        :root {
+            --negro: #0a0a0a;
+            --morado-neon: #bc13fe;
+            --azul-neon: #0ff0fc;
+            --rosa-neon: #ff44cc;
+            --blanco: #ffffff;
+            --sombra-neon: 0 0 10px var(--morado-neon), 0 0 20px var(--morado-neon);
+        }
+
+        /* Estilos base */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--blanco);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            background-color: var(--negro);
+        }
+
+        /* Fondo DJ con efecto parallax */
+.fondo-dj {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('Fondodj.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -2;
+    /* Ajustes clave para mejor visibilidad: */
+    opacity: 1;
+    filter: brightness(0.7) contrast(1.1) saturate(1.2);
+}
+
+.capa-neon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Capa más transparente para dejar ver el fondo */
+    background: linear-gradient(
+        rgba(10, 10, 10, 0.4),  /* Más transparente arriba */
+        rgba(10, 10, 10, 0.7)   /* Ligera transparencia abajo */
+    );
+    z-index: -1;
+}
+
+        /* Menú disco giratorio */
+        .menu-disco {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--negro) 40%, transparent 70%);
+            border: 3px solid var(--morado-neon);
+            box-shadow: 0 0 15px var(--morado-neon), inset 0 0 10px var(--morado-neon);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: girar-disco 20s infinite linear;
+        }
+
+        .menu-disco::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--azul-neon);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        @keyframes girar-disco {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .menu-disco:hover {
+            animation-play-state: paused;
+        }
+
+        .menu-links {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .menu-disco a {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--negro);
+            border: 2px solid var(--rosa-neon);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--rosa-neon);
+            text-decoration: none;
+            font-size: 1.2rem;
+            box-shadow: 0 0 10px var(--rosa-neon);
+            transition: all 0.3s ease;
+        }
+
+        .menu-disco a:hover {
+            background: var(--rosa-neon);
+            color: var(--negro);
+            transform: scale(1.2);
+        }
+
+        .menu-disco a:nth-child(1) { top: -20px; left: 50%; transform: translateX(-50%); }
+        .menu-disco a:nth-child(2) { top: 50%; right: -20px; transform: translateY(-50%); }
+        .menu-disco a:nth-child(3) { bottom: -20px; left: 50%; transform: translateX(-50%); }
+        .menu-disco a:nth-child(4) { top: 50%; left: -20px; transform: translateY(-50%); }
+
+        /* Logo central */
+        .logo-neon {
+            position: absolute;
+            top: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            text-align: center;
+        }
+
+        .nombre-empresa {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: transparent;
+            background: linear-gradient(45deg, var(--morado-neon), var(--azul-neon), var(--rosa-neon));
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 10px var(--morado-neon), 0 0 20px var(--azul-neon), 0 0 30px var(--rosa-neon);
+            letter-spacing: 3px;
+            animation: brillo-neon 1.5s infinite alternate;
+        }
+
+        @keyframes brillo-neon {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; text-shadow: 0 0 15px var(--morado-neon), 0 0 30px var(--azul-neon), 0 0 45px var(--rosa-neon); }
+        }
+
+        /* Contenido principal */
+        .contenido-principal {
+            position: relative;
+            z-index: 1;
+            padding-top: 300px;
+            padding-bottom: 60px;
+        }
+
+        /* Carrusel estilo neón */
+        .carrusel {
+            position: relative;
+            max-width: 900px;
+            margin: 40px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 20px var(--morado-neon);
+            border: 2px solid var(--azul-neon);
+        }
+
+        .slide {
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        .slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 15, 15, 0.7);
+            color: var(--azul-neon);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+            box-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        .prev:hover, .next:hover {
+            background: var(--azul-neon);
+            color: var(--negro);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        /* Banners estilo neón */
+        .banners {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px auto;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .banner {
+            background: rgba(20, 20, 20, 0.8);
+            width: 250px;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--rosa-neon);
+            box-shadow: 0 0 15px var(--rosa-neon);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .banner:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 25px var(--rosa-neon);
+        }
+
+        .banner i {
+            font-size: 2.5rem;
+            color: var(--azul-neon);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        .banner h3 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+            color: var(--morado-neon);
+            text-shadow: 0 0 5px var(--morado-neon);
+        }
+
+        .banner p {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--blanco);
+        }
+
+        /* Sección Nosotros */
+        .nosotros-contenido {
+            background: rgba(15, 15, 15, 0.8);
+            border: 2px solid var(--morado-neon);
+            box-shadow: 0 0 20px var(--morado-neon);
+            padding: 60px;
+            border-radius: 15px;
+            margin: 80px auto;
+            max-width: 1000px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nosotros-contenido::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(188, 19, 254, 0.05), transparent);
+            animation: barrido 6s infinite linear;
+        }
+
+        @keyframes barrido {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        .nosotros-contenido h2 {
+            font-size: 2.5rem;
+            color: var(--azul-neon);
+            text-shadow: 0 0 10px var(--azul-neon);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .nosotros-info {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+        }
+
+        .nosotros-texto {
+            flex: 1;
+        }
+
+        .nosotros-texto p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .nosotros-imagen {
+            flex: 1;
+            position: relative;
+        }
+
+        .nosotros-imagen img {
+            width: 100%;
+            border-radius: 10px;
+            border: 2px solid var(--rosa-neon);
+            box-shadow: 0 0 15px var(--rosa-neon);
+            transition: transform 0.5s ease;
+        }
+
+        .nosotros-imagen:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Galería de productos */
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .item-galeria {
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 10px;
+            border: 2px solid var(--azul-neon);
+            box-shadow: 0 0 15px var(--azul-neon);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .item-galeria img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .item-galeria:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 25px var(--azul-neon);
+        }
+
+        .item-galeria:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Sección Contacto */
+        .marquesina-contacto {
+            background: rgba(20, 20, 20, 0.8);
+            border: 2px solid var(--morado-neon);
+            box-shadow: var(--sombra-neon);
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .marquesina-contacto::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(188, 19, 254, 0.1), transparent);
+            animation: barrido 3s infinite linear;
+        }
+
+        .marquesina-contacto h2 {
+            font-size: 2.5rem;
+            color: var(--azul-neon);
+            text-shadow: 0 0 10px var(--azul-neon);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .datos-empresa {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .datos-empresa p {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--rosa-neon);
+            animation: parpadeo 4s infinite;
+        }
+
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .datos-empresa i {
+            color: var(--rosa-neon);
+            margin-right: 15px;
+            font-size: 1.5rem;
+            min-width: 30px;
+            text-shadow: 0 0 5px var(--rosa-neon);
+        }
+
+        /* Modal de productos */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-contenido {
+            background: rgba(15, 15, 15, 0.95);
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid var(--morado-neon);
+            box-shadow: 0 0 30px var(--morado-neon);
+            width: 80%;
+            max-width: 800px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            animation: modalFadeIn 0.5s;
+            position: relative;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cerrar {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: var(--rosa-neon);
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px var(--rosa-neon);
+        }
+
+        .cerrar:hover {
+            color: var(--azul-neon);
+            transform: rotate(90deg);
+            text-shadow: 0 0 10px var(--azul-neon);
+        }
+
+        .modal-imagen {
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-imagen img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 2px solid var(--azul-neon);
+            box-shadow: 0 0 20px var(--azul-neon);
+        }
+
+        .modal-info {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .modal-info h3 {
+            font-size: 2rem;
+            color: var(--rosa-neon);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--rosa-neon);
+        }
+
+        .modal-info p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .btn-contacto {
+            background: linear-gradient(45deg, var(--morado-neon), var(--azul-neon));
+            color: var(--negro);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--morado-neon);
+            margin-top: 15px;
+        }
+
+        .btn-contacto:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px var(--azul-neon);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--negro);
+            color: var(--blanco);
+            text-align: center;
+            padding: 25px;
+            font-size: 1rem;
+            position: relative;
+            border-top: 1px solid var(--morado-neon);
+            box-shadow: 0 -5px 15px var(--morado-neon);
+        }
+
+        footer p {
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        footer strong {
+            color: var(--azul-neon);
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--azul-neon);
+        }
+
+        footer em {
+            font-style: normal;
+            color: var(--rosa-neon);
+            text-shadow: 0 0 5px var(--rosa-neon);
+        }
+
+        /* Efectos de scroll */
+        .seccion-oculta {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .seccion-activa {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nosotros-info {
+                flex-direction: column;
+            }
+            
+            .menu-disco {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .menu-disco a {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .nombre-empresa {
+                font-size: 2.5rem;
+            }
+            
+            .contenido-principal {
+                padding-top: 250px;
+            }
+
+            .modal-contenido {
+                width: 90%;
+                margin: 10% auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banners {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nombre-empresa {
+                font-size: 2rem;
+            }
+            
+            .marquesina-contacto {
+                margin: 40px auto;
+                padding: 20px;
+            }
+            
+            .marquesina-contacto h2 {
+                font-size: 2rem;
+            }
+            
+            .datos-empresa {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-contenido {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .modal-info h3 {
+                font-size: 1.5rem;
+            }
+
+            .modal-info p {
+                font-size: 1rem;
+            }
+            
+            .fondo-dj {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-contenido {
+                margin: 20% auto;
+            }
+            
+            .cerrar {
+                font-size: 25px;
+                top: 10px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo DJ con parallax -->
+    <div class="fondo-dj"></div>
+    
+    <!-- Capa para mejorar contraste -->
+    <div class="capa-neon"></div>
+
+    <!-- Menú disco giratorio -->
+    <nav class="menu-disco">
+        <div class="menu-links">
+            <a href="#inicio"><i class="fas fa-home"></i></a>
+            <a href="#nosotros"><i class="fas fa-users"></i></a>
+            <a href="#productos"><i class="fas fa-music"></i></a>
+            <a href="#contacto"><i class="fas fa-envelope"></i></a>
+        </div>
+    </nav>
+
+    <!-- Logo central -->
+    <div class="logo-neon">
+        <div class="nombre-empresa">MUSIC JD</div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="contenido-principal">
+        <!-- Sección Inicio -->
+        <section id="inicio" class="seccion-activa">
+            <div class="carrusel">
+                <div class="slide active">
+                    <img src="img1plant.jpeg" alt="Conciertos Music JD">
+                </div>
+                <div class="slide">
+                    <img src="img2plant.jpeg" alt="DJ en acción">
+                </div>
+                <div class="slide">
+                    <img src="img3plant.jpeg" alt="Eventos musicales">
+                </div>
+                <button class="prev" onclick="cambiarSlide(-1)">&#10094;</button>
+                <button class="next" onclick="cambiarSlide(1)">&#10095;</button>
+            </div>
+
+            <!-- Banners -->
+            <div class="banners">
+                <div class="banner">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Eventos</h3>
+                    <p>Próximos shows y fiestas</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-compact-disc"></i>
+                    <h3>Lanzamientos</h3>
+                    <p>Nueva música cada semana</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>Boletos</h3>
+                    <p>Adquiere tus entradas</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="seccion-oculta">
+            <div class="nosotros-contenido">
+                <h2>NOSOTROS</h2>
+                <div class="nosotros-info">
+                    <div class="nosotros-texto">
+                        <p><strong>MUSIC JD</strong> es más que una marca, es un movimiento musical que combina los mejores beats con experiencias visuales impactantes.</p>
+                        <p>Desde 2018, hemos estado revolucionando la escena musical con nuestros eventos únicos y producciones de alta calidad.</p>
+                        <p>Nuestro equipo de DJs y productores trabaja para crear experiencias que van más allá de la música.</p>
+                    </div>
+                    <div class="nosotros-imagen">
+                        <img src="img/nosotros.jpg" alt="Equipo Music JD">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Productos -->
+        <section id="productos" class="seccion-oculta">
+            <h2 style="text-align: center; font-size: 2.5rem; margin: 50px 0 30px; color: var(--azul-neon); text-shadow: 0 0 10px var(--azul-neon);">NUESTROS PRODUCTOS</h2>
+            <div class="galeria">
+                <div class="item-galeria" onclick="abrirModal('img4plant.jpeg', 'ÁLBUM EXCLUSIVO', 'Nuestro último lanzamiento con 12 tracks originales')">
+                    <img src="img4plant.jpeg" alt="Álbum Music JD">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img5plant.jpeg', 'MERCHANDISING', 'Camisetas y accesorios con diseño neón')">
+                    <img src="img5plant.jpeg" alt="Merchandising">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img6plant.jpeg', 'BEAT PACKS', 'Colección de beats para productores')">
+                    <img src="img6plant.jpeg" alt="Beat Packs">
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Contacto -->
+        <section id="contacto" class="seccion-oculta">
+            <div class="marquesina-contacto">
+                <h2>CONTÁCTANOS</h2>
+                <div class="datos-empresa">
+                    <p><i class="fas fa-map-marker-alt"></i> Calle Neón 123, Ciudad DJ</p>
+                    <p><i class="fas fa-phone"></i> +1 234 567 8900</p>
+                    <p><i class="fas fa-envelope"></i> contact@musicjd.com</p>
+                    <p><i class="fas fa-clock"></i> 24/7 Beat Service</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de productos -->
+    <div class="modal" id="modalProducto">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <div class="modal-imagen">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalTitulo"></h3>
+                <p id="modalDesc"></p>
+                <button class="btn-contacto" onclick="location.href='#contacto'">CONTACTAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 <strong>Music JD</strong> | <em>Todos los derechos reservados</em></p>
+    </footer>
+
+    <script>
+        // CONTROL DEL CARRUSEL Y MODAL
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carrusel
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length > 0) {
+                let slideIndex = 0;
+                mostrarSlide(slideIndex);
+
+                function cambiarSlide(n) {
+                    mostrarSlide(slideIndex += n);
+                }
+
+                function mostrarSlide(n) {
+                    if (n >= slides.length) slideIndex = 0;
+                    if (n < 0) slideIndex = slides.length - 1;
+                    
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    slides[slideIndex].classList.add('active');
+                }
+
+                // Botones del carrusel
+                const prevBtn = document.querySelector('.prev');
+                const nextBtn = document.querySelector('.next');
+                
+                if (prevBtn && nextBtn) {
+                    prevBtn.addEventListener('click', () => cambiarSlide(-1));
+                    nextBtn.addEventListener('click', () => cambiarSlide(1));
+                }
+
+                // Auto-avance
+                setInterval(() => cambiarSlide(1), 5000);
+            }
+
+            // Modal - VERSIÓN CORREGIDA Y FUNCIONAL
+            window.abrirModal = function(src, titulo, desc) {
+                const modal = document.getElementById('modalProducto');
+                const modalImg = document.getElementById('modalImg');
+                const modalTitulo = document.getElementById('modalTitulo');
+                const modalDesc = document.getElementById('modalDesc');
+                
+                if (modal && modalImg && modalTitulo && modalDesc) {
+                    modalImg.src = src;
+                    modalImg.alt = titulo;
+                    modalTitulo.textContent = titulo;
+                    modalDesc.textContent = desc;
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            window.cerrarModal = function() {
+                const modal = document.getElementById('modalProducto');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            };
+
+            // Cerrar modal al hacer clic en la X
+            const cerrarBtn = document.querySelector('.cerrar');
+            if (cerrarBtn) {
+                cerrarBtn.addEventListener('click', cerrarModal);
+            }
+
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('modalProducto');
+                if (event.target === modal) {
+                    cerrarModal();
+                }
+            });
+
+            // Efecto parallax
+            // Reemplaza la función efectoParallax en tu script con esta versión mejorada
+function efectoParallax() {
+    const fondo = document.querySelector('.fondo-dj');
+    if (fondo) {
+        const scrollPosition = window.pageYOffset;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.body.scrollHeight;
+        
+        // Calcula qué porcentaje del documento ha sido desplazado
+        const scrollPercent = scrollPosition / (documentHeight - windowHeight);
+        
+        // Ajusta estos valores para controlar la velocidad y límite del movimiento
+        const velocidad = 0.3; // Más bajo = más lento (0.2-0.5 es buen rango)
+        const maxDesplazamiento = 200; // Máximo de píxeles que se moverá el fondo
+        
+        // Calcula el nuevo desplazamiento
+        const desplazamiento = scrollPercent * maxDesplazamiento * velocidad;
+        
+        // Aplica el movimiento con un efecto suave
+        fondo.style.transform = `translateY(${desplazamiento}px)`;
+        fondo.style.transition = 'transform 0.5s ease-out';
+    }
+}
+
+            // Scroll para mostrar secciones
+            function revelarSecciones() {
+                const secciones = document.querySelectorAll('.seccion-oculta');
+                if (secciones.length > 0) {
+                    const windowAltura = window.innerHeight;
+                    
+                    secciones.forEach(seccion => {
+                        const seccionPos = seccion.getBoundingClientRect().top;
+                        if (seccionPos < windowAltura - 100) {
+                            seccion.classList.add('seccion-activa');
+                        }
+                    });
+                }
+            }
+
+            // Inicializar
+            revelarSecciones();
+            window.addEventListener('scroll', function() {
+                revelarSecciones();
+                efectoParallax();
+            });
+        });
+    </script>
+</body>
+</html>

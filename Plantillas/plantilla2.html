@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio | Nature Plant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Paleta de colores naturales */
+        :root {
+            --verde-oscuro: #2d5a3d;
+            --verde-medio: #5a8f64;
+            --verde-claro: #a3c9a8;
+            --ocre: #d4a762;
+            --marron: #8b5a2b;
+            --blanco: #f8f9fa;
+            --negro: #1e1e1e;
+            --sombra-verde: 0 0 15px rgba(90, 143, 100, 0.5);
+        }
+
+        /* Estilos base con fondo natural */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e6f0e6, #f5f9f5);
+            color: var(--verde-oscuro);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Efecto de textura de paja */
+        .efecto-paja {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 70% 30%, rgba(212, 167, 98, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 30% 70%, rgba(139, 90, 43, 0.03) 0%, transparent 20%);
+            background-size: 300px 300px;
+            z-index: -1;
+            pointer-events: none;
+            animation: movimiento-paja 20s infinite alternate;
+        }
+
+        @keyframes movimiento-paja {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100px 100px; }
+        }
+
+        /* Menú superior con logo */
+        .menu-superior {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(45, 90, 61, 0.95);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid var(--ocre);
+        }
+
+        .logo-container {
+            padding: 10px 0;
+        }
+
+        .nombre-empresa {
+            font-family: 'Georgia', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--blanco);
+            text-shadow: 
+                2px 2px 0 var(--verde-oscuro),
+                4px 4px 0 rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .menu-links {
+            width: 100%;
+            padding: 10px 0;
+            background: rgba(35, 80, 51, 0.9);
+        }
+
+        .menu-superior ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            max-width: 800px;
+        }
+
+        .menu-superior li a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu-superior li a:hover {
+            background: var(--verde-medio);
+            transform: translateY(-3px);
+        }
+
+        /* Contenido principal */
+        .contenido-principal {
+            padding-top: 160px;
+            padding-bottom: 60px;
+        }
+
+        /* Carrusel natural */
+        .carrusel {
+            position: relative;
+            max-width: 900px;
+            margin: 40px auto;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 5px solid var(--blanco);
+        }
+
+        .slide {
+            display: none;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        .slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(45, 90, 61, 0.7);
+            color: var(--blanco);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+
+        .prev:hover, .next:hover {
+            background: var(--verde-medio);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
+        /* Banners circulares naturales */
+        .banners {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px auto;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .banner {
+            background: rgba(163, 201, 168, 0.7);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 5px rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .banner:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 15px 35px rgba(90, 143, 100, 0.4),
+                inset 0 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .banner:hover::before {
+            opacity: 1;
+        }
+
+        .banner i {
+            font-size: 2.5rem;
+            color: var(--verde-oscuro);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .banner:hover i {
+            transform: rotate(15deg) scale(1.2);
+        }
+
+        .banner h3 {
+            margin: 0 0 5px;
+            font-size: 1.2rem;
+            color: var(--verde-oscuro);
+            text-align: center;
+        }
+
+        .banner p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--marron);
+            text-align: center;
+        }
+
+        /* Sección Nosotros natural */
+        .nosotros-contenido {
+            background: linear-gradient(145deg, rgba(163, 201, 168, 0.9), rgba(90, 143, 100, 0.9));
+            color: var(--verde-oscuro);
+            padding: 60px;
+            border-radius: 20px;
+            margin: 80px auto;
+            max-width: 1000px;
+            box-shadow: var(--sombra-verde);
+            border: 2px solid var(--ocre);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nosotros-contenido::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232d5a3d" fill-opacity="0.05" d="M30,50 Q50,30 70,50 T90,50 T70,70 T50,90 T30,70 T10,50 T30,30 Z"/></svg>');
+            background-size: 200px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .nosotros-contenido h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--verde-oscuro);
+            z-index: 1;
+        }
+
+        .nosotros-contenido h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--ocre);
+        }
+
+        .nosotros-info {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nosotros-texto {
+            flex: 1;
+        }
+
+        .nosotros-texto p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .nosotros-imagen {
+            flex: 1;
+            position: relative;
+        }
+
+        .nosotros-imagen img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s ease;
+            border: 3px solid var(--blanco);
+        }
+
+        .nosotros-imagen:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Galería de productos */
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .item-galeria {
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--ocre);
+        }
+
+        .item-galeria img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .item-galeria:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(90, 143, 100, 0.4);
+        }
+
+        .item-galeria:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Modal de productos */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow-y: auto;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-contenido {
+            background: var(--verde-oscuro);
+            margin: 50px auto;
+            width: 85%;
+            max-width: 1000px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(90, 143, 100, 0.5);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (min-width: 992px) {
+            .modal-contenido {
+                flex-direction: row;
+            }
+        }
+
+        .modal-imagen {
+            flex: 1;
+            min-height: 400px;
+            background: var(--negro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-imagen img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .modal-info {
+            flex: 1;
+            padding: 30px;
+            color: var(--blanco);
+            position: relative;
+        }
+
+        .modal-info h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ocre);
+        }
+
+        .modal-info p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .cerrar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--blanco);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            backdrop-filter: blur(3px);
+        }
+
+        .cerrar:hover {
+            transform: rotate(90deg);
+            color: var(--ocre);
+        }
+
+        .btn-contacto {
+            background: var(--ocre);
+            color: var(--verde-oscuro);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-contacto:hover {
+            background: var(--blanco);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sección Contacto con hoja horizontal */
+        .hoja-contacto {
+            width: 100%;
+            max-width: 800px;
+            margin: 80px auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hoja-img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+        }
+
+        .datos-empresa {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            text-align: center;
+        }
+
+        .hoja-contacto h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--verde-oscuro);
+        }
+
+        .datos-empresa p {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--verde-oscuro);
+            font-size: 1.1rem;
+        }
+
+        .datos-empresa i {
+            color: var(--marron);
+            margin-right: 15px;
+            font-size: 1.3rem;
+            min-width: 30px;
+        }
+
+        /* Footer natural */
+        footer {
+            background: var(--verde-oscuro);
+            color: var(--blanco);
+            text-align: center;
+            padding: 25px;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--ocre), transparent);
+        }
+
+        footer p {
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        footer strong {
+            color: var(--ocre);
+            font-weight: 600;
+        }
+
+        footer em {
+            font-style: normal;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* Efectos de scroll y secciones */
+        .seccion-oculta {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .seccion-activa {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nosotros-info {
+                flex-direction: column;
+            }
+            
+            .menu-superior ul {
+                gap: 15px;
+            }
+            
+            .nombre-empresa {
+                font-size: 1.8rem;
+            }
+            
+            .hoja-contacto {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banners {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+            
+            .banner {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .nosotros-contenido {
+                padding: 40px 20px;
+            }
+            
+            .menu-superior ul {
+                gap: 8px;
+                flex-wrap: wrap;
+                padding: 5px 0;
+            }
+            
+            .menu-superior li a {
+                font-size: 0.9rem;
+                padding: 5px 10px;
+            }
+            
+            .contenido-principal {
+                padding-top: 140px;
+            }
+            
+            .modal-contenido {
+                width: 95%;
+                flex-direction: column;
+            }
+            
+            .hoja-img {
+                max-width: 100%;
+            }
+            
+            .datos-empresa p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nombre-empresa {
+                font-size: 1.5rem;
+            }
+            
+            .menu-superior ul {
+                gap: 5px;
+            }
+            
+            .menu-superior li a {
+                font-size: 0.8rem;
+                padding: 3px 8px;
+            }
+            
+            .contenido-principal {
+                padding-top: 130px;
+            }
+            
+            .slide img {
+                height: 300px;
+            }
+            
+            .hoja-contacto h2 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .datos-empresa p {
+                font-size: 0.9rem;
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Efecto de paja dinámico -->
+    <div class="efecto-paja"></div>
+
+    <!-- Menú superior con logo -->
+    <nav class="menu-superior">
+        <div class="logo-container">
+            <h1 class="nombre-empresa">Nature Plant</h1>
+        </div>
+        <div class="menu-links">
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="contenido-principal">
+        <!-- Sección Inicio -->
+        <section id="inicio" class="seccion-activa">
+            <div class="carrusel">
+                <div class="slide active">
+                    <img src="img1plant.jpeg" alt="Productos naturales">
+                </div>
+                <div class="slide">
+                    <img src="img2plant.jpeg" alt="Plantas naturales">
+                </div>
+                <div class="slide">
+                    <img src="img3plant.jpeg" alt="Soluciones ecológicas">
+                </div>
+                <button class="prev" onclick="cambiarSlide(-1)">&#10094;</button>
+                <button class="next" onclick="cambiarSlide(1)">&#10095;</button>
+            </div>
+
+            <!-- Banners circulares -->
+            <div class="banners">
+                <div class="banner">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Productos Orgánicos</h3>
+                    <p>Descubre nuestra línea 100% natural y ecológica</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-seedling"></i>
+                    <h3>Cultivos Sostenibles</h3>
+                    <p>Técnicas amigables con el medio ambiente</p>
+                </div>
+                <div class="banner">
+                    <i class="fas fa-recycle"></i>
+                    <h3>Economía Circular</h3>
+                    <p>Nuestro compromiso con el planeta</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="seccion-oculta">
+            <div class="nosotros-contenido">
+                <h2>¿Quiénes Somos?</h2>
+                <div class="nosotros-info">
+                    <div class="nosotros-texto">
+                        <p>En <strong>Nature Plant</strong> nos dedicamos a conectar a las personas con la naturaleza a través de productos y soluciones ecológicas. Desde 2015, hemos cultivado relaciones sostenibles con la tierra y nuestras comunidades.</p>
+                        <p>Nuestro equipo de expertos en botánica y sostenibilidad trabaja para ofrecer productos que no solo son hermosos, sino también responsables con el medio ambiente.</p>
+                        <p>Creemos en un futuro verde y nos esforzamos cada día por hacerlo realidad, una planta a la vez.</p>
+                    </div>
+                    <div class="nosotros-imagen">
+                        <img src="img/nosotros.jpg" alt="Equipo Nature Plant">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Productos -->
+        <section id="productos" class="seccion-oculta">
+            <h2 style="text-align: center; font-size: 2.5rem; margin: 50px 0 30px; color: var(--verde-oscuro);">Nuestros Productos</h2>
+            <div class="galeria">
+                <div class="item-galeria" onclick="abrirModal('img4plant.jpeg', 'Kit de Cultivo', 'Todo lo necesario para comenzar tu huerto en casa. Incluye semillas orgánicas, sustrato y guía de cultivo.')">
+                    <img src="img4plant.jpeg" alt="Kit de Cultivo">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img5plant.jpeg', 'Tierra Fertilizada', 'Sustrato premium enriquecido con nutrientes naturales para un crecimiento óptimo.')">
+                    <img src="img5plant.jpeg" alt="Tierra Fertilizada">
+                </div>
+                <div class="item-galeria" onclick="abrirModal('img6plant.jpeg', 'Plantas Medicinales', 'Selección de hierbas con propiedades curativas, cultivadas sin pesticidas.')">
+                    <img src="img6plant.jpeg" alt="Plantas Medicinales">
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Contacto con hoja horizontal -->
+        <section id="contacto" class="seccion-oculta">
+            <div class="hoja-contacto">
+                <img src="hoja.jpg" alt="Hoja" class="hoja-img">
+                <div class="datos-empresa">
+                    <h2>Contáctanos</h2>
+                    <p><i class="fas fa-map-marker-alt"></i> Camino Verde 123, Bosque Alegre</p>
+                    <p><i class="fas fa-phone"></i> +1 234 567 8900</p>
+                    <p><i class="fas fa-envelope"></i> info@natureplant.com</p>
+                    <p><i class="fas fa-clock"></i> Lunes a Viernes: 8:00 - 17:00</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de productos -->
+    <div class="modal" id="modalProducto">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <div class="modal-imagen">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="modal-info">
+                <h3 id="modalTitulo"></h3>
+                <p id="modalDesc"></p>
+                <button class="btn-contacto" onclick="location.href='#contacto'">Consultar sobre este producto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 <strong>Francisco Javier Martínez Gutiérrez</strong> | <em>Nature Plant</em>. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // CONTROL DEL CARRUSEL
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            if (slides.length > 0) {
+                let slideIndex = 0;
+                mostrarSlide(slideIndex);
+
+                function cambiarSlide(n) {
+                    mostrarSlide(slideIndex += n);
+                }
+
+                function mostrarSlide(n) {
+                    if (n >= slides.length) { slideIndex = 0; }
+                    if (n < 0) { slideIndex = slides.length - 1; }
+                    
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    slides[slideIndex].classList.add('active');
+                }
+
+                // Botones del carrusel
+                document.querySelector('.prev')?.addEventListener('click', () => cambiarSlide(-1));
+                document.querySelector('.next')?.addEventListener('click', () => cambiarSlide(1));
+
+                // Auto-avance
+                setInterval(() => cambiarSlide(1), 5000);
+            }
+
+            // MODAL
+            const modal = document.getElementById('modalProducto');
+            if (modal) {
+                window.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        cerrarModal();
+                    }
+                });
+            }
+
+            // SCROLL REVEAL
+            revelarSecciones();
+            window.addEventListener('scroll', revelarSecciones);
+        });
+
+        // FUNCIONES
+        function abrirModal(src, titulo, desc) {
+            const modal = document.getElementById('modalProducto');
+            const modalImg = document.getElementById('modalImg');
+            const modalTitulo = document.getElementById('modalTitulo');
+            const modalDesc = document.getElementById('modalDesc');
+            
+            if (modal && modalImg && modalTitulo && modalDesc) {
+                modalImg.src = src;
+                modalTitulo.textContent = titulo;
+                modalDesc.textContent = desc;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('modalProducto');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function revelarSecciones() {
+            const secciones = document.querySelectorAll('.seccion-oculta');
+            if (secciones.length > 0) {
+                const windowAltura = window.innerHeight;
+                
+                secciones.forEach(seccion => {
+                    const seccionPos = seccion.getBoundingClientRect().top;
+                    if (seccionPos < windowAltura - 150) {
+                        seccion.classList.add('seccion-activa');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
