@@ -683,25 +683,31 @@
 }
 .plantillas-grid {
     display: flex;
-    justify-content: space-between;  /* Distribuir los items de forma equitativa */
+    justify-content: space-between;
     flex-wrap: wrap;
     margin-top: 20px;
-    width: 100vw;  /* Esto hace que el contenedor ocupe todo el ancho de la pantalla */
-    box-sizing: border-box;  /* Asegura que el ancho total no se vea afectado por márgenes */
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100vw; /* Hace que ocupe todo el ancho de la pantalla */
 }
 
 .plantilla {
     text-align: center;
-    flex: 1 1 22%;  /* Asegura que cada plantilla ocupe aproximadamente el 22% del ancho */
+    flex: 1 1 22%;  /* Los thumbnails ocupan aproximadamente el 22% del ancho */
     margin: 10px;
-    min-width: 200px;  /* Evita que las plantillas sean demasiado pequeñas */
+    min-width: 180px;
+}
+
+.thumbnail-container {
+    overflow: hidden;  /* Oculta la parte inferior de las imágenes */
+    height: 120px;  /* Ajusta la altura de las imágenes */
+    width: 100%;  /* La imagen ocupa todo el ancho disponible */
 }
 
 .thumbnail {
-    width: 100%;  /* Las imágenes ocupan todo el ancho de su contenedor */
-    height: auto;  /* La altura se ajusta proporcionalmente al ancho */
-    max-width: 300px;  /* Limita el tamaño máximo */
-    object-fit: cover;
+    width: 100%;
+    height: auto;
+    object-fit: cover;  /* Recorta la imagen si es necesario para ajustarse */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
@@ -869,8 +875,7 @@
                     </div>
                 </div>
             </div>
-    
-            <!-- Sección de plantillas -->
+<!-- Sección de plantillas -->
 <div class="portfolio-item">
     <div class="portfolio-content">
         <h3 style="text-align: center;">📂 Plantillas Web</h3>
@@ -879,30 +884,39 @@
             <div class="plantilla">
                 <h4>Plantilla 1</h4>
                 <a href="Plantillas/plantilla1.html" target="_blank">
-                    <img src="Plantillas/thumbnail1.jpg" alt="Vista previa Plantilla 1" class="thumbnail">
+                    <div class="thumbnail-container">
+                        <img src="Plantillas/thumbnail1.jpg" alt="Vista previa Plantilla 1" class="thumbnail">
+                    </div>
                 </a>
             </div>
             <div class="plantilla">
                 <h4>Plantilla 2</h4>
                 <a href="Plantillas/plantilla2.html" target="_blank">
-                    <img src="Plantillas/thumbnail2.jpg" alt="Vista previa Plantilla 2" class="thumbnail">
+                    <div class="thumbnail-container">
+                        <img src="Plantillas/thumbnail2.jpg" alt="Vista previa Plantilla 2" class="thumbnail">
+                    </div>
                 </a>
             </div>
             <div class="plantilla">
                 <h4>Plantilla 3</h4>
                 <a href="Plantillas/plantilla3.html" target="_blank">
-                    <img src="Plantillas/thumbnail3.jpg" alt="Vista previa Plantilla 3" class="thumbnail">
+                    <div class="thumbnail-container">
+                        <img src="Plantillas/thumbnail3.jpg" alt="Vista previa Plantilla 3" class="thumbnail">
+                    </div>
                 </a>
             </div>
             <div class="plantilla">
                 <h4>Plantilla 4</h4>
                 <a href="Plantillas/plantilla4.html" target="_blank">
-                    <img src="Plantillas/thumbnail4.jpg" alt="Vista previa Plantilla 4" class="thumbnail">
+                    <div class="thumbnail-container">
+                        <img src="Plantillas/thumbnail4.jpg" alt="Vista previa Plantilla 4" class="thumbnail">
+                    </div>
                 </a>
             </div>
         </div>
     </div>
 </div>
+
         <!-- Sección de conocimientos -->
         <div class="custom-solution">
             <h3>🔧 Stack Tecnológico Completo</h3>
