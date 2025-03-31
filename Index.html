@@ -165,26 +165,69 @@
         }
 
         /* Noticias */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
+        /* Contenedor principal de noticias */
+.news-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 40px;
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en pantallas pequeñas */
+}
 
-        .news-card {
-    width: fit-content; /* Ajusta el ancho al contenido */
-    padding: 20px; /* Reduce si hay mucho espacio interno */
-    margin: 10px auto; /* Centrado y espacio exterior */
+/* Contenedor del video */
+.news-video-container {
+    flex: 1;
+    max-width: 50%;
+}
+
+.news-video {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* Contenedor del texto */
+.news-text {
+    flex: 1;
+    max-width: 50%;
+    text-align: left;
+}
+
+.news-text h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.news-text p {
+    font-size: 18px;
+    color: #555;
+}
+
+/* Estilos para las tarjetas de noticias */
+.news-card {
+    flex: 1;
+    padding: 20px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-        .news-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.2); /* Sombra cobriza */
-        }
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.2);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .news-grid {
+        flex-direction: column;
+    }
+    .news-video-container, .news-text {
+        max-width: 100%;
+    }
+}
+
 
         /* Acerca de - Botones */
         .about-buttons {
@@ -698,28 +741,22 @@
                 <div class="carousel-item" style="background-image: url('carru3.jpg')"></div>
             </div>
         </div>
+    
+        <!-- Contenedor de noticias -->
         <div class="news-grid">
-            <div class="news-card">
-                <div class="news-video-container">
-                    <video controls class="news-video">
-                        <source src="deliciaslogo.mp4" type="video/mp4">
-                    </video>
-                </div>
-                <h3>Últimas noticias</h3>
-                <p>Texto de ejemplo...</p>
+            <div class="news-video-container">
+                <video controls class="news-video">
+                    <source src="deliciaslogo.mp4" type="video/mp4">
+                </video>
+            </div>
+        
+            <div class="news-text">
+                <h3>CSS con JavaScript de alto nivel</h3>
+                <p>Entra con nosotros e instrúyete en el mundo de nuevos estilos y aplícalos con maestría...</p>
             </div>
         </div>
-                        <h3>Actualización de Logo</h3>
-                        <p>Totalmente Nuevo y mejorado</p>
-                    </div>
-                </div>
-            <div class="news-card">
-                <h3>Nuevos proyectos</h3>
-                <p>Estamos trabajando en emocionantes desarrollos...</p>
-            </div>
-        </div>
+        
     </section>
-
     <section id="acerca">
         <h2>Acerca de Nosotros</h2>
     
