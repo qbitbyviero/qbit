@@ -719,20 +719,21 @@
 /* Estilos para la sección Cerebro */
 .highlight-item {
     position: relative;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important; /* Fuerza el fondo claro */
-    color: #2a2a2a !important; /* Texto oscuro */
+    background: transparent !important; /* Fondo transparente */
+    border: 2px solid #ff4500 !important; /* Borde cobrizo */
+    color: #fff !important; /* Texto en blanco */
     border-radius: 15px;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
+    backdrop-filter: blur(5px); /* Efecto de vidrio esmerilado */
 }
-/* Añade estos estilos adicionales */
+
 .highlight-item .portfolio-content {
     background: transparent !important; /* Elimina cualquier fondo heredado */
 }
 
-.brain-features li {
-    color: #444 !important; /* Color de texto más oscuro */
+.brain-features li::before {
+    color: #ff4500; /* Triángulos en cobrizo */
 }
 
 .brain-features li::before {
@@ -740,8 +741,9 @@
 }
 
 .cta-button {
-    background-color: #ff4500 !important; /* Color cobrizo en lugar del verde */
-    border: 1px solid #ff4500;
+    background-color: rgba(255, 69, 0, 0.2) !important; /* Fondo cobrizo translúcido */
+    border: 1px solid #ff4500 !important;
+    color: #ff4500 !important; /* Texto cobrizo */
 }
 .highlight-item:hover {
     transform: translateY(-5px);
@@ -785,8 +787,8 @@
 }
 
 .cta-button:hover {
-    background-color: #228176;
-    box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+    background-color: #ff4500 !important; /* Fondo cobrizo sólido al hover */
+    color: #000 !important;
 }
 
 .cta-button svg {
