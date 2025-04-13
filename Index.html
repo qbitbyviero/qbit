@@ -716,7 +716,65 @@
 .thumbnail:hover {
     transform: scale(1.05);
 }
+/* Estilos para la sección Cerebro */
+.highlight-item {
+    position: relative;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
 
+.highlight-item:hover {
+    transform: translateY(-5px);
+}
+
+.brain-icon {
+    font-size: 4rem;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.brain-features {
+    text-align: left;
+    margin: 20px 0;
+    padding-left: 25px;
+}
+
+.brain-features li {
+    margin: 10px 0;
+    position: relative;
+}
+
+.brain-features li::before {
+    content: '▹';
+    position: absolute;
+    left: -20px;
+    color: #2a9d8f;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background-color: #2a9d8f;
+    color: white !important;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin: 15px 0;
+}
+
+.cta-button:hover {
+    background-color: #228176;
+    box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+}
+
+.cta-button svg {
+    margin-left: 5px;
+}
 </style>
 </head>
 <body>
@@ -838,7 +896,31 @@
                     </div>
                 </div>
             </div>
-    
+     <!-- Sección Cerebro -->
+     <div class="portfolio-item highlight-item">
+        <div class="portfolio-content">
+            <div class="brain-icon">🧠</div>
+            <h3>Sistema Cerebro</h3>
+            <p>Plataforma inteligente de gestión del conocimiento con:</p>
+            <ul class="brain-features">
+                <li>Mapas mentales interactivos</li>
+                <li>Base de conocimiento organizada</li>
+                <li>Búsqueda semántica</li>
+                <li>Integración con IA</li>
+            </ul>
+            <a href="cerebro/cerebro.html" target="_blank" class="cta-button">
+                Explorar Sistema
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"/>
+                </svg>
+            </a>
+            <div class="tech-badges">
+                <span class="tech-badge">AI Integration</span>
+                <span class="tech-badge">Knowledge Graph</span>
+                <span class="tech-badge">React</span>
+            </div>
+        </div>
+    </div>
             <div class="portfolio-content">
                 <div class="project">
                     <div class="video-container">

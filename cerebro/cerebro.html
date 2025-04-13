@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor 3D del Cerebro con Conexiones Neuronales</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    canvas { display: block; }
+    #editor-ui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #controls button {
+      margin-top: 5px;
+      display: block;
+    }
+    #dialog {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 1px solid #fff;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+      z-index: 200;
+    }
+    #dialog button { margin-top: 10px; }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 5px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div id="editor-ui">
+    <h2>Editor del Cerebro</h2>
+    <div id="controls">
+      <button onclick="addArrow()">Agregar Flecha</button>
+      <button onclick="removeLastArrow()">Eliminar Última Flecha</button>
+      <button onclick="changeColorSelected()">Cambiar Color Flecha Seleccionada</button>
+    </div>
+  </div>
+
+  <div id="dialog">
+    <p id="dialog-content"></p>
+    <button onclick="closeDialog()">Cerrar</button>
+  </div>
+
+  <footer>
+    Este sitio usa <strong>Three.js</strong> y modelos para la edición de este cerebro. <br>
+    Código e idea de Francisco Javier Martínez Gutiérrez.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/DragControls.js"></script>
+
+  <script>
+    let scene, camera, renderer, controls, dragControls, brainModel;
+    let movableObjects = [];
+    let selectedArrow = null;
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let neuralGroup;
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 1, 3);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000);
+      document.body.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(3, 5, 2);
+      scene.add(directionalLight);
+
+      createNeuralBackground();
+
+      const loader = new THREE.GLTFLoader();
+      loader.load('brain_project.glb', function(gltf) {
+        brainModel = gltf.scene;
+        brainModel.scale.set(1, 1, 1);
+        brainModel.position.set(0, 0, 0);
+        scene.add(brainModel);
+      }, undefined, function(error) {
+        console.error('Error al cargar el modelo:', error);
+      });
+
+      dragControls = new THREE.DragControls(movableObjects, camera, renderer.domElement);
+      dragControls.addEventListener('dragstart', () => controls.enabled = false);
+      dragControls.addEventListener('dragend', () => controls.enabled = true);
+
+      renderer.domElement.addEventListener('click', onClick, false);
+      window.addEventListener('resize', onWindowResize, false);
+      animate();
+    }
+
+    function createNeuralBackground() {
+      neuralGroup = new THREE.Group();
+      const neuronCount = 100;
+      const neurons = [];
+      for (let i = 0; i < neuronCount; i++) {
+        neurons.push(new THREE.Vector3(
+          (Math.random() - 0.5) * 50,
+          (Math.random() - 0.5) * 50,
+          (Math.random() - 0.5) * 50
+        ));
+      }
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(neurons);
+      const material = new THREE.PointsMaterial({ color: 0x8888ff, size: 0.5 });
+      const points = new THREE.Points(geometry, material);
+      neuralGroup.add(points);
+
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8888ff, opacity: 0.3, transparent: true });
+      const lines = [];
+      for (let i = 0; i < neuronCount; i++) {
+        for (let j = i + 1; j < neuronCount; j++) {
+          if (neurons[i].distanceTo(neurons[j]) < 10) {
+            lines.push(neurons[i].x, neurons[i].y, neurons[i].z);
+            lines.push(neurons[j].x, neurons[j].y, neurons[j].z);
+          }
+        }
+      }
+      const lineGeometry = new THREE.BufferGeometry();
+      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lines, 3));
+      const lineSegments = new THREE.LineSegments(lineGeometry, lineMaterial);
+      neuralGroup.add(lineSegments);
+      scene.add(neuralGroup);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (neuralGroup) neuralGroup.rotation.y += 0.0005;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function addArrow() {
+  if (!brainModel) return;
+
+  const origin = new THREE.Vector3(
+    (Math.random() - 0.5) * 2,
+    (Math.random() - 0.5) * 2,
+    (Math.random() - 0.5) * 2
+  );
+  const direction = new THREE.Vector3(
+    Math.random(), Math.random(), Math.random()
+  ).normalize();
+
+  const length = 0.5; // Más grande
+  const radius = 0.07;
+  const color = new THREE.Color(Math.random(), Math.random(), Math.random());
+  const material = new THREE.MeshStandardMaterial({ color: color });
+
+  const coneGeom = new THREE.ConeGeometry(radius, length, 16);
+  const cone = new THREE.Mesh(coneGeom, material);
+
+  // Posicionar el cono
+  cone.position.copy(origin.clone().add(direction.clone().multiplyScalar(length / 2)));
+
+  // Rotar hacia la dirección deseada
+  const axis = new THREE.Vector3(0, 1, 0); // Cono por default apunta en Y
+  cone.quaternion.setFromUnitVectors(axis, direction);
+
+  // Agregar a la escena
+  scene.add(cone);
+  movableObjects.push(cone);
+
+  // Actualizar DragControls
+  dragControls.dispose();
+  dragControls = new THREE.DragControls(movableObjects, camera, renderer.domElement);
+  dragControls.addEventListener('dragstart', () => controls.enabled = false);
+  dragControls.addEventListener('dragend', () => controls.enabled = true);
+}
+
+    function removeLastArrow() {
+      if (movableObjects.length === 0) return;
+      const last = movableObjects.pop();
+      scene.remove(last);
+      dragControls.dispose();
+      dragControls = new THREE.DragControls(movableObjects, camera, renderer.domElement);
+      dragControls.addEventListener('dragstart', () => controls.enabled = false);
+      dragControls.addEventListener('dragend', () => controls.enabled = true);
+    }
+
+    function onClick(event) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(movableObjects);
+  if (intersects.length > 0) {
+    const selected = intersects[0].object;
+    const message = getMessageByPosition(selected.position);
+    alert(message);
+  }
+}
+
+function getMessageByPosition(position) {
+  if (position.x < -0.5) {
+    return `Sección de Estimulación Visual
+Esta área está diseñada para resonar en el rango de frecuencia de 40 Hz (hercios), un espectro vinculado con estados de alta concentración. Te recomendamos la canción "Time" de Hans Zimmer, cuya progresión lenta y textura sonora favorecen este tipo de estimulación.
+
+Nota: Ajusta el brillo ambiental y volumen para una experiencia inmersiva.`;
+  } else if (position.x > 0.5) {
+    return `Sección de Estimulación Cognitiva
+Aquí estimulamos rangos cercanos a 70 Hz, relacionados con procesos lógicos y resolución de problemas. Sugerimos la canción "Algorithm" de Muse, por su estructura electrónica progresiva.
+
+Nota: Ideal para actividades mentales intensas.`;
+  } else {
+    return `Sección de Estimulación Sonora
+Esta área está diseñada para resonar en el rango de frecuencia de 120 Hz (hercios), un espectro asociado a la activación física y la sincronización rítmica. Para potenciar la experiencia, te recomendamos utilizar la canción "La Carencia" de Panteón Rococó, cuya composición en graves y estructura armónica se alinea con este rango, favoreciendo la estimulación auditiva y corporal.
+
+Nota: Ajusta el volumen a un nivel seguro para disfrutar de manera óptima.`;
+  }
+}
+
+    function changeColorSelected() {
+      if (!selectedArrow) return;
+      selectedArrow.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.set(Math.random() * 0xffffff);
+        }
+      });
+    }
+
+    function closeDialog() {
+      document.getElementById('dialog').style.display = 'none';
+    }
+
+    init();
+  </script>
+</body>
+</html>
