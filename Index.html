@@ -719,13 +719,30 @@
 /* Estilos para la sección Cerebro */
 .highlight-item {
     position: relative;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important; /* Fuerza el fondo claro */
+    color: #2a2a2a !important; /* Texto oscuro */
     border-radius: 15px;
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
 }
+/* Añade estos estilos adicionales */
+.highlight-item .portfolio-content {
+    background: transparent !important; /* Elimina cualquier fondo heredado */
+}
 
+.brain-features li {
+    color: #444 !important; /* Color de texto más oscuro */
+}
+
+.brain-features li::before {
+    color: #ff4500; /* Color cobrizo para los triángulos */
+}
+
+.cta-button {
+    background-color: #ff4500 !important; /* Color cobrizo en lugar del verde */
+    border: 1px solid #ff4500;
+}
 .highlight-item:hover {
     transform: translateY(-5px);
 }
