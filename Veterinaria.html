@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Posh Posh</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+    }
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: fadeOut 2s 3s forwards;
+    }
+    #splash img {
+      width: 200px;
+      animation: zoomIn 2s ease;
+    }
+    @keyframes zoomIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+    header {
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+    header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
+  </div>
+  <header>
+    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
+    <h1>Agenda Veterinaria - Posh Posh</h1>
+  </header>
+
+  <div id="calendar"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzA5tsxtCXzeUVsb0vneHtaNsV3-XZfN790ujSRN32RbKi77SjW3JqGFborIcBtGt4Y/exec";
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      const calendarEl = document.getElementById('calendar');
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        locale: 'es',
+        height: 'auto',
+        selectable: true,
+        dateClick: async function(info) {
+          const motivo = prompt('¿Motivo de la cita?');
+          if (motivo) {
+            const nuevaCita = {
+              fecha: info.dateStr,
+              hora: '',
+              cliente: '',
+              paciente: '',
+              motivo: motivo,
+              notas: '',
+              costo: ''
+            };
+            // Enviar a GAS
+            const res = await fetch("https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec", {
+  method: 'POST',
+  body: JSON.stringify(nuevaCita),
+  headers: { 'Content-Type': 'application/json' }
+});
+const texto = await res.text();
+console.log('Respuesta del servidor:', texto);
+            // Actualizar el calendario
+
+            calendar.addEvent({
+              title: motivo,
+              start: info.dateStr,
+              allDay: true
+            });
+            alert('Cita registrada');
+          }
+        },
+        events: await cargarCitas()
+      });
+
+      calendar.render();
+    });
+
+    async function cargarCitas() {
+      try {
+        const res = await fetch(WEBAPP_URL);
+        const data = await res.json();
+        return data.map(item => ({
+          title: item.Motivo || 'Cita',
+          start: item.Fecha,
+          allDay: true
+        }));
+      } catch (error) {
+        console.error('Error al cargar citas:', error);
+        return [];
+      }
+    }
+  </script>
+</body>
+</html>
