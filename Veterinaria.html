@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agenda Veterinaria - Posh Posh</title>
+  <title>Agenda Posh Posh</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Para los íconos -->
   <style>
     * { box-sizing: border-box; }
     body {
@@ -14,163 +13,7 @@
       background-color: #f2f2f2;
     }
 
-    /* Menú con animación */
-    nav {
-      position: fixed;
-      top: 0; left: 0;
-      height: 100%;
-      width: 250px;
-      background-color: #333;
-      color: white;
-      z-index: 100;
-      padding-top: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-    }
-
-    nav.active {
-      transform: translateX(0);
-    }
-
-    nav a {
-      text-decoration: none;
-      color: white;
-      padding: 15px;
-      font-size: 18px;
-      transition: background-color 0.3s ease;
-    }
-
-    nav a:hover {
-      background-color: #007bff;
-    }
-
-    .menu-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 16px;
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 101;
-    }
-
-    /* Submenú animado */
-    .submenu {
-      display: none;
-      margin-left: 20px;
-    }
-
-    nav a:hover + .submenu,
-    .submenu:hover {
-      display: block;
-      animation: slideIn 0.5s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(-20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* Modales */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: #fff;
-      padding: 20px;
-      width: 400px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header h2 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .modal-body {
-      margin-top: 10px;
-    }
-
-    .modal-footer {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .modal-footer button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .modal-footer button.cancel {
-      background-color: #f44336;
-    }
-
-    .modal-footer button:hover {
-      opacity: 0.8;
-    }
-
-    /* Estilos adicionales para formulario */
-    label {
-      font-size: 16px;
-      margin-top: 10px;
-      display: block;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .species-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .species-item {
-      padding: 10px;
-      background-color: #f2f2f2;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .species-item:hover {
-      background-color: #007bff;
-      color: white;
-    }
-
-    /* Animación Splash */
+    /* Splash screen */
     #splash {
       position: fixed;
       top: 0; left: 0;
@@ -196,6 +39,73 @@
     @keyframes fadeOut {
       to { opacity: 0; visibility: hidden; }
     }
+
+    /* Header */
+    header {
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 50;
+    }
+
+    header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      color: #333;
+      flex-grow: 1;
+    }
+
+    /* Menú hover en top */
+    nav.menu {
+      position: relative;
+    }
+
+    nav.menu ul {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav.menu ul li {
+      position: relative;
+    }
+
+    nav.menu ul li a {
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      padding: 10px 15px;
+      display: block;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    nav.menu ul li a:hover {
+      background-color: #007bff;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Calendario */
+    #calendar {
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -204,118 +114,93 @@
     <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
   </div>
 
-  <!-- Menú -->
-  <button id="menu-toggle" class="menu-button">Menú</button>
-  <nav id="menu">
-    <a href="#">Clientes <i class="fas fa-caret-down"></i></a>
-    <div class="submenu">
-      <a href="#" id="submenu-existing">Existente</a>
-      <a href="#" id="submenu-new">Nuevo</a>
-    </div>
-    <a href="#">Historial</a>
-    <a href="#">Vacuna</a>
-    <a href="#">Tienda</a>
-    <a href="#">Estética</a>
-  </nav>
+  <!-- Header y Menú -->
+  <header>
+    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
+    <h1>Agenda Veterinaria - Posh Posh</h1>
+    <nav class="menu">
+      <ul>
+        <li><a href="#">Cliente</a></li>
+        <li><a href="#">Historial</a></li>
+        <li><a href="#">Vacuna</a></li>
+        <li><a href="#">Tienda</a></li>
+        <li><a href="#">Estética</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <!-- Modal de Búsqueda de Cliente -->
-  <div id="search-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Buscar Cliente</h2>
-      </div>
-      <div class="modal-body">
-        <label for="search-name">Nombre del Cliente o Mascota</label>
-        <input type="text" id="search-name" placeholder="Buscar...">
-      </div>
-      <div class="modal-footer">
-        <button class="cancel">Cerrar</button>
-        <button class="search">Buscar</button>
-      </div>
-    </div>
-  </div>
+  <!-- Calendario -->
+  <div id="calendar"></div>
 
-  <!-- Modal de Registro de Cliente Nuevo -->
-  <div id="new-client-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Nuevo Cliente</h2>
-      </div>
-      <div class="modal-body">
-        <label for="owner-name">Nombre del Dueño</label>
-        <input type="text" id="owner-name" placeholder="Nombre del dueño">
-        
-        <label for="owner-address">Dirección</label>
-        <input type="text" id="owner-address" placeholder="Dirección del dueño">
-        
-        <label for="owner-phone">Teléfono</label>
-        <input type="text" id="owner-phone" placeholder="Teléfono">
-        
-        <label for="owner-email">Correo</label>
-        <input type="email" id="owner-email" placeholder="Correo electrónico">
-
-        <label for="species">Especie</label>
-        <select id="species">
-          <option value="Perro">Perro 🐶</option>
-          <option value="Gato">Gato 🐱</option>
-          <option value="Conejo">Conejo 🐰</option>
-          <option value="Ave">Ave 🦜</option>
-          <!-- Agrega más especies según sea necesario -->
-        </select>
-
-        <label for="breed">Raza</label>
-        <select id="breed">
-          <!-- Las razas se llenarán según la especie seleccionada -->
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button class="cancel">Cerrar</button>
-        <button class="submit">Registrar Cliente</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
-    // Mostrar u ocultar menú
-    const menuButton = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
-    menuButton.addEventListener('click', function() {
-      menu.classList.toggle('active');
-    });
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzA5tsxtCXzeUVsb0vneHtaNsV3-XZfN790ujSRN32RbKi77SjW3JqGFborIcBtGt4Y/exec";
 
-    // Mostrar submenú al pasar el ratón sobre "Clientes"
-    const clienteLink = document.querySelector('nav a[href="#"]');
-    const submenu = document.querySelector('.submenu');
-    clienteLink.addEventListener('mouseenter', () => {
-      submenu.style.display = 'block';
-    });
-    clienteLink.addEventListener('mouseleave', () => {
-      submenu.style.display = 'none';
-    });
+    document.addEventListener('DOMContentLoaded', async function() {
+      const calendarEl = document.getElementById('calendar');
 
-    // Abrir modal de búsqueda
-    const existingClientBtn = document.getElementById('submenu-existing');
-    const searchModal = document.getElementById('search-modal');
-    existingClientBtn.addEventListener('click', () => {
-      searchModal.style.display = 'flex';
-    });
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        locale: 'es',
+        height: 'auto',
+        selectable: true,
+        dateClick: async function(info) {
+          const motivo = prompt('¿Motivo de la cita?');
+          if (motivo) {
+            const nuevaCita = {
+              fecha: info.dateStr,
+              hora: '',
+              cliente: '',
+              paciente: '',
+              motivo: motivo,
+              notas: '',
+              costo: ''
+            };
+            fetch("https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec", {
+              method: 'POST',
+              mode: 'no-cors',
+              body: JSON.stringify(nuevaCita),
+              headers: { 'Content-Type': 'application/json' }
+            })
+            .then(() => {
+              console.log('Datos enviados correctamente (modo no-cors).');
+            })
+            .catch(err => console.error('Error al enviar:', err));
 
-    // Abrir modal de nuevo cliente
-    const newClientBtn = document.getElementById('submenu-new');
-    const newClientModal = document.getElementById('new-client-modal');
-    newClientBtn.addEventListener('click', () => {
-      newClientModal.style.display = 'flex';
-    });
-
-    // Cerrar modales
-    document.querySelectorAll('.cancel').forEach(btn => {
-      btn.addEventListener('click', () => {
-        searchModal.style.display = 'none';
-        newClientModal.style.display = 'none';
+            calendar.addEvent({
+              title: motivo,
+              start: info.dateStr,
+              allDay: true
+            });
+            alert('Cita registrada');
+          }
+        },
+        events: await cargarCitas()
       });
+
+      calendar.render();
     });
 
-    // Aquí puedes agregar más funcionalidades como la búsqueda y el registro en la hoja de Google
+    async function cargarCitas() {
+      try {
+        const res = await fetch(WEBAPP_URL);
+        const data = await res.json();
+        return data.map(item => ({
+          title: item.Motivo || 'Cita',
+          start: item.Fecha,
+          allDay: true
+        }));
+      } catch (error) {
+        console.error('Error al cargar citas:', error);
+        return [];
+      }
+    }
   </script>
 </body>
 </html>
