@@ -323,6 +323,9 @@ document.addEventListener('DOMContentLoaded', async function() {
           evento: evento
         });
         
+        // Actualizar localStorage
+        actualizarLocalStorage();
+        
         alert('Cita agregada. Se sincronizará en breve.');
         iniciarSincronizacion();
       }
@@ -363,7 +366,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch (error) {
       console.error('Error al guardar:', error);
       alert('Error al guardar el cliente. Se reintentará más tarde.');
-      // Guardar en cola para reintentar
       citasPendientes.push({
         data: formData,
         esCliente: true
@@ -379,10 +381,22 @@ document.addEventListener('DOMContentLoaded', async function() {
   setInterval(iniciarSincronizacion, INTERVALO_SINCRONIZACION);
 });
 
+// Función para actualizar localStorage
+function actualizarLocalStorage() {
+  const eventos = calendar.getEvents();
+  const citasSimplificadas = eventos.map(evento => ({
+    title: evento.title,
+    start: evento.start,
+    allDay: evento.allDay,
+    color: evento.backgroundColor
+  }));
+  localStorage.setItem('citasLocales', JSON.stringify(citasSimplificadas));
+}
+
 // Función mejorada para enviar datos
 async function enviarDatos(url, datos) {
   try {
-    const respuesta = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
       headers: {
@@ -390,7 +404,7 @@ async function enviarDatos(url, datos) {
       },
       body: JSON.stringify(datos)
     });
-    return true; // Asumimos éxito en no-cors
+    return true;
   } catch (error) {
     console.log('Error en el envío (no crítico):', error);
     throw error;
@@ -410,47 +424,62 @@ async function iniciarSincronizacion() {
       await enviarDatos(WEBAPP_URL, item.data);
       exitos.push(i);
       
-      // Si es un evento del calendario, marcarlo como sincronizado
       if (item.evento) {
-        item.evento.setProp('color', '#28a745'); // Verde = sincronizado
+        item.evento.setProp('color', '#28a745');
       }
     } catch (error) {
       console.log('No se pudo sincronizar item:', item);
     }
   }
   
-  // Eliminar solo los exitosos
   citasPendientes = citasPendientes.filter((_, index) => !exitos.includes(index));
   sincronizando = false;
   
   if (exitos.length > 0) {
-    console.log(`${exitos.length} items sincronizados correctamente`);
+    actualizarLocalStorage();
+    console.log(`${exitos.length} items sincronizados`);
   }
 }
 
-// Función para cargar citas al iniciar
+// Función mejorada para cargar citas
 async function cargarCitas() {
+  // Primero intentamos cargar de Google Sheets (activando doGet)
   try {
-    // Intenta cargar desde localStorage como fallback
+    await fetch(`${WEBAPP_URL}?action=getCitas`, { method: 'GET', mode: 'no-cors' });
+  } catch (e) {
+    console.log('No se puede verificar citas remotas (normal en no-cors)');
+  }
+  
+  // Luego cargamos de localStorage
+  try {
     const citasLocales = localStorage.getItem('citasLocales');
-    if (citasLocales) return JSON.parse(citasLocales);
-    
-    return []; // En no-cors no podemos cargar remotamente
+    if (citasLocales) {
+      const parsed = JSON.parse(citasLocales);
+      // Convertir strings de fecha a objetos Date
+      return parsed.map(cita => ({
+        ...cita,
+        start: cita.start instanceof Date ? cita.start : new Date(cita.start)
+      }));
+    }
   } catch (error) {
     console.error('Error al cargar citas locales:', error);
-    return [];
   }
+  
+  return [];
 }
 
-// Funciones auxiliares
+// Funciones auxiliares para modales
 function abrirModal(id) {
   document.getElementById(id).style.display = 'block';
+  document.body.style.overflow = 'hidden'; // Evitar scroll
 }
 
 function cerrarModal(id) {
   document.getElementById(id).style.display = 'none';
+  document.body.style.overflow = 'auto'; // Restaurar scroll
 }
 
+// Funciones para razas (sin cambios)
 const razasPorEspecie = {
   '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
   '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
@@ -479,20 +508,11 @@ function actualizarRazas() {
   }
 }
 
-// Inicializar las razas al cargar
+// Inicialización
 actualizarRazas();
 
-// Guardar citas antes de cerrar la página
-window.addEventListener('beforeunload', function() {
-  const eventos = calendar.getEvents();
-  const citasSimplificadas = eventos.map(evento => ({
-    title: evento.title,
-    start: evento.start,
-    allDay: evento.allDay,
-    color: evento.backgroundColor
-  }));
-  localStorage.setItem('citasLocales', JSON.stringify(citasSimplificadas));
-});
+// Guardar citas al cerrar
+window.addEventListener('beforeunload', actualizarLocalStorage);
 </script>
 </body>
 </html>
