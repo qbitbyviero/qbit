@@ -100,15 +100,17 @@
               costo: ''
             };
             // Enviar a GAS
-            const res = await fetch("https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec", {
-  method: 'POST',
-  body: JSON.stringify(nuevaCita),
-  headers: { 'Content-Type': 'application/json' }
-});
-const texto = await res.text();
-console.log('Respuesta del servidor:', texto);
+            fetch("https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec", {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(nuevaCita),
+            headers: { 'Content-Type': 'application/json' }
+            })
+            .then(() => {
+            console.log('Datos enviados correctamente (modo no-cors).');
+            })
+            .catch(err => console.error('Error al enviar:', err));
             // Actualizar el calendario
-
             calendar.addEvent({
               title: motivo,
               start: info.dateStr,
