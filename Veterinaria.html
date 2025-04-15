@@ -208,46 +208,43 @@
 
 <div id="calendar"></div>
 
-<!-- Modal Cliente Nuevo -->
-<div id="modalNuevo" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="cerrarModal('modalNuevo')">&times;</span>
-    <h2>Nuevo Cliente 🐶</h2>
-    <form>
-      <label>ID Cliente (auto):</label>
-      <input type="text" disabled placeholder="Se generará automáticamente">
-
-      <label>Nombre del Dueño</label>
-      <input type="text">
-
-      <label>Dirección</label>
-      <input type="text">
-
-      <label>Teléfono</label>
-      <input type="number">
-
-      <label>Correo</label>
-      <input type="email">
-
-      <label>ID Mascota (auto):</label>
-      <input type="text" disabled placeholder="Se generará automáticamente">
-
-      <label>Nombre de Mascota</label>
-      <input type="text">
-
-      <label>Edad</label>
-      <input type="number">
-
-      <label>Peso (kg)</label>
-      <input type="number">
-
-      <label>Sexo</label>
-      <select>
-        <option>Macho</option>
-        <option>Hembra</option>
+<!-- Modal de Nuevo Cliente 🌟 -->
+<div id="modalNuevoCliente" class="modal">
+    <form id="formNuevoCliente">
+      <label for="idCliente">ID Cliente 🆔:</label>
+      <input type="text" id="idCliente" name="idCliente" required>
+      
+      <label for="nombreDueno">Nombre del Dueño 🧑‍⚕️:</label>
+      <input type="text" id="nombreDueno" name="nombreDueno" required>
+      
+      <label for="direccion">Dirección 📍:</label>
+      <input type="text" id="direccion" name="direccion" required>
+      
+      <label for="telefono">Teléfono 📱:</label>
+      <input type="tel" id="telefono" name="telefono" required>
+      
+      <label for="correo">Correo 📧:</label>
+      <input type="email" id="correo" name="correo" required>
+      
+      <label for="idMascota">ID de Mascota 🐾:</label>
+      <input type="text" id="idMascota" name="idMascota" required>
+      
+      <label for="nombreMascota">Nombre de Mascota 🐶/🐱:</label>
+      <input type="text" id="nombreMascota" name="nombreMascota" required>
+      
+      <label for="edad">Edad 🎂:</label>
+      <input type="number" id="edad" name="edad" required>
+      
+      <label for="peso">Peso ⚖️:</label>
+      <input type="number" id="peso" name="peso" required>
+      
+      <label for="sexo">Sexo 🔵/🔴:</label>
+      <select id="sexo" name="sexo" required>
+        <option value="Macho">Macho 💙</option>
+        <option value="Hembra">Hembra ❤️</option>
       </select>
-
-      <label>Especie</label>
+      
+      <label>Especie 🦄:</label>
       <select id="especieSelect" onchange="actualizarRazas()">
         <option>🐶 Perro</option>
         <option>🐱 Gato</option>
@@ -257,16 +254,15 @@
         <option>🐢 Tortuga</option>
         <option>🦎 Reptil</option>
       </select>
-
-      <label>Raza</label>
-      <select id="razaSelect">
-        <option>Selecciona una especie</option>
+      
+      <label for="raza">Raza 🐕/🐈:</label>
+      <select id="raza" name="raza" required>
+        <!-- Aquí se actualizarán las opciones de razas dependiendo de la especie seleccionada -->
       </select>
-
-      <button type="submit">Guardar Cliente</button>
+      
+      <button type="submit">Guardar Cliente 💾</button>
     </form>
   </div>
-</div>
 
 <!-- Modal Cliente Existente -->
 <div id="modalExistente" class="modal">
@@ -351,7 +347,10 @@
     const razaSelect = document.getElementById("razaSelect");
     const especie = especieSelect.value;
 
+    // Limpiar las razas actuales
     razaSelect.innerHTML = "";
+
+    // Verificar si existen razas para la especie seleccionada
     if (razasPorEspecie[especie]) {
       razasPorEspecie[especie].forEach(raza => {
         const option = document.createElement("option");
@@ -359,6 +358,7 @@
         razaSelect.appendChild(option);
       });
     } else {
+      // Si no hay razas disponibles, mostrar un mensaje
       razaSelect.innerHTML = "<option>No hay razas disponibles</option>";
     }
   }
