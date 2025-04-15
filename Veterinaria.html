@@ -13,7 +13,6 @@
       background-color: #f2f2f2;
     }
 
-    /* Splash screen */
     #splash {
       position: fixed;
       top: 0; left: 0;
@@ -40,106 +39,71 @@
       to { opacity: 0; visibility: hidden; }
     }
 
-    /* Header */
     header {
       background-color: #fff;
       padding: 10px 20px;
       display: flex;
       align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: relative;
+      justify-content: space-between;
+      flex-wrap: wrap;
     }
 
     header img {
       height: 40px;
-      margin-right: 15px;
     }
 
     header h1 {
-      font-size: 24px;
+      font-size: 20px;
       color: #333;
+      margin: 0 15px;
+      flex: 1;
     }
 
-    /* Botón Menú */
-    .menu-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 16px;
-      position: absolute;
-      top: 10px;
-      right: 20px;
-    }
-
-    /* Menú principal */
-    .menu {
-      display: none;
-      position: absolute;
-      top: 50px;
-      right: 20px;
-      background-color: #fff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      padding: 10px 20px;
-      z-index: 100;
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .menu.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .menu ul {
+    nav ul {
       list-style: none;
-      margin: 0;
       padding: 0;
+      margin: 0;
+      display: flex;
     }
 
-    .menu li {
-      margin: 15px 0;
+    nav ul li {
       position: relative;
     }
 
-    .menu li a {
-      text-decoration: none;
-      color: #333;
-      font-size: 18px;
-      transition: color 0.3s ease;
+    nav ul li a {
       display: block;
+      padding: 10px 15px;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
     }
 
-    .menu li a:hover {
-      color: #007bff;
+    nav ul li:hover > a {
+      background-color: #e1f0ff;
     }
 
-    /* Submenú */
-    .submenu {
+    nav ul li ul {
       display: none;
       position: absolute;
-      left: 100%;
-      top: 0;
+      top: 100%;
+      left: 0;
       background-color: #fff;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      border-radius: 5px;
-      padding: 10px;
-      min-width: 150px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      z-index: 200;
     }
 
-    .menu li:hover .submenu {
+    nav ul li:hover ul {
       display: block;
     }
 
-    .submenu li {
-      margin: 10px 0;
+    nav ul li ul li a {
+      padding: 10px 20px;
+      white-space: nowrap;
     }
 
-    /* Calendario */
     #calendar {
       max-width: 1000px;
       margin: 40px auto;
@@ -148,123 +112,256 @@
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+
+    /* Modales */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 16px;
+      }
+      nav ul {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Splash screen -->
-  <div id="splash">
-    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
+
+<div id="splash">
+  <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
+</div>
+
+<header>
+  <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
+  <h1>Agenda Veterinaria - Posh Posh</h1>
+  <nav>
+    <ul>
+      <li>
+        <a href="#">Cliente ⬇</a>
+        <ul>
+          <li><a href="#" onclick="abrirModal('modalNuevo')">🐾 Nuevo</a></li>
+          <li><a href="#" onclick="abrirModal('modalExistente')">🔎 Existente</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Historial</a></li>
+      <li><a href="#">Vacuna</a></li>
+      <li><a href="#">Tienda</a></li>
+      <li><a href="#">Estética</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div id="calendar"></div>
+
+<!-- Modal Cliente Nuevo -->
+<div id="modalNuevo" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModal('modalNuevo')">&times;</span>
+    <h2>Nuevo Cliente 🐶</h2>
+    <form>
+      <label>ID Cliente (auto):</label>
+      <input type="text" disabled placeholder="Se generará automáticamente">
+
+      <label>Nombre del Dueño</label>
+      <input type="text">
+
+      <label>Dirección</label>
+      <input type="text">
+
+      <label>Teléfono</label>
+      <input type="number">
+
+      <label>Correo</label>
+      <input type="email">
+
+      <label>ID Mascota (auto):</label>
+      <input type="text" disabled placeholder="Se generará automáticamente">
+
+      <label>Nombre de Mascota</label>
+      <input type="text">
+
+      <label>Edad</label>
+      <input type="number">
+
+      <label>Peso (kg)</label>
+      <input type="number">
+
+      <label>Sexo</label>
+      <select>
+        <option>Macho</option>
+        <option>Hembra</option>
+      </select>
+
+      <label>Especie</label>
+      <select id="especieSelect" onchange="actualizarRazas()">
+        <option>🐶 Perro</option>
+        <option>🐱 Gato</option>
+        <option>🐰 Conejo</option>
+        <option>🦜 Ave</option>
+        <option>🐹 Hámster</option>
+        <option>🐢 Tortuga</option>
+        <option>🦎 Reptil</option>
+      </select>
+
+      <label>Raza</label>
+      <select id="razaSelect">
+        <option>Selecciona una especie</option>
+      </select>
+
+      <button type="submit">Guardar Cliente</button>
+    </form>
   </div>
+</div>
 
-  <!-- Header y Menú -->
-  <header>
-    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
-    <h1>Agenda Veterinaria - Posh Posh</h1>
-    <button id="menu-toggle" class="menu-button">Menú</button>
-    <nav id="menu" class="menu">
-      <ul>
-        <li>
-          <a href="#">Cliente</a>
-          <ul class="submenu">
-            <li><a href="#">Nuevo</a></li>
-            <li><a href="#">Existente</a></li>
-          </ul>
-        </li>
-        <li><a href="#">Historial</a></li>
-        <li><a href="#">Vacuna</a></li>
-        <li><a href="#">Tienda</a></li>
-        <li><a href="#">Estética</a></li>
-      </ul>
-    </nav>
-  </header>
+<!-- Modal Cliente Existente -->
+<div id="modalExistente" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModal('modalExistente')">&times;</span>
+    <h2>Buscar Cliente 🔍</h2>
+    <label>Buscar por nombre de mascota o dueño:</label>
+    <input type="text" placeholder="Ej. Luna, Juan Pérez">
+    <button>Buscar</button>
+  </div>
+</div>
 
-  <!-- Calendario -->
-  <div id="calendar"></div>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzA5tsxtCXzeUVsb0vneHtaNsV3-XZfN790ujSRN32RbKi77SjW3JqGFborIcBtGt4Y/exec";
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzA5tsxtCXzeUVsb0vneHtaNsV3-XZfN790ujSRN32RbKi77SjW3JqGFborIcBtGt4Y/exec";
+  document.addEventListener('DOMContentLoaded', async function() {
+    const calendarEl = document.getElementById('calendar');
 
-    document.addEventListener('DOMContentLoaded', async function() {
-      const calendarEl = document.getElementById('calendar');
-
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        locale: 'es',
-        height: 'auto',
-        selectable: true,
-        dateClick: async function(info) {
-          const motivo = prompt('¿Motivo de la cita?');
-          if (motivo) {
-            const nuevaCita = {
-              fecha: info.dateStr,
-              hora: '',
-              cliente: '',
-              paciente: '',
-              motivo: motivo,
-              notas: '',
-              costo: ''
-            };
-            fetch("https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec", {
-              method: 'POST',
-              mode: 'no-cors',
-              body: JSON.stringify(nuevaCita),
-              headers: { 'Content-Type': 'application/json' }
-            })
-            .then(() => {
-              console.log('Datos enviados correctamente (modo no-cors).');
-            })
-            .catch(err => console.error('Error al enviar:', err));
-            calendar.addEvent({
-              title: motivo,
-              start: info.dateStr,
-              allDay: true
-            });
-            alert('Cita registrada');
-          }
-        },
-        events: await cargarCitas()
-      });
-
-      calendar.render();
-    });
-
-    async function cargarCitas() {
-      try {
-        const res = await fetch(WEBAPP_URL);
-        const data = await res.json();
-        return data.map(item => ({
-          title: item.Motivo || 'Cita',
-          start: item.Fecha,
-          allDay: true
-        }));
-      } catch (error) {
-        console.error('Error al cargar citas:', error);
-        return [];
-      }
-    }
-
-    // Funcionalidad del menú
-    document.addEventListener('DOMContentLoaded', function() {
-      const menuButton = document.getElementById('menu-toggle');
-      const menu = document.getElementById('menu');
-      
-      menuButton.addEventListener('click', function() {
-        menu.classList.toggle('active');
-      });
-      
-      window.addEventListener('click', function(e) {
-        if (!menu.contains(e.target) && e.target !== menuButton) {
-          menu.classList.remove('active');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      locale: 'es',
+      height: 'auto',
+      selectable: true,
+      dateClick: async function(info) {
+        const motivo = prompt('¿Motivo de la cita?');
+        if (motivo) {
+          calendar.addEvent({
+            title: motivo,
+            start: info.dateStr,
+            allDay: true
+          });
+          alert('Cita registrada');
         }
-      });
+      },
+      events: await cargarCitas()
     });
-  </script>
+
+    calendar.render();
+  });
+
+  async function cargarCitas() {
+    try {
+      const res = await fetch(WEBAPP_URL);
+      const data = await res.json();
+      return data.map(item => ({
+        title: item.Motivo || 'Cita',
+        start: item.Fecha,
+        allDay: true
+      }));
+    } catch (error) {
+      console.error('Error al cargar citas:', error);
+      return [];
+    }
+  }
+
+  function abrirModal(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  const razasPorEspecie = {
+    '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
+    '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
+    '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
+    '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
+    '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
+    '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
+    '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+  };
+
+  function actualizarRazas() {
+    const especieSelect = document.getElementById("especieSelect");
+    const razaSelect = document.getElementById("razaSelect");
+    const especie = especieSelect.value;
+
+    razaSelect.innerHTML = "";
+    if (razasPorEspecie[especie]) {
+      razasPorEspecie[especie].forEach(raza => {
+        const option = document.createElement("option");
+        option.textContent = raza;
+        razaSelect.appendChild(option);
+      });
+    } else {
+      razaSelect.innerHTML = "<option>No hay razas disponibles</option>";
+    }
+  }
+</script>
 </body>
 </html>
