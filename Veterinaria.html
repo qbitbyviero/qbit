@@ -46,10 +46,8 @@
       padding: 10px 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: relative;
-      z-index: 50;
     }
 
     header img {
@@ -60,41 +58,85 @@
     header h1 {
       font-size: 24px;
       color: #333;
-      flex-grow: 1;
     }
 
-    /* Menú hover en top */
-    nav.menu {
-      position: relative;
+    /* Botón Menú */
+    .menu-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      position: absolute;
+      top: 10px;
+      right: 20px;
     }
 
-    nav.menu ul {
-      display: flex;
-      gap: 20px;
+    /* Menú principal */
+    .menu {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 10px 20px;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .menu.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .menu ul {
       list-style: none;
       margin: 0;
       padding: 0;
     }
 
-    nav.menu ul li {
+    .menu li {
+      margin: 15px 0;
       position: relative;
     }
 
-    nav.menu ul li a {
+    .menu li a {
       text-decoration: none;
       color: #333;
-      font-size: 16px;
-      padding: 10px 15px;
+      font-size: 18px;
+      transition: color 0.3s ease;
       display: block;
-      transition: all 0.3s ease;
-      border-radius: 8px;
     }
 
-    nav.menu ul li a:hover {
-      background-color: #007bff;
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transform: translateY(-2px);
+    .menu li a:hover {
+      color: #007bff;
+    }
+
+    /* Submenú */
+    .submenu {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: 0;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      padding: 10px;
+      min-width: 150px;
+    }
+
+    .menu li:hover .submenu {
+      display: block;
+    }
+
+    .submenu li {
+      margin: 10px 0;
     }
 
     /* Calendario */
@@ -118,9 +160,16 @@
   <header>
     <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
     <h1>Agenda Veterinaria - Posh Posh</h1>
-    <nav class="menu">
+    <button id="menu-toggle" class="menu-button">Menú</button>
+    <nav id="menu" class="menu">
       <ul>
-        <li><a href="#">Cliente</a></li>
+        <li>
+          <a href="#">Cliente</a>
+          <ul class="submenu">
+            <li><a href="#">Nuevo</a></li>
+            <li><a href="#">Existente</a></li>
+          </ul>
+        </li>
         <li><a href="#">Historial</a></li>
         <li><a href="#">Vacuna</a></li>
         <li><a href="#">Tienda</a></li>
@@ -172,7 +221,6 @@
               console.log('Datos enviados correctamente (modo no-cors).');
             })
             .catch(err => console.error('Error al enviar:', err));
-
             calendar.addEvent({
               title: motivo,
               start: info.dateStr,
@@ -201,6 +249,22 @@
         return [];
       }
     }
+
+    // Funcionalidad del menú
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuButton = document.getElementById('menu-toggle');
+      const menu = document.getElementById('menu');
+      
+      menuButton.addEventListener('click', function() {
+        menu.classList.toggle('active');
+      });
+      
+      window.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && e.target !== menuButton) {
+          menu.classList.remove('active');
+        }
+      });
+    });
   </script>
 </body>
 </html>
