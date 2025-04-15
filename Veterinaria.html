@@ -277,91 +277,143 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec";
-
-  document.addEventListener('DOMContentLoaded', async function() {
-    const calendarEl = document.getElementById('calendar');
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      locale: 'es',
-      height: 'auto',
-      selectable: true,
-      dateClick: async function(info) {
-        const motivo = prompt('¿Motivo de la cita?');
-        if (motivo) {
-          calendar.addEvent({
-            title: motivo,
-            start: info.dateStr,
-            allDay: true
-          });
-          alert('Cita registrada');
-        }
-      },
-      events: await cargarCitas()
-    });
-
-    calendar.render();
-  });
-
-  async function cargarCitas() {
-    try {
-      const res = await fetch(WEBAPP_URL);
-      const data = await res.json();
-      return data.map(item => ({
-        title: item.Motivo || 'Cita',
-        start: item.Fecha,
-        allDay: true
-      }));
-    } catch (error) {
-      console.error('Error al cargar citas:', error);
-      return [];
-    }
-  }
-
-  function abrirModal(id) {
-    document.getElementById(id).style.display = 'block';
-  }
-
-  function cerrarModal(id) {
-    document.getElementById(id).style.display = 'none';
-  }
-
-  const razasPorEspecie = {
-    '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
-    '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
-    '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
-    '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
-    '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
-    '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
-    '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
-  };
-
-  function actualizarRazas() {
-    const especieSelect = document.getElementById("especieSelect");
-    const razaSelect = document.getElementById("razaSelect");
-    const especie = especieSelect.value;
-
-    // Limpiar las razas actuales
-    razaSelect.innerHTML = "";
-
-    // Verificar si existen razas para la especie seleccionada
-    if (razasPorEspecie[especie]) {
-      razasPorEspecie[especie].forEach(raza => {
-        const option = document.createElement("option");
-        option.textContent = raza;
-        razaSelect.appendChild(option);
+    // Agrega esta variable con la URL de tu WebApp
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec';
+    
+    document.addEventListener('DOMContentLoaded', async function() {
+      const calendarEl = document.getElementById('calendar');
+    
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        locale: 'es',
+        height: 'auto',
+        selectable: true,
+        dateClick: async function(info) {
+          const motivo = prompt('¿Motivo de la cita?');
+          if (motivo) {
+            // Enviar datos a Google Sheets
+            const nuevaCita = {
+              fecha: info.dateStr,
+              motivo: motivo,
+              cliente: 'Nuevo Cliente', // Puedes modificar esto
+              paciente: 'Nueva Mascota' // Puedes modificar esto
+            };
+            
+            try {
+              await fetch(WEBAPP_URL, {
+                method: 'POST',
+                body: JSON.stringify(nuevaCita)
+              });
+              calendar.addEvent({
+                title: motivo,
+                start: info.dateStr,
+                allDay: true
+              });
+              alert('Cita registrada con éxito');
+            } catch (error) {
+              console.error('Error al guardar:', error);
+              alert('Error al guardar la cita');
+            }
+          }
+        },
+        events: await cargarCitas()
       });
-    } else {
-      // Si no hay razas disponibles, mostrar un mensaje
-      razaSelect.innerHTML = "<option>No hay razas disponibles</option>";
+    
+      calendar.render();
+      
+      // Configurar el formulario de nuevo cliente
+      document.getElementById('formNuevoCliente').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+          idCliente: document.getElementById('idCliente').value,
+          nombreDueno: document.getElementById('nombreDueno').value,
+          direccion: document.getElementById('direccion').value,
+          telefono: document.getElementById('telefono').value,
+          correo: document.getElementById('correo').value,
+          idMascota: document.getElementById('idMascota').value,
+          nombreMascota: document.getElementById('nombreMascota').value,
+          edad: document.getElementById('edad').value,
+          peso: document.getElementById('peso').value,
+          sexo: document.getElementById('sexo').value,
+          especie: document.getElementById('especieSelect').value,
+          raza: document.getElementById('raza').value
+        };
+        
+        try {
+          await fetch(WEBAPP_URL, {
+            method: 'POST',
+            body: JSON.stringify(formData)
+          });
+          alert('Cliente registrado con éxito');
+          cerrarModal('modalNuevoCliente');
+          this.reset();
+        } catch (error) {
+          console.error('Error al guardar:', error);
+          alert('Error al guardar el cliente');
+        }
+      });
+    });
+    
+    async function cargarCitas() {
+      try {
+        const res = await fetch(`${WEBAPP_URL}?action=getCitas`);
+        const data = await res.json();
+        return data.map(item => ({
+          title: item.Motivo || 'Cita',
+          start: item.Fecha,
+          allDay: true
+        }));
+      } catch (error) {
+        console.error('Error al cargar citas:', error);
+        return [];
+      }
     }
-  }
-</script>
+    
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+    
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    
+    const razasPorEspecie = {
+      '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
+      '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
+      '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
+      '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
+      '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
+      '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
+      '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+    };
+    
+    function actualizarRazas() {
+      const especie = document.getElementById("especieSelect").value;
+      const razaSelect = document.getElementById("raza");
+      
+      // Limpiar las razas actuales
+      razaSelect.innerHTML = "";
+    
+      if (razasPorEspecie[especie]) {
+        razasPorEspecie[especie].forEach(raza => {
+          const option = document.createElement("option");
+          option.value = raza;
+          option.textContent = raza;
+          razaSelect.appendChild(option);
+        });
+      } else {
+        razaSelect.innerHTML = "<option value=''>No hay razas disponibles</option>";
+      }
+    }
+    
+    // Inicializar las razas al cargar
+    actualizarRazas();
+    </script>
 </body>
 </html>
