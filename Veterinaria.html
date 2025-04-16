@@ -810,8 +810,21 @@ async function verificarClienteExistente(nombreDueno, nombreMascota) {
 }
 
 async function generarNuevosIDs() {
-    const response = await fetch(`${WEBAPP_URL}?action=generarIDs`);
-    return await response.json();
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=generarIDs`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Error en la respuesta');
+        return await response.json();
+    } catch (error) {
+        console.error('Error al generar IDs:', error);
+        throw error;
+    }
 }
 
 async function guardarEnSpreadsheet(data) {
