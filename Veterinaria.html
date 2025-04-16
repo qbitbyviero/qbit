@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agenda Posh Posh</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -391,8 +393,9 @@ input:focus, select:focus {
     <div class="modal-content">
         <div class="modal-header">
             <h3 class="modal-title">Nuevo Cliente</h3>
-            <span class="close">&times;</span>
+            <span class="close" onclick="cerrarModal('modalNuevoCliente')">&times;</span>
         </div>
+        <form id="formNuevoCliente" class="modal-form" onsubmit="return guardarCliente(event)">
         <form class="modal-form">
             <div class="form-group">
                 <label for="nombreDueno">Nombre del Dueño</label>
@@ -442,12 +445,12 @@ input:focus, select:focus {
         </select>
         <div class="btn-container">
           <button type="submit" class="btn btn-primary">Guardar</button>
-          <button type="button" class="btn btn-secondary">Cancelar</button>
+          <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalNuevoCliente')">Cancelar</button>
       </div>
-  </div>
-  
-
-  <!-- Modal Cliente Existente -->
+  </form>
+</div>
+</div>
+    <!-- Modal Cliente Existente -->
   <div id="modalExistente" class="modal">
     <div class="modal-content">
       <span class="close" onclick="cerrarModal('modalExistente')">&times;</span>
@@ -632,31 +635,26 @@ input:focus, select:focus {
             }
         },
         events: async function(fetchInfo, successCallback, failureCallback) {
-            try {
-                const response = await fetch(`${WEBAPP_URL}?action=getCitas&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`);
-                const citas = await response.json();
-                
-                // Prevenir duplicados
-                const eventosUnicos = [];
-                const idsVistos = new Set();
-                
-                citas.forEach(cita => {
-                    if (!idsVistos.has(cita.id)) {
-                        idsVistos.add(cita.id);
-                        eventosUnicos.push({
-                            title: `${cita.paciente} - ${cita.motivo}`,
-                            start: cita.fecha,
-                            allDay: true
-                        });
-                    }
-                });
-                
-                successCallback(eventosUnicos);
-            } catch (error) {
-                console.error('Error al cargar eventos:', error);
-                failureCallback(error);
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=getCitas&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`);
+        const citas = await response.json();
+        
+        const eventos = citas.map(cita => ({
+            title: `${cita.paciente} - ${cita.motivo}`,
+            start: cita.fecha,
+            allDay: true,
+            extendedProps: {
+                hora: cita.hora,
+                notas: cita.notas
             }
-        }
+        }));
+        
+        successCallback(eventos);
+    } catch (error) {
+        console.error('Error al cargar eventos:', error);
+        failureCallback(error);
+    }
+}
     });
 
     calendar.render();
@@ -761,73 +759,111 @@ window.addEventListener('click', (event) => {
     async function guardarCliente(event) {
     event.preventDefault();
     
-    // Obtener valores del formulario
-    const nombreDueno = document.getElementById('nombreDueno').value.trim();
-    const nombreMascota = document.getElementById('nombreMascota').value.trim();
+    // Validación básica
+    if (!validarFormulario()) return false;
+
+    // Obtener valores
     const formData = {
-        nombreDueno: nombreDueno,
-        direccion: document.getElementById('direccion').value,
-        telefono: document.getElementById('telefono').value,
-        correo: document.getElementById('correo').value,
-        nombreMascota: nombreMascota,
+        nombreDueno: document.getElementById('nombreDueno').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        correo: document.getElementById('correo').value.trim(),
+        nombreMascota: document.getElementById('nombreMascota').value.trim(),
         edad: document.getElementById('edad').value,
         peso: document.getElementById('peso').value,
         sexo: document.getElementById('sexo').value,
         especie: document.getElementById('especieSelect').value,
-        raza: document.getElementById('raza').value,
-        fechaRegistro: new Date().toISOString()
+        raza: document.getElementById('raza').value
     };
 
-    // Verificar si ya existe
     try {
-        const response = await fetch(`${WEBAPP_URL}?action=verificarCliente`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nombreDueno: nombreDueno,
-                nombreMascota: nombreMascota
-            })
-        });
-        
-        const existe = await response.json();
-        
+        // Verificar duplicados
+        const existe = await verificarClienteExistente(formData.nombreDueno, formData.nombreMascota);
         if (existe.duenoYmascota) {
-            alert('¡Hola! 😊 Ese cliente y mascota ya están registrados. Te invito a buscarlos en la otra opción. ¡Gracias por tu comprensión! 🙏');
-            return false;
-        } else if (existe.soloMascota) {
-            if (!confirm('⚠️ Esta mascota ya está registrada con otro dueño. ¿Deseas continuar?')) {
-                return false;
-            }
+            mostrarAlerta('¡Este cliente y mascota ya están registrados!', 'error');
+            return;
         }
-        
-        // Generar IDs automáticos
-        const idsResponse = await fetch(`${WEBAPP_URL}?action=generarIDs`);
-        const ids = await idsResponse.json();
-        
+
+        // Generar IDs
+        const ids = await generarNuevosIDs();
         formData.idCliente = ids.idCliente;
         formData.idMascota = ids.idMascota;
 
-        // Guardar en Google Sheets
-        const guardarResponse = await fetch(WEBAPP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'guardarCliente',
-                data: formData
-            })
-        });
-
-        if (guardarResponse.ok) {
-            alert('✅ Cliente registrado exitosamente!');
+        // Guardar
+        const respuesta = await guardarEnSpreadsheet(formData);
+        
+        if (respuesta.ok) {
+            mostrarAlerta('✅ Registro exitoso!', 'success');
             cerrarModal('modalNuevoCliente');
             document.getElementById('formNuevoCliente').reset();
-        } else {
-            throw new Error('Error al guardar');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('❌ Ocurrió un error al guardar. Por favor intenta nuevamente.');
+        mostrarAlerta('❌ Error al guardar: ' + error.message, 'error');
     }
+}
+
+// Funciones auxiliares
+async function verificarClienteExistente(nombreDueno, nombreMascota) {
+    const response = await fetch(`${WEBAPP_URL}?action=verificarCliente&nombreDueno=${encodeURIComponent(nombreDueno)}&nombreMascota=${encodeURIComponent(nombreMascota)}`);
+    return await response.json();
+}
+
+async function generarNuevosIDs() {
+    const response = await fetch(`${WEBAPP_URL}?action=generarIDs`);
+    return await response.json();
+}
+
+async function guardarEnSpreadsheet(data) {
+    return await fetch(WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            action: 'guardarCliente',
+            data: data
+        })
+    });
+}
+
+function validarFormulario() {
+    const camposRequeridos = [
+        'nombreDueno', 'direccion', 'telefono', 
+        'correo', 'nombreMascota', 'edad', 'peso'
+    ];
+    
+    for (const campoId of camposRequeridos) {
+        const valor = document.getElementById(campoId).value.trim();
+        if (!valor) {
+            mostrarAlerta(`Por favor complete el campo ${campoId.replace('nombre', '')}`, 'error');
+            return false;
+        }
+    }
+    
+    // Validación adicional para email
+    const email = document.getElementById('correo').value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        mostrarAlerta('Por favor ingrese un correo electrónico válido', 'error');
+        return false;
+    }
+    
+    return true;
+}
+function mostrarAlerta(mensaje, tipo = 'info') {
+    const colores = {
+        success: '#4CAF50',
+        error: '#F44336',
+        info: '#2196F3'
+    };
+    
+    Toastify({
+        text: mensaje,
+        duration: 3000,
+        backgroundColor: colores[tipo] || colores.info,
+        className: "toast-" + tipo,
+        close: true,
+        gravity: "top",
+        position: "right"
+    }).showToast();
 }
   </script>
 
