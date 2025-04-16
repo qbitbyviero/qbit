@@ -194,7 +194,7 @@
       <li>
         <a href="#">Cliente ⬇</a>
         <ul>
-            <li><a href="#" onclick="abrirModal('modalNuevoCliente')">🐾 Nuevo</a></li>
+          <li><a href="#" onclick="abrirModal('modalNuevoCliente')">🐾 Nuevo</a></li>
           <li><a href="#" onclick="abrirModal('modalExistente')">🔎 Existente</a></li>
         </ul>
       </li>
@@ -276,148 +276,110 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
-// URL de tu WebApp
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec';
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec';
 
-// Variables para sincronización
-let calendar;
-let citasPendientes = [];
-let sincronizando = false;
-const INTERVALO_SINCRONIZACION = 30000; // 30 segundos
-document.addEventListener('DOMContentLoaded', async function () {
-  const calendarEl = document.getElementById('calendar');
+  let calendar;
+  let citasPendientes = [];
+  let sincronizando = false;
+  const INTERVALO_SINCRONIZACION = 30000;
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay'
-    },
-    locale: 'es',
-    height: 'auto',
-    selectable: true,
-    dateClick: async function (info) {
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      const fechaSeleccionada = new Date(info.dateStr);
-
-      if (fechaSeleccionada < hoy) {
-        alert('No puedes agendar una cita en una fecha pasada.');
-        return;
+  // Cargar citas desde localStorage
+  async function cargarCitas() {
+    try {
+      const citasLocales = localStorage.getItem('citasLocales');
+      if (citasLocales) {
+        const parsed = JSON.parse(citasLocales);
+        return parsed.map(cita => ({
+          ...cita,
+          start: new Date(cita.start)
+        }));
       }
+    } catch (error) {
+      console.error('Error al cargar citas locales:', error);
+    }
+    return [];
+  }
 
-      const motivo = prompt('¿Motivo de la cita?');
-      if (motivo) {
-        const nuevaCita = {
-          fecha: info.dateStr,
-          motivo: motivo,
-          cliente: 'Nuevo Cliente',
-          paciente: 'Nueva Mascota'
-        };
+  document.addEventListener('DOMContentLoaded', async function () {
+    const calendarEl = document.getElementById('calendar');
+    if (!calendarEl) return;
 
-        // Añadir evento visualmente al calendario
-        const evento = {
-          title: `${nuevaCita.paciente} - ${nuevaCita.motivo}`,
-          start: nuevaCita.fecha,
-          allDay: true,
-          color: '#ffcc00' // Amarillo = pendiente de confirmar
-        };
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      locale: 'es',
+      height: 'auto',
+      selectable: true,
+      dateClick: async function (info) {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const fechaSeleccionada = new Date(info.dateStr);
 
-        calendar.addEvent(evento);
+        if (fechaSeleccionada < hoy) {
+          alert('No puedes agendar una cita en una fecha pasada.');
+          return;
+        }
 
-        // Guardar en cola de sincronización
-        if (!window.citasPendientes) window.citasPendientes = [];
-        citasPendientes.push({
-          data: nuevaCita,
-          evento: evento
-        });
+        const motivo = prompt('¿Motivo de la cita?');
+        if (motivo) {
+          const nuevaCita = {
+            fecha: info.dateStr,
+            motivo,
+            cliente: 'Nuevo Cliente',
+            paciente: 'Nueva Mascota'
+          };
 
-        // Guardar en localStorage
-        if (typeof actualizarLocalStorage === 'function') {
+          const evento = {
+            title: `${nuevaCita.paciente} - ${nuevaCita.motivo}`,
+            start: nuevaCita.fecha,
+            allDay: true,
+            color: '#ffcc00'
+          };
+
+          calendar.addEvent(evento);
+
+          citasPendientes.push({
+            data: nuevaCita,
+            evento
+          });
+
           actualizarLocalStorage();
-        }
-
-        // Guardar en spreadsheet si existe la función
-        if (typeof guardarCitaEnSpreadsheet === 'function') {
           await guardarCitaEnSpreadsheet(nuevaCita);
-        }
-
-        alert('Cita agregada. Se sincronizará en breve.');
-
-        // Iniciar sincronización si existe la función
-        if (typeof iniciarSincronizacion === 'function') {
+          alert('Cita agregada. Se sincronizará en breve.');
           iniciarSincronizacion();
         }
-      }
-    },
-    events: await cargarCitas() // Asegúrate que esta función existe y retorna un array de eventos
+      },
+      events: await cargarCitas()
+    });
+
+    calendar.render();
   });
 
-  calendar.render();
-});
-  
-  // Configurar el formulario de nuevo cliente
-  document.getElementById('formNuevoCliente').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const boton = this.querySelector('button[type="submit"]');
-    boton.disabled = true;
-    boton.textContent = 'Enviando...';
-    
-    const formData = {
-      idCliente: document.getElementById('idCliente').value,
-      nombreDueno: document.getElementById('nombreDueno').value,
-      direccion: document.getElementById('direccion').value,
-      telefono: document.getElementById('telefono').value,
-      correo: document.getElementById('correo').value,
-      idMascota: document.getElementById('idMascota').value,
-      nombreMascota: document.getElementById('nombreMascota').value,
-      edad: document.getElementById('edad').value,
-      peso: document.getElementById('peso').value,
-      sexo: document.getElementById('sexo').value,
-      especie: document.getElementById('especieSelect').value,
-      raza: document.getElementById('raza').value
-    };
-    
+  // Guardar en localStorage
+  function actualizarLocalStorage() {
+    const eventos = calendar.getEvents();
+    const citasSimplificadas = eventos.map(evento => ({
+      title: evento.title,
+      start: evento.start,
+      allDay: evento.allDay,
+      color: evento.backgroundColor
+    }));
+    localStorage.setItem('citasLocales', JSON.stringify(citasSimplificadas));
+  }
+
+  async function guardarCitaEnSpreadsheet(cita) {
     try {
-      await enviarDatos(WEBAPP_URL, formData);
-      alert('Cliente registrado con éxito');
-      cerrarModal('modalNuevoCliente');
-      this.reset();
+      await enviarDatos(WEBAPP_URL, cita);
     } catch (error) {
-      console.error('Error al guardar:', error);
-      alert('Error al guardar el cliente. Se reintentará más tarde.');
-      citasPendientes.push({
-        data: formData,
-        esCliente: true
-      });
-    } finally {
-      boton.disabled = false;
-      boton.textContent = 'Guardar Cliente 💾';
-      iniciarSincronizacion();
+      console.warn('No se pudo enviar la cita al servidor. Guardado en pendientes.');
     }
-  });
-  
-  // Iniciar sincronización periódica
-  setInterval(iniciarSincronizacion, INTERVALO_SINCRONIZACION);
-});
+  }
 
-// Función para actualizar localStorage
-function actualizarLocalStorage() {
-  const eventos = calendar.getEvents();
-  const citasSimplificadas = eventos.map(evento => ({
-    title: evento.title,
-    start: evento.start,
-    allDay: evento.allDay,
-    color: evento.backgroundColor
-  }));
-  localStorage.setItem('citasLocales', JSON.stringify(citasSimplificadas));
-}
-
-// Función mejorada para enviar datos
-async function enviarDatos(url, datos) {
-  try {
+  async function enviarDatos(url, datos) {
     await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
@@ -426,115 +388,126 @@ async function enviarDatos(url, datos) {
       },
       body: JSON.stringify(datos)
     });
-    return true;
-  } catch (error) {
-    console.log('Error en el envío (no crítico):', error);
-    throw error;
   }
-}
 
-// Función para sincronizar citas pendientes
-async function iniciarSincronizacion() {
-  if (sincronizando || citasPendientes.length === 0) return;
-  
-  sincronizando = true;
-  const exitos = [];
-  
-  for (let i = 0; i < citasPendientes.length; i++) {
-    const item = citasPendientes[i];
-    try {
-      await enviarDatos(WEBAPP_URL, item.data);
-      exitos.push(i);
-      
-      if (item.evento) {
-        item.evento.setProp('color', '#28a745');
+  async function iniciarSincronizacion() {
+    if (sincronizando || citasPendientes.length === 0) return;
+
+    sincronizando = true;
+    const exitos = [];
+
+    for (let i = 0; i < citasPendientes.length; i++) {
+      const item = citasPendientes[i];
+      try {
+        await enviarDatos(WEBAPP_URL, item.data);
+        exitos.push(i);
+        if (item.evento) {
+          item.evento.setProp('color', '#28a745'); // verde
+        }
+      } catch (error) {
+        console.log('Error al sincronizar item:', item);
       }
-    } catch (error) {
-      console.log('No se pudo sincronizar item:', item);
+    }
+
+    citasPendientes = citasPendientes.filter((_, i) => !exitos.includes(i));
+    sincronizando = false;
+
+    if (exitos.length > 0) {
+      actualizarLocalStorage();
+      console.log(`${exitos.length} citas sincronizadas`);
     }
   }
-  
-  citasPendientes = citasPendientes.filter((_, index) => !exitos.includes(index));
-  sincronizando = false;
-  
-  if (exitos.length > 0) {
-    actualizarLocalStorage();
-    console.log(`${exitos.length} items sincronizados`);
-  }
-}
 
-// Función mejorada para cargar citas
-async function cargarCitas() {
-  // Primero intentamos cargar de Google Sheets (activando doGet)
-  try {
-    await fetch(`${WEBAPP_URL}?action=getCitas`, { method: 'GET', mode: 'no-cors' });
-  } catch (e) {
-    console.log('No se puede verificar citas remotas (normal en no-cors)');
-  }
-  
-  // Luego cargamos de localStorage
-  try {
-    const citasLocales = localStorage.getItem('citasLocales');
-    if (citasLocales) {
-      const parsed = JSON.parse(citasLocales);
-      // Convertir strings de fecha a objetos Date
-      return parsed.map(cita => ({
-        ...cita,
-        start: cita.start instanceof Date ? cita.start : new Date(cita.start)
-      }));
-    }
-  } catch (error) {
-    console.error('Error al cargar citas locales:', error);
-  }
-  
-  return [];
-}
+  // Registro de nuevo cliente
+  const form = document.getElementById('formNuevoCliente');
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
 
-// Funciones auxiliares para modales
-function abrirModal(id) {
-  document.getElementById(id).style.display = 'block';
-  document.body.style.overflow = 'hidden'; // Evitar scroll
-}
+      const boton = this.querySelector('button[type="submit"]');
+      boton.disabled = true;
+      boton.textContent = 'Enviando...';
 
-function cerrarModal(id) {
-  document.getElementById(id).style.display = 'none';
-  document.body.style.overflow = 'auto'; // Restaurar scroll
-}
+      const formData = {
+        idCliente: document.getElementById('idCliente').value,
+        nombreDueno: document.getElementById('nombreDueno').value,
+        direccion: document.getElementById('direccion').value,
+        telefono: document.getElementById('telefono').value,
+        correo: document.getElementById('correo').value,
+        idMascota: document.getElementById('idMascota').value,
+        nombreMascota: document.getElementById('nombreMascota').value,
+        edad: document.getElementById('edad').value,
+        peso: document.getElementById('peso').value,
+        sexo: document.getElementById('sexo').value,
+        especie: document.getElementById('especieSelect').value,
+        raza: document.getElementById('raza').value
+      };
 
-// Funciones para razas (sin cambios)
-const razasPorEspecie = {
-  '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
-  '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
-  '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
-  '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
-  '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
-  '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
-  '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
-};
-
-function actualizarRazas() {
-  const especie = document.getElementById("especieSelect").value;
-  const razaSelect = document.getElementById("raza");
-  
-  razaSelect.innerHTML = "";
-
-  if (razasPorEspecie[especie]) {
-    razasPorEspecie[especie].forEach(raza => {
-      const option = document.createElement("option");
-      option.value = raza;
-      option.textContent = raza;
-      razaSelect.appendChild(option);
+      try {
+        await enviarDatos(WEBAPP_URL, formData);
+        alert('Cliente registrado con éxito');
+        cerrarModal('modalNuevoCliente');
+        this.reset();
+      } catch (error) {
+        console.error('Error al guardar:', error);
+        alert('Error al guardar el cliente. Se reintentará más tarde.');
+        citasPendientes.push({ data: formData, esCliente: true });
+      } finally {
+        boton.disabled = false;
+        boton.textContent = 'Guardar Cliente 💾';
+        iniciarSincronizacion();
+      }
     });
-  } else {
-    razaSelect.innerHTML = "<option value=''>No hay razas disponibles</option>";
   }
-}
 
-// Inicialización
-actualizarRazas();
+  // Sincronizar periódicamente
+  setInterval(iniciarSincronizacion, INTERVALO_SINCRONIZACION);
 
-// Guardar citas al cerrar
-window.addEventListener('beforeunload', actualizarLocalStorage);
+  // Modal helpers
+  function abrirModal(id) {
+    document.getElementById(id).style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  // Actualizar razas dinámicamente
+  const razasPorEspecie = {
+    '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
+    '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
+    '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
+    '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
+    '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
+    '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
+    '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+  };
+
+  function actualizarRazas() {
+    const especie = document.getElementById('especieSelect').value;
+    const razaSelect = document.getElementById('raza');
+    razaSelect.innerHTML = '';
+
+    if (razasPorEspecie[especie]) {
+      razasPorEspecie[especie].forEach(raza => {
+        const option = document.createElement('option');
+        option.value = raza;
+        option.textContent = raza;
+        razaSelect.appendChild(option);
+      });
+    } else {
+      razaSelect.innerHTML = '<option value="">No hay razas disponibles</option>';
+    }
+  }
+
+  const especieSelect = document.getElementById('especieSelect');
+  if (especieSelect) especieSelect.addEventListener('change', actualizarRazas);
+  actualizarRazas();
+
+  // Guardar antes de salir
+  window.addEventListener('beforeunload', actualizarLocalStorage);
 </script>
 </body>
 </html>
