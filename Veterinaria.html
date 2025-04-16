@@ -182,29 +182,31 @@
 </head>
 <body>
 
-<div id="splash">
-  <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
-</div>
-
-<header>
-  <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
-  <h1>Agenda Veterinaria - Posh Posh</h1>
-  <nav>
-    <ul>
-      <li>
-        <a href="#">Cliente ⬇</a>
-        <ul>
-          <li><a href="#" onclick="abrirModal('modalNuevoCliente')">🐾 Nuevo</a></li>
-          <li><a href="#" onclick="abrirModal('modalExistente')">🔎 Existente</a></li>
-        </ul>
-      </li>
-      <li><a href="#">Historial</a></li>
-      <li><a href="#">Vacuna</a></li>
-      <li><a href="#">Tienda</a></li>
-      <li><a href="#">Estética</a></li>
-    </ul>
-  </nav>
-</header>
+  <!-- [SECCION] SPLASH SCREEN -->
+  <div id="splash">
+    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
+  </div>
+  
+  <!-- [SECCION] ENCABEZADO Y MENÚ -->
+  <header>
+    <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
+    <h1>Agenda Veterinaria - Posh Posh</h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="#">Cliente ⬇</a>
+          <ul>
+            <li><a href="#" onclick="abrirModal('modalNuevoCliente')">🐾 Nuevo</a></li>
+            <li><a href="#" onclick="abrirModal('modalExistente')">🔎 Existente</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Historial</a></li>
+        <li><a href="#">Vacuna</a></li>
+        <li><a href="#">Tienda</a></li>
+        <li><a href="#">Estética</a></li>
+      </ul>
+    </nav>
+  </header>
 
 <div id="calendar"></div>
 
@@ -348,10 +350,17 @@
           });
 
           actualizarLocalStorage();
-          await guardarCitaEnSpreadsheet(nuevaCita);
-          alert('Cita agregada. Se sincronizará en breve.');
-          iniciarSincronizacion();
-        }
+          try {
+  await guardarCitaEnSpreadsheet(nuevaCita);
+  alert('Cita agregada y enviada exitosamente.');
+} catch (e) {
+  citasPendientes.push({
+    data: nuevaCita,
+    evento
+  });
+  alert('Cita agregada localmente. Se sincronizará en breve.');
+  iniciarSincronizacion();
+}
       },
       events: await cargarCitas()
     });
