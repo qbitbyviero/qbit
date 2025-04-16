@@ -183,32 +183,43 @@
 
     /* Modales */
     .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-    }
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
 
-    .modal-content {
-      background-color: #fff;
-      margin: 5% auto;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-    }
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: modalFadeIn 0.3s;
+}
 
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 24px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close:hover {
+    color: #333;
+}
 
     label {
       display: block;
@@ -278,8 +289,8 @@
           <li>
             <a href="#">Cliente ⬇</a>
             <ul>
-              <li><a href="#" onclick="abrirModal('modalNuevoCliente')">🐾 Nuevo</a></li>
-              <li><a href="#" onclick="abrirModal('modalExistente')">🔎 Existente</a></li>
+              <li><a href="#" onclick="abrirModal('modalNuevoCliente'); return false;">🐾 Nuevo</a></li>
+              <li><a href="#" onclick="abrirModal('modalExistente'); return false;">🔎 Existente</a></li>
             </ul>
           </li>
           <li><a href="#historial-section">Historial</a></li>
@@ -299,8 +310,7 @@
     <div class="modal-content">
       <span class="close" onclick="cerrarModal('modalNuevoCliente')">&times;</span>
       <form id="formNuevoCliente">
-        <label for="idCliente">ID Cliente 🆔:</label>
-        <input type="text" id="idCliente" name="idCliente" required>
+        <input type="hidden" id="idCliente" name="idCliente">
         
         <label for="nombreDueno">Nombre del Dueño �:</label>
         <input type="text" id="nombreDueno" name="nombreDueno" required>
@@ -314,8 +324,7 @@
         <label for="correo">Correo 📧:</label>
         <input type="email" id="correo" name="correo" required>
         
-        <label for="idMascota">ID de Mascota 🐾:</label>
-        <input type="text" id="idMascota" name="idMascota" required>
+        <input type="hidden" id="idMascota" name="idMascota">
         
         <label for="nombreMascota">Nombre de Mascota 🐶/🐱:</label>
         <input type="text" id="nombreMascota" name="nombreMascota" required>
@@ -387,7 +396,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxQq4hvdzPlvPOoLRz2IYQ9-CZFJUIiKoL69T4hXX4E-BX1g-Ms-_MMnDZKIffhuecW/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxi1AayWtu_2hxfQDeJaop4WQ7A0rhppbDP9kCFWkgF6YY7vMAdqKUy9zQGO9DogmOG/exec';
 
     // Variables globales
     let calendar;
@@ -611,15 +620,32 @@
     });
 
     // [FUNCIONES EXISTENTES] (se mantienen igual)
-    function abrirModal(id) {
-      document.getElementById(id).style.display = 'block';
-      document.body.style.overflow = 'hidden';
+ // Funciones para abrir/cerrar modales
+function abrirModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Bloquea el scroll
+    } else {
+        console.error('Modal no encontrado:', modalId);
     }
+}
 
-    function cerrarModal(id) {
-      document.getElementById(id).style.display = 'none';
-      document.body.style.overflow = 'auto';
+function cerrarModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restaura el scroll
     }
+}
+
+// Cierra modales al hacer clic fuera del contenido
+window.addEventListener('click', (event) => {
+    if (event.target.className === 'modal') {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
 
     const razasPorEspecie = {
       '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
@@ -647,6 +673,77 @@
         razaSelect.innerHTML = '<option value="">No hay razas disponibles</option>';
       }
     }
+    async function guardarCliente(event) {
+    event.preventDefault();
+    
+    // Obtener valores del formulario
+    const nombreDueno = document.getElementById('nombreDueno').value.trim();
+    const nombreMascota = document.getElementById('nombreMascota').value.trim();
+    const formData = {
+        nombreDueno: nombreDueno,
+        direccion: document.getElementById('direccion').value,
+        telefono: document.getElementById('telefono').value,
+        correo: document.getElementById('correo').value,
+        nombreMascota: nombreMascota,
+        edad: document.getElementById('edad').value,
+        peso: document.getElementById('peso').value,
+        sexo: document.getElementById('sexo').value,
+        especie: document.getElementById('especieSelect').value,
+        raza: document.getElementById('raza').value,
+        fechaRegistro: new Date().toISOString()
+    };
+
+    // Verificar si ya existe
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=verificarCliente`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombreDueno: nombreDueno,
+                nombreMascota: nombreMascota
+            })
+        });
+        
+        const existe = await response.json();
+        
+        if (existe.duenoYmascota) {
+            alert('¡Hola! 😊 Ese cliente y mascota ya están registrados. Te invito a buscarlos en la otra opción. ¡Gracias por tu comprensión! 🙏');
+            return false;
+        } else if (existe.soloMascota) {
+            if (!confirm('⚠️ Esta mascota ya está registrada con otro dueño. ¿Deseas continuar?')) {
+                return false;
+            }
+        }
+        
+        // Generar IDs automáticos
+        const idsResponse = await fetch(`${WEBAPP_URL}?action=generarIDs`);
+        const ids = await idsResponse.json();
+        
+        formData.idCliente = ids.idCliente;
+        formData.idMascota = ids.idMascota;
+
+        // Guardar en Google Sheets
+        const guardarResponse = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'guardarCliente',
+                data: formData
+            })
+        });
+
+        if (guardarResponse.ok) {
+            alert('✅ Cliente registrado exitosamente!');
+            cerrarModal('modalNuevoCliente');
+            document.getElementById('formNuevoCliente').reset();
+        } else {
+            throw new Error('Error al guardar');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Ocurrió un error al guardar. Por favor intenta nuevamente.');
+    }
+}
   </script>
 
 </body>
