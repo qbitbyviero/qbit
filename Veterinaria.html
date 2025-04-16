@@ -284,11 +284,10 @@ let calendar;
 let citasPendientes = [];
 let sincronizando = false;
 const INTERVALO_SINCRONIZACION = 30000; // 30 segundos
-
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
   const calendarEl = document.getElementById('calendar');
 
-  calendar = new FullCalendar.Calendar(calendarEl, {
+  const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     headerToolbar: {
       left: 'prev,next today',
@@ -298,7 +297,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     locale: 'es',
     height: 'auto',
     selectable: true,
-    dateClick: async function(info) {
+    dateClick: async function (info) {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const fechaSeleccionada = new Date(info.dateStr);
+
+      if (fechaSeleccionada < hoy) {
+        alert('No puedes agendar una cita en una fecha pasada.');
+        return;
+      }
+
       const motivo = prompt('¿Motivo de la cita?');
       if (motivo) {
         const nuevaCita = {
@@ -307,33 +315,47 @@ document.addEventListener('DOMContentLoaded', async function() {
           cliente: 'Nuevo Cliente',
           paciente: 'Nueva Mascota'
         };
-        
-        // Añadir evento localmente
+
+        // Añadir evento visualmente al calendario
         const evento = {
-          title: motivo,
-          start: info.dateStr,
+          title: `${nuevaCita.paciente} - ${nuevaCita.motivo}`,
+          start: nuevaCita.fecha,
           allDay: true,
           color: '#ffcc00' // Amarillo = pendiente de confirmar
         };
+
         calendar.addEvent(evento);
-        
+
         // Guardar en cola de sincronización
+        if (!window.citasPendientes) window.citasPendientes = [];
         citasPendientes.push({
           data: nuevaCita,
           evento: evento
         });
-        
-        // Actualizar localStorage
-        actualizarLocalStorage();
-        
+
+        // Guardar en localStorage
+        if (typeof actualizarLocalStorage === 'function') {
+          actualizarLocalStorage();
+        }
+
+        // Guardar en spreadsheet si existe la función
+        if (typeof guardarCitaEnSpreadsheet === 'function') {
+          await guardarCitaEnSpreadsheet(nuevaCita);
+        }
+
         alert('Cita agregada. Se sincronizará en breve.');
-        iniciarSincronizacion();
+
+        // Iniciar sincronización si existe la función
+        if (typeof iniciarSincronizacion === 'function') {
+          iniciarSincronizacion();
+        }
       }
     },
-    events: await cargarCitas()
+    events: await cargarCitas() // Asegúrate que esta función existe y retorna un array de eventos
   });
 
   calendar.render();
+});
   
   // Configurar el formulario de nuevo cliente
   document.getElementById('formNuevoCliente').addEventListener('submit', async function(e) {
