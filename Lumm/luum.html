@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luum - Limpieza Profesional con Propósito</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2B6CB0; /* Azul profesional */
+            --secondary: #F687B3; /* Rosa suave */
+            --accent: #4FD1C5; /* Turquesa limpio */
+            --light: #F7FAFC; /* Blanco muy claro */
+            --dark: #2D3748; /* Gris oscuro */
+            --text: #4A5568; /* Gris texto */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Header y Menú espectacular */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+        
+        .menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .menu li {
+            position: relative;
+            margin-left: 2rem;
+        }
+        
+        .menu li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .menu li a i {
+            margin-right: 8px;
+        }
+        
+        .menu li a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .menu li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        
+        .menu li a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('imagenes/luum1.png') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(246, 135, 179, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(246, 135, 179, 0.6);
+            background-color: #f9739b;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            margin-left: 1rem;
+        }
+        
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        section {
+            padding: 6rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            display: inline-block;
+            position: relative;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 25%;
+            border-radius: 2px;
+        }
+        
+        /* Tarjetas de servicios */
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .service-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #f5f5f5;
+            mix-blend-mode: multiply;
+        }
+        
+        .service-content {
+            padding: 1.5rem;
+        }
+        
+        .service-content h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        
+        .service-content ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-content ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .service-content ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+        
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 1rem 0;
+        }
+        
+        /* Sección Nosotros */
+        .about {
+            background-color: white;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-text h3 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .mission-vision {
+            margin-top: 2rem;
+        }
+        
+        .mission-vision div {
+            background-color: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .mission-vision h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .about-image {
+            position: relative;
+            height: 500px;
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Valores */
+        .values {
+            background-color: var(--light);
+        }
+        
+        .values-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .value-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        
+        .value-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .value-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        /* Precios */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .pricing-table th, .pricing-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .pricing-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .pricing-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .pricing-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .pricing-table td:last-child {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        /* Impacto Social */
+        .impact {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%), url('imagenes/luum7.png') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            background-blend-mode: overlay;
+        }
+        
+        .impact .section-title h2 {
+            color: white;
+        }
+        
+        .impact .section-title h2::after {
+            background: white;
+        }
+        
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .stat-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .stat-item i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Equipo */
+        .team {
+            background-color: white;
+        }
+        
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .member-card {
+            text-align: center;
+            background-color: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .member-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem;
+            border: 5px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .member-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .member-card p {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* Contacto */
+        .contact {
+            background-color: var(--light);
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+        
+        .contact-info {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .contact-info h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item i {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-right: 1rem;
+            margin-top: 0.3rem;
+        }
+        
+        .contact-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column ul li a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .social-footer {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-footer a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-footer a:hover {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #cbd5e0;
+        }
+        
+        /* Efectos especiales */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-image {
+                height: 300px;
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con Menú Espectacular -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fas fa-broom"></i> Luum
+                </a>
+                <ul class="menu">
+                    <li><a href="#servicios"><i class="fas fa-broom"></i> Servicios</a></li>
+                    <li><a href="#nosotros"><i class="fas fa-building"></i> Sobre Nosotros</a></li>
+                    <li><a href="#valores"><i class="fas fa-heart"></i> Valores</a></li>
+                    <li><a href="#porque"><i class="fas fa-star"></i> ¿Por Qué Nosotros?</a></li>
+                    <li><a href="#precios"><i class="fas fa-tag"></i> Precios</a></li>
+                    <li><a href="#contacto"><i class="fas fa-envelope"></i> Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Limpieza con sentido humano</h1>
+            <p>Servicios profesionales de limpieza para oficinas con enfoque social, dignificando el trabajo femenino en el World Trade Center.</p>
+            <div>
+                <a href="#contacto" class="btn">Solicitar Cotización</a>
+                <a href="#servicios" class="btn btn-outline">Nuestros Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>NUESTROS SERVICIOS</h2>
+            </div>
+            
+            <div class="services">
+                <!-- Servicio 1 -->
+                <div class="service-card">
+                    <img src="imagenes/luum2.png" alt="Limpieza de oficinas">
+                    <div class="service-content">
+                        <h3>Limpieza de Oficinas</h3>
+                        <ul>
+                            <li>Limpieza diaria y profunda</li>
+                            <li>Desinfección y aromatización</li>
+                            <li>Limpieza de cristales interiores</li>
+                            <li>Sanitarios y áreas comunes</li>
+                        </ul>
+                        <div class="price">Desde $600 (40 m² mínimo)</div>
+                        <a href="#contacto" class="btn">Contratar</a>
+                    </div>
+                </div>
+                
+                <!-- Servicio 2 -->
+                <div class="service-card">
+                    <img src="imagenes/luum3.png" alt="Limpieza profunda">
+                    <div class="service-content">
+                        <h3>Limpieza Profunda</h3>
+                        <ul>
+                            <li>Eliminación profunda de suciedad</li>
+                            <li>Desinfección completa</li>
+                            <li>Tratamiento de pisos y superficies</li>
+                            <li>Limpieza de áreas difíciles</li>
+                        </ul>
+                        <div class="price">Desde $900 por visita</div>
+                        <a href="#contacto" class="btn">Contratar</a>
+                    </div>
+                </div>
+                
+                <!-- Servicio 3 -->
+                <div class="service-card">
+                    <img src="imagenes/luum4.png" alt="Servicio nocturno">
+                    <div class="service-content">
+                        <h3>Servicio Nocturno/Eventos</h3>
+                        <ul>
+                            <li>Horario fuera de oficina</li>
+                            <li>Preparación para eventos</li>
+                            <li>Limpieza post-eventos</li>
+                            <li>Servicio especializado</li>
+                        </ul>
+                        <div class="price">Desde $1,200 por visita</div>
+                        <a href="#contacto" class="btn">Contratar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Nosotros -->
+    <section id="nosotros" class="about section">
+        <div class="container">
+            <div class="section-title">
+                <h2>SOBRE NOSOTROS</h2>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Somos una empresa creada por dos mujeres emprendedoras con la visión de ofrecer servicios de limpieza eficientes, humanos y responsables en oficinas del World Trade Center, impulsando el empleo digno para otras mujeres.</p>
+                    
+                    <div class="mission-vision">
+                        <div>
+                            <h4><i class="fas fa-bullseye"></i> Misión</h4>
+                            <p>Brindar limpieza profesional con enfoque humano, generando espacios saludables y dignificando el trabajo femenino.</p>
+                        </div>
+                        
+                        <div>
+                            <h4><i class="fas fa-eye"></i> Visión</h4>
+                            <p>Ser la empresa líder en limpieza dentro del WTC, reconocida por su profesionalismo y compromiso social.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image">
+                    <img src="imagenes/luum5.png" alt="Equipo Luum" class="floating">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Valores -->
+    <section id="valores" class="values section">
+        <div class="container">
+            <div class="section-title">
+                <h2>NUESTROS VALORES</h2>
+            </div>
+            
+            <div class="values-container">
+                <div class="value-card">
+                    <i class="fas fa-venus-mars"></i>
+                    <h3>Equidad de Género</h3>
+                    <p>Promovemos igualdad de oportunidades para mujeres en el ámbito laboral.</p>
+                </div>
+                
+                <div class="value-card">
+                    <i class="fas fa-handshake"></i>
+                    <h3>Responsabilidad</h3>
+                    <p>Cumplimos con nuestros compromisos de manera puntual y profesional.</p>
+                </div>
+                
+                <div class="value-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>Compromiso</h3>
+                    <p>Nos dedicamos completamente a satisfacer las necesidades de nuestros clientes.</p>
+                </div>
+                
+                <div class="value-card">
+                    <i class="fas fa-gem"></i>
+                    <h3>Honestidad</h3>
+                    <p>Actuamos con transparencia en todas nuestras relaciones comerciales.</p>
+                </div>
+                
+                <div class="value-card">
+                    <i class="fas fa-hands-helping"></i>
+                    <h3>Respeto</h3>
+                    <p>Valoramos a cada persona, cliente y colaborador por igual.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ¿Por Qué Escogernos? -->
+    <section id="porque" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>¿POR QUÉ ESCOGERNOS?</h2>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="imagenes/luum6.png" alt="Tecnología de limpieza" class="floating">
+                </div>
+                
+                <div class="about-text">
+                    <ul style="list-style-type: none;">
+                        <li style="margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--primary);"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> Supervisión constante</h3>
+                            <p>Garantizamos calidad con supervisiones periódicas a nuestro personal.</p>
+                        </li>
+                        
+                        <li style="margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--primary);"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> Atención personalizada</h3>
+                            <p>Adaptamos nuestros servicios a las necesidades específicas de cada cliente.</p>
+                        </li>
+                        
+                        <li style="margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--primary);"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> Proyecto con causa social</h3>
+                            <p>Tu contratación ayuda a mujeres a obtener empleo digno y estable.</p>
+                        </li>
+                        
+                        <li style="margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--primary);"><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> Adaptabilidad</h3>
+                            <p>Flexibilidad para ajustarnos a horarios y requerimientos especiales.</p>
+                        </li>
+                    </ul>
+                    
+                    <p style="margin-top: 2rem; font-style: italic;">"Hemos hecho una inversión en tecnología de limpieza avanzada para ofrecer un servicio de calidad superior."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Precios -->
+    <section id="precios" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>PRECIOS ESTIMADOS</h2>
+            </div>
+            
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>TIPO DE SERVICIO</th>
+                        <th>PRECIO ESTIMADO POR M²</th>
+                        <th>MONTO MÍNIMO POR VISITA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Limpieza ligera (solo mantenimiento)</td>
+                        <td>$12 – $15 MXN</td>
+                        <td>$600 (40 m² mínimo)</td>
+                    </tr>
+                    <tr>
+                        <td>Limpieza profunda</td>
+                        <td>$18 – $22 MXN</td>
+                        <td>$900</td>
+                    </tr>
+                    <tr>
+                        <td>Servicio especial nocturno</td>
+                        <td>$25 – $30 MXN</td>
+                        <td>$1,200</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p style="text-align: center; margin-top: 2rem;">Los precios pueden ajustarse según materiales, tipo de oficina y horario.</p>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="#contacto" class="btn">Solicitar cotización personalizada</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impacto Social -->
+    <section id="impacto" class="impact section">
+        <div class="container">
+            <div class="section-title">
+                <h2>IMPACTO SOCIAL</h2>
+            </div>
+            
+            <p style="max-width: 800px; margin: 0 auto 2rem; font-size: 1.2rem;">Con cada oficina que confía en nosotras, ayudamos a una mujer a tener ingresos dignos, horarios seguros y estabilidad.</p>
+            <p style="font-size: 1.5rem; font-weight: 600; margin-bottom: 3rem;">Limpieza con propósito, limpieza con corazón.</p>
+            
+            <div class="impact-stats">
+                <div class="stat-item">
+                    <i class="fas fa-female"></i>
+                    <h3>50+</h3>
+                    <p>Mujeres empleadas</p>
+                </div>
+                
+                <div class="stat-item">
+                    <i class="fas fa-building"></i>
+                    <h3>30+</h3>
+                    <p>Oficinas satisfechas</p>
+                </div>
+                
+                <div class="stat-item">
+                    <i class="fas fa-smile"></i>
+                    <h3>100%</h3>
+                    <p>Clientes satisfechos</p>
+                </div>
+                
+                <div class="stat-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>5+</h3>
+                    <p>Años de experiencia</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nuestro Equipo -->
+    <section id="equipo" class="team section">
+        <div class="container">
+            <div class="section-title">
+                <h2>NUESTRO EQUIPO</h2>
+            </div>
+            
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">En Luum nos enorgullece contar con un equipo de profesionales altamente capacitados y comprometidos con proporcionar servicios de limpieza excepcionales.</p>
+            
+            <div class="team-members">
+                <div class="member-card">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1976&q=80" alt="Ivonne" class="member-image">
+                    <h3>Ivonne</h3>
+                    <p>Co-Fundadora</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80" alt="Co-Fundadora" class="member-image">
+                    <h3>Fernanda</h3>
+                    <p>Co-Fundadora</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <img src="https://images.unsplash.com/photo-1562788869-4ed32648eb72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Supervisora" class="member-image">
+                    <h3>ANA</h3>
+                    <p>Asesor</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="contact section">
+        <div class="container">
+            <div class="section-title">
+                <h2>CONTACTO</h2>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Información de Contacto</h3>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Ubicación</h4>
+                            <p>World Trade Center, Ciudad de México</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h4>Teléfono</h4>
+                            <p>[NÚMERO DE TELÉFONO]</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>[EMAIL DE CONTACTO]</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horario</h4>
+                            <p>Lunes a Viernes: 8:00 am - 6:00 pm</p>
+                            <p>Sábados: 9:00 am - 2:00 pm</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h4>Síguenos</h4>
+                        <div class="social-links" style="justify-content: flex-start;">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h3>Agenda tu cotización sin compromiso</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Nombre completo</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Correo electrónico</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service">Servicio de interés</label>
+                            <select id="service" class="form-group input">
+                                <option value="">Selecciona un servicio</option>
+                                <option value="limpieza">Limpieza de oficinas</option>
+                                <option value="profunda">Limpieza profunda</option>
+                                <option value="nocturno">Servicio nocturno</option>
+                                <option value="evento">Limpieza para eventos</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Mensaje</label>
+                            <textarea id="message" rows="4"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%;">Enviar solicitud</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Luum</h3>
+                <p>Limpieza profesional con sentido humano, dignificando el trabajo femenino en el World Trade Center.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Servicios</h3>
+                <ul>
+                    <li><a href="#">Limpieza de oficinas</a></li>
+                    <li><a href="#">Limpieza profunda</a></li>
+                    <li><a href="#">Servicio nocturno</a></li>
+                    <li><a href="#">Limpieza para eventos</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Empresa</h3>
+                <ul>
+                    <li><a href="#nosotros">Sobre nosotros</a></li>
+                    <li><a href="#valores">Nuestros valores</a></li>
+                    <li><a href="#equipo">Nuestro equipo</a></li>
+                    <li><a href="#impacto">Impacto social</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><a href="tel:+5255XXXXXXX"><i class="fas fa-phone-alt"></i> [NÚMERO]</a></li>
+                    <li><a href="mailto:contacto@luum.com"><i class="fas fa-envelope"></i> [EMAIL]</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> WTC, CDMX</a></li>
+                </ul>
+                
+                <div class="social-footer">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 Luum Servicios de Limpieza. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Efecto suave al hacer scroll a las secciones
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Efecto de aparición al hacer scroll
+        const fadeElements = document.querySelectorAll('.service-card, .value-card, .member-card, .stat-item');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        
+        // Inicializar elementos con opacidad 0
+        fadeElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        window.addEventListener('scroll', fadeInOnScroll);
+        window.addEventListener('load', fadeInOnScroll);
+    </script>
+</body>
+</html>
