@@ -6,7 +6,6 @@
   <title>Agenda Posh Posh</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -363,7 +362,6 @@ input:focus, select:focus {
 
   <!-- [SECCIÓN] CALENDARIO -->
   <div id="calendar-container">
-    <!-- [SECCIÓN] ENCABEZADO Y MENÚ -->
     <header>
       <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
       <h1>Agenda Veterinaria - Posh Posh</h1>
@@ -383,11 +381,8 @@ input:focus, select:focus {
         </ul>
       </nav>
     </header>
-
     <div id="calendar"></div>
   </div>
-
-  <!-- [SECCIÓN] MODALES (se mantienen igual) -->
   <!-- Modal de Nuevo Cliente -->
   <div id="modalNuevoCliente" class="modal">
     <div class="modal-content">
@@ -396,7 +391,6 @@ input:focus, select:focus {
             <span class="close" onclick="cerrarModal('modalNuevoCliente')">&times;</span>
         </div>
         <form id="formNuevoCliente" class="modal-form" onsubmit="return guardarCliente(event)">
-        <form class="modal-form">
             <div class="form-group">
                 <label for="nombreDueno">Nombre del Dueño</label>
                 <input type="text" id="nombreDueno" required>
@@ -483,426 +477,346 @@ input:focus, select:focus {
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
     const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxi1AayWtu_2hxfQDeJaop4WQ7A0rhppbDP9kCFWkgF6YY7vMAdqKUy9zQGO9DogmOG/exec';
-
-    // Variables globales
     let calendar;
     let citasPendientes = [];
-    let sincronizando = false;
-    const INTERVALO_SINCRONIZACION = 30000;
+    const razasPorEspecie = {
+        '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
+        '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
+        '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
+        '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
+        '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
+        '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
+        '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+    };
 
-    // [FUNCIÓN] Cargar citas desde Google Sheets
+    // ========== FUNCIONES PRINCIPALES ==========
+    async function initApp() {
+        const barkSound = document.getElementById('barkSound');
+        setTimeout(async () => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('daily-appointments').style.display = 'block';
+            
+            document.body.addEventListener('click', function playSoundOnce() {
+                barkSound.play().catch(e => console.log('Sonido omitido'));
+                document.body.removeEventListener('click', playSoundOnce);
+            });
+            
+            await cargarCitasDelDia();
+            setupMenuNavigation();
+            actualizarRazas();
+        }, 3000);
+    }
+
     async function cargarCitasDelDia() {
+        try {
+            const hoy = new Date().toISOString().split('T')[0];
+            const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
+            const citas = await response.json();
+            const lista = document.getElementById('appointments-list');
+            
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-MX', opcionesFecha);
+            
+            lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
+            
+            citas.forEach(cita => {
+                const [dueno, mascota] = cita.paciente.split('/').map(s => s.trim());
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
+                    ⏰ ${cita.hora} - ${cita.motivo}<br>
+                    📝 ${cita.notas || 'Sin notas'}
+                `;
+                lista.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('appointments-list').innerHTML = `
+                <li style="color: red;">Error al cargar citas. Recarga la página.</li>
+            `;
+        }
+    }
+
+    function configurarBotones() {
+        document.getElementById('print-btn').addEventListener('click', () => window.print());
+        
+        document.getElementById('show-btn').addEventListener('click', () => {
+            const contenido = document.getElementById('daily-appointments').outerHTML;
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`
+                <html>
+                    <head><title>Citas del Día - Posh Posh</title>
+                    <style>${document.querySelector('style').innerHTML}</style></head>
+                    <body>${contenido}</body>
+                </html>
+            `);
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('daily-appointments').style.display = 'none';
+            document.getElementById('calendar-container').style.display = 'block';
+            initCalendar();
+        });
+    }
+
+    async function initCalendar() {
+        const calendarEl = document.getElementById('calendar');
+        document.getElementById('calendar-container').style.display = 'block';
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            height: 'auto',
+            selectable: true,
+            dateClick: async (info) => {
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const fechaSeleccionada = new Date(info.dateStr);
+
+                if (fechaSeleccionada < hoy) {
+                    mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
+                    return;
+                }
+
+                const motivo = prompt('¿Motivo de la cita?');
+                if (motivo) {
+                    try {
+                        await fetch(WEBAPP_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                            action: 'guardarCliente',
+                            nombreDueno: formData.nombreDueno,
+                            direccion: formData.direccion,
+                            telefono: formData.telefono,
+                            correo: formData.correo,
+                            nombreMascota: formData.nombreMascota,
+                            edad: formData.edad,
+                            peso: formData.peso,
+                            sexo: formData.sexo,
+                            especie: formData.especie,
+                            raza: formData.raza,
+})
+                        });
+                        calendar.refetchEvents();
+                        mostrarAlerta('Cita agregada correctamente', 'success');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        mostrarAlerta('Error al guardar la cita', 'error');
+                    }
+                }
+            },
+            events: async (fetchInfo, successCallback) => {
+                try {
+                    const response = await fetch(
+                        `${WEBAPP_URL}?action=getCitas&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`
+                    );
+                    const citas = await response.json();
+                    successCallback(citas.map(cita => ({
+                        title: `${cita.paciente.split('/')[1].trim()} - ${cita.motivo}`,
+                        start: cita.fecha,
+                        allDay: true,
+                        extendedProps: cita,
+                        color: getColorForAppointmentType(cita.motivo)
+                    })));
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+        calendar.render();
+    }
+
+    function getColorForAppointmentType(motivo) {
+        const colors = {
+            'Estética': '#FF9800',
+            'Vacunas': '#4CAF50',
+            'Consulta': '#2196F3',
+            'Eutanasia': '#9C27B0',
+            'Cirugía': '#F44336'
+        };
+        return colors[motivo] || '#607D8B';
+    }
+
+    // ========== FUNCIONES DE CLIENTES ==========
+    async function guardarCliente(event) {
+  event.preventDefault();
+
+  if (!validarFormulario()) return false;
+
+  const formData = {
+    nombreDueno: document.getElementById('nombreDueno').value.trim(),
+    direccion: document.getElementById('direccion').value.trim(),
+    telefono: document.getElementById('telefono').value.trim(),
+    correo: document.getElementById('correo').value.trim(),
+    nombreMascota: document.getElementById('nombreMascota').value.trim(),
+    edad: document.getElementById('edad').value,
+    peso: document.getElementById('peso').value,
+    sexo: document.getElementById('sexo').value,
+    especie: document.getElementById('especieSelect').value,
+    raza: document.getElementById('raza').value
+  };
+
   try {
-    const hoy = new Date().toISOString().split('T')[0];
-    const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
-    const citas = await response.json();
-    
-    const lista = document.getElementById('appointments-list');
-    lista.innerHTML = '';
-    
-    // Formatear fecha bonita
-    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-MX', opcionesFecha);
-    
-    if (citas.length === 0) {
-      lista.innerHTML = '<li>No hay citas programadas para hoy.</li>';
+    const existe = await verificarClienteExistente(formData.nombreDueno, formData.nombreMascota);
+    if (existe.duenoYmascota) {
+      mostrarAlerta('¡Este cliente y mascota ya están registrados!', 'error');
       return;
     }
-    
-    citas.forEach(cita => {
-      // Asume que cita.paciente contiene "Dueño / Mascota"
-      const [dueno, mascota] = cita.paciente.split('/').map(s => s.trim());
-      const li = document.createElement('li');
-      li.innerHTML = `
-        🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
-        ⏰ ${cita.hora} - ${cita.motivo}<br>
-        📝 ${cita.notas || 'Sin notas'}
-      `;
-      lista.appendChild(li);
-    });
-    
-  } catch (error) {
-    console.error('Error al cargar citas:', error);
-    document.getElementById('appointments-list').innerHTML = `
-      <li style="color: red;">Error al cargar citas. Recarga la página.</li>
-    `;
-  }
-}
 
-    // [FUNCIÓN] Mostrar citas del día
-    async function mostrarCitasDelDia() {
-      const citas = await cargarCitasDelDia();
-      const lista = document.getElementById('appointments-list');
-      lista.innerHTML = '';
-      
-      // Formatear fecha
-      const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const hoy = new Date();
-      document.getElementById('current-date').textContent = hoy.toLocaleDateString('es-MX', opcionesFecha);
-      
-      // Mostrar cada cita
-      citas.forEach(cita => {
-        const li = document.createElement('li');
-        li.innerHTML = `🐶 ${cita.paciente} - ${cita.motivo} - ${cita.hora}`;
-        lista.appendChild(li);
-      });
-      
-      // Si no hay citas
-      if (citas.length === 0) {
-        const li = document.createElement('li');
-        li.textContent = 'No hay citas programadas para hoy.';
-        lista.appendChild(li);
-      }
-    }
-
-    // [FUNCIÓN] Inicializar la aplicación
-    // En initApp():
-async function initApp() {
-  // 1. Cargar sonido pero no reproducir aún
-  const barkSound = document.getElementById('barkSound');
-  
-  // 2. Mostrar citas después de la animación
-  setTimeout(async () => {
-    document.getElementById('splash').style.display = 'none';
-    document.getElementById('daily-appointments').style.display = 'block';
-    
-    // Reproducir solo cuando el usuario ha interactuado
-    document.body.addEventListener('click', function playSoundOnce() {
-      barkSound.play().catch(e => console.log('Sonido omitido'));
-      document.body.removeEventListener('click', playSoundOnce);
-    });
-    
-    await mostrarCitasDelDia();
-  }, 3000);
-}
-      
-      // 3. Configurar botones
-      document.getElementById('print-btn').addEventListener('click', () => window.print());
-      document.getElementById('show-btn').addEventListener('click', () => {
-        const ventana = window.open('', '_blank');
-        ventana.document.write(`
-          <html>
-            <head><title>Citas del Día - Posh Posh</title></head>
-            <body>
-              ${document.getElementById('daily-appointments').outerHTML}
-              <style>
-                body { font-family: Arial, sans-serif; padding: 20px; }
-                button { display: none; }
-              </style>
-            </body>
-          </html>
-        `);
-      });
-      
-      document.getElementById('start-btn').addEventListener('click', () => {
-        document.getElementById('daily-appointments').style.display = 'none';
-        document.getElementById('calendar-container').style.display = 'block';
-        initCalendar();
-      });
-    
-    // [FUNCIÓN] Inicializar calendario (similar a tu código original)
-    async function initCalendar() {
-    const calendarEl = document.getElementById('calendar');
-    if (!calendarEl) return;
-
-    // Asegurarnos de que el contenedor sea visible
-    document.getElementById('calendar-container').style.display = 'block';
-
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        locale: 'es',
-        height: 'auto',
-        selectable: true,
-        dateClick: async function(info) {
-            const hoy = new Date();
-            hoy.setHours(0, 0, 0, 0);
-            const fechaSeleccionada = new Date(info.dateStr);
-
-            if (fechaSeleccionada < hoy) {
-                alert('No puedes agendar una cita en una fecha pasada.');
-                return;
-            }
-
-            const motivo = prompt('¿Motivo de la cita?');
-            if (motivo) {
-                const nuevaCita = {
-                    fecha: info.dateStr,
-                    motivo,
-                    cliente: 'Nuevo Cliente',
-                    paciente: 'Nueva Mascota'
-                };
-
-                const evento = {
-                    title: `${nuevaCita.paciente} - ${nuevaCita.motivo}`,
-                    start: nuevaCita.fecha,
-                    allDay: true,
-                    color: '#ffcc00'
-                };
-
-                calendar.addEvent(evento);
-                await guardarCitaEnSpreadsheet(nuevaCita);
-            }
-        },
-        events: async function(fetchInfo, successCallback, failureCallback) {
-    try {
-        const response = await fetch(`${WEBAPP_URL}?action=getCitas&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`);
-        const citas = await response.json();
-        
-        const eventos = citas.map(cita => ({
-            title: `${cita.paciente} - ${cita.motivo}`,
-            start: cita.fecha,
-            allDay: true,
-            extendedProps: {
-                hora: cita.hora,
-                notas: cita.notas
-            }
-        }));
-        
-        successCallback(eventos);
-    } catch (error) {
-        console.error('Error al cargar eventos:', error);
-        failureCallback(error);
-    }
-}
-    });
-
-    calendar.render();
-    calendar.updateSize(); // ¡Esta línea es clave! Fuerza el redimensionamiento.
-}
-
-    // [FUNCIÓN] Guardar cita en Google Sheets
-    async function guardarCitaEnSpreadsheet(cita) {
-      try {
-        await fetch(WEBAPP_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...cita, action: 'guardarCita' })
-        });
-      } catch (error) {
-        console.error('Error al guardar cita:', error);
-        throw error;
-      }
-    }
-
-    // [FUNCIÓN] Navegación por secciones
-    function setupMenuNavigation() {
-      document.querySelectorAll('nav a').forEach(link => {
-        if (link.getAttribute('href').startsWith('#')) {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            document.querySelectorAll('[id$="-section"]').forEach(section => {
-              section.style.display = section.id === `${targetId}-section` ? 'block' : 'none';
-            });
-          });
-        }
-      });
-    }
-
-    // [INICIALIZACIÓN] Al cargar la página
-    document.addEventListener('DOMContentLoaded', () => {
-      initApp();
-      setupMenuNavigation();
-      
-      // Inicializar modales (se mantiene tu código original)
-      const especieSelect = document.getElementById('especieSelect');
-      if (especieSelect) especieSelect.addEventListener('change', actualizarRazas);
-      actualizarRazas();
-    });
-
-    // [FUNCIONES EXISTENTES] (se mantienen igual)
- // Funciones para abrir/cerrar modales
-function abrirModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Bloquea el scroll
-    } else {
-        console.error('Modal no encontrado:', modalId);
-    }
-}
-
-function cerrarModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restaura el scroll
-    }
-}
-
-// Cierra modales al hacer clic fuera del contenido
-window.addEventListener('click', (event) => {
-    if (event.target.className === 'modal') {
-        event.target.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-});
-
-    const razasPorEspecie = {
-      '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
-      '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
-      '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
-      '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
-      '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
-      '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
-      '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
-    };
-
-    function actualizarRazas() {
-      const especie = document.getElementById('especieSelect').value;
-      const razaSelect = document.getElementById('raza');
-      razaSelect.innerHTML = '';
-
-      if (razasPorEspecie[especie]) {
-        razasPorEspecie[especie].forEach(raza => {
-          const option = document.createElement('option');
-          option.value = raza;
-          option.textContent = raza;
-          razaSelect.appendChild(option);
-        });
-      } else {
-        razaSelect.innerHTML = '<option value="">No hay razas disponibles</option>';
-      }
-    }
-    async function guardarCliente(event) {
-    event.preventDefault();
-    
-    // Validación básica
-    if (!validarFormulario()) return false;
-
-    // Obtener valores
-    const formData = {
-        nombreDueno: document.getElementById('nombreDueno').value.trim(),
-        direccion: document.getElementById('direccion').value.trim(),
-        telefono: document.getElementById('telefono').value.trim(),
-        correo: document.getElementById('correo').value.trim(),
-        nombreMascota: document.getElementById('nombreMascota').value.trim(),
-        edad: document.getElementById('edad').value,
-        peso: document.getElementById('peso').value,
-        sexo: document.getElementById('sexo').value,
-        especie: document.getElementById('especieSelect').value,
-        raza: document.getElementById('raza').value
-    };
-
-    try {
-        // Verificar duplicados
-        const existe = await verificarClienteExistente(formData.nombreDueno, formData.nombreMascota);
-        if (existe.duenoYmascota) {
-            mostrarAlerta('¡Este cliente y mascota ya están registrados!', 'error');
-            return;
-        }
-
-        // Generar IDs
-        const ids = await generarNuevosIDs();
-        formData.idCliente = ids.idCliente;
-        formData.idMascota = ids.idMascota;
-
-        // Guardar
-        const respuesta = await guardarEnSpreadsheet(formData);
-        
-        if (respuesta.ok) {
-            mostrarAlerta('✅ Registro exitoso!', 'success');
-            cerrarModal('modalNuevoCliente');
-            document.getElementById('formNuevoCliente').reset();
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        mostrarAlerta('❌ Error al guardar: ' + error.message, 'error');
-    }
-}
-
-// Funciones auxiliares
-async function verificarClienteExistente(nombreDueno, nombreMascota) {
-    const response = await fetch(`${WEBAPP_URL}?action=verificarCliente&nombreDueno=${encodeURIComponent(nombreDueno)}&nombreMascota=${encodeURIComponent(nombreMascota)}`);
-    return await response.json();
-}
-
-async function generarNuevosIDs() {
-  try {
-    const response = await fetch(`${WEBAPP_URL}?action=generarIDs`, {
-      method: 'GET',
-      mode: 'no-cors',
-      cache: 'no-store'
-    });
-    
-    // Generar IDs localmente si falla
-    return {
-      idCliente: 'PP-' + Math.floor(1000 + Math.random() * 9000),
-      idMascota: 'PP-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(100 + Math.random() * 900)
-    };
-  } catch (error) {
-    console.log('Usando IDs generados localmente');
-    return {
-      idCliente: 'PP-' + (Math.floor(Math.random() * 9000) + 1000),
-      idMascota: 'PP-' + (Math.floor(Math.random() * 9000) + 1000) + '-' + (Math.floor(Math.random() * 900) + 100)
-    };
-  }
-}
-
-async function guardarEnSpreadsheet(data) {
-  try {
     const response = await fetch(WEBAPP_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'guardarCliente', data })
+      body: JSON.stringify({
+        action: 'guardarCliente',
+        ...formData // ← IMPORTANTE: aquí estás mandando los datos planos como espera el GAS
+      })
     });
-    return { ok: true }; // Asumimos éxito porque no podemos leer la respuesta
+
+    const result = await response.json();
+
+    if (result.status === 'success') {
+      mostrarAlerta('✅ Registro exitoso!', 'success');
+      cerrarModal('modalNuevoCliente');
+      document.getElementById('formNuevoCliente').reset();
+    } else {
+      throw new Error(result.message || 'Fallo en el servidor');
+    }
   } catch (error) {
-    console.error('Error al guardar (modo no-cors):', error);
-    return { ok: false };
+    console.error('Error:', error);
+    mostrarAlerta('❌ Error al guardar: ' + error.message, 'error');
   }
 }
+    // ========== FUNCIONES AUXILIARES ==========
+    function setupMenuNavigation() {
+        document.querySelectorAll('nav a').forEach(link => {
+            if (link.getAttribute('href').startsWith('#')) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    document.querySelectorAll('[id$="-section"]').forEach(section => {
+                        section.style.display = section.id === `${targetId}-section` ? 'block' : 'none';
+                    });
+                });
+            }
+        });
+    }
 
-function validarFormulario() {
-    const camposRequeridos = [
-        'nombreDueno', 'direccion', 'telefono', 
-        'correo', 'nombreMascota', 'edad', 'peso'
-    ];
-    
-    for (const campoId of camposRequeridos) {
-        const valor = document.getElementById(campoId).value.trim();
-        if (!valor) {
-            mostrarAlerta(`Por favor complete el campo ${campoId.replace('nombre', '')}`, 'error');
-            return false;
+    function abrirModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
     }
-    
-    // Validación adicional para email
-    const email = document.getElementById('correo').value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        mostrarAlerta('Por favor ingrese un correo electrónico válido', 'error');
-        return false;
-    }
-    
-    return true;
-}
-function mostrarAlerta(mensaje, tipo = 'info') {
-    const colores = {
-        success: '#4CAF50',
-        error: '#F44336',
-        info: '#2196F3'
-    };
-    
-    Toastify({
-        text: mensaje,
-        duration: 3000,
-        backgroundColor: colores[tipo] || colores.info,
-        className: "toast-" + tipo,
-        close: true,
-        gravity: "top",
-        position: "right"
-    }).showToast();
-}
-  </script>
 
+    function cerrarModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    function actualizarRazas() {
+        const especie = document.getElementById('especieSelect').value;
+        const razaSelect = document.getElementById('raza');
+        razaSelect.innerHTML = '';
+
+        if (razasPorEspecie[especie]) {
+            razasPorEspecie[especie].forEach(raza => {
+                const option = document.createElement('option');
+                option.value = raza;
+                option.textContent = raza;
+                razaSelect.appendChild(option);
+            });
+        }
+    }
+
+    async function verificarClienteExistente(nombreDueno, nombreMascota) {
+        const response = await fetch(`${WEBAPP_URL}?action=verificarCliente&nombreDueno=${encodeURIComponent(nombreDueno)}&nombreMascota=${encodeURIComponent(nombreMascota)}`);
+        return await response.json();
+    }
+
+    async function generarNuevosIDs() {
+        try {
+            const response = await fetch(`${WEBAPP_URL}?action=generarIDs`);
+            return await response.json();
+        } catch (error) {
+            return {
+                idCliente: 'PP-' + Math.floor(1000 + Math.random() * 9000),
+                idMascota: 'PP-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(100 + Math.random() * 900)
+            };
+        }
+    }
+
+    async function guardarEnSpreadsheet(data) {
+        try {
+            await fetch(WEBAPP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'guardarCliente', data })
+            });
+            return { ok: true };
+        } catch (error) {
+            console.error('Error:', error);
+            return { ok: false };
+        }
+    }
+
+    function validarFormulario() {
+        const camposRequeridos = [
+            'nombreDueno', 'direccion', 'telefono', 
+            'correo', 'nombreMascota', 'edad', 'peso'
+        ];
+        
+        for (const campoId of camposRequeridos) {
+            const valor = document.getElementById(campoId).value.trim();
+            if (!valor) {
+                mostrarAlerta(`Complete el campo ${campoId.replace('nombre', '')}`, 'error');
+                return false;
+            }
+        }
+        
+        const email = document.getElementById('correo').value;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            mostrarAlerta('Ingrese un correo válido', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+
+    function mostrarAlerta(mensaje, tipo = 'info') {
+        const colores = {
+            success: '#4CAF50',
+            error: '#F44336',
+            info: '#2196F3'
+        };
+        
+        Toastify({
+            text: mensaje,
+            duration: 3000,
+            backgroundColor: colores[tipo],
+            close: true,
+            gravity: "top",
+            position: "right"
+        }).showToast();
+    }
+
+    // ========== INICIALIZACIÓN ==========
+    document.addEventListener('DOMContentLoaded', initApp);
+    window.addEventListener('click', (event) => {
+        if (event.target.className === 'modal') {
+            event.target.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+</script>
 </body>
 </html>
