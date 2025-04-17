@@ -526,7 +526,14 @@ input:focus, select:focus {
     citas.forEach(cita => {
       const mascota = cita['Paciente'] || '---';
       const dueno = cita['Cliente'] || '---';
-      const hora = cita['Hora'] || 'Sin hora';
+
+      // ← Aquí es donde ahora formateamos la hora correctamente:
+      let hora = '---';
+      if (cita['Hora']) {
+        const horaDate = new Date(`1970-01-01T${cita['Hora']}`);
+        hora = horaDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+      }
+
       const motivo = cita['Motivo'] || 'Sin motivo';
 
       const li = document.createElement('li');
@@ -545,7 +552,6 @@ input:focus, select:focus {
     `;
   }
 }
-
     function configurarBotones() {
         document.getElementById('print-btn').addEventListener('click', () => window.print());
         
