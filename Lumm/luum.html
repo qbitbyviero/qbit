@@ -22,19 +22,18 @@
         }
         /* Fondo animado */
         body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(135deg, #f0e6ff 0%, #d9d0e3 100%);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            opacity: 0.3; /* Transparencia para que no sea muy intenso */
-        }
-
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2; /* Detrás de las burbujas */
+    background: linear-gradient(135deg, #f0e6ff 0%, #d9d0e3 100%);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    opacity: 0.2; /* Más transparente para dejar ver las burbujas */
+}
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -48,32 +47,33 @@
     height: 100%;
     top: 0;
     left: 0;
-    z-index: -2; /* Debe estar detrás del contenido pero delante del fondo */
+    z-index: -1; /* Ajustado para estar entre el fondo y el contenido */
     overflow: hidden;
 }
-
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: rgba(210, 190, 240, 0.3); /* Lila muy suave */
-            border-radius: 50%;
-            animation: rise 15s infinite ease-in;
-        }
-
-        @keyframes rise {
-            0% {
-                bottom: -100px;
-                transform: translateX(0);
-            }
-            50% {
-                transform: translateX(100px);
-            }
-            100% {
-                bottom: 1080px;
-                transform: translateX(-200px);
-            }
-        }
-
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    background: rgba(180, 160, 220, 0.6); /* Color más intenso y opaco */
+    border-radius: 50%;
+    animation: rise 15s infinite ease-in;
+    box-shadow: 0 0 10px rgba(180, 160, 220, 0.4); /* Sombra para dar profundidad */
+}
+@keyframes rise {
+    0% {
+        bottom: -100px;
+        transform: translateX(0) scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateX(100px) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        bottom: 1080px;
+        transform: translateX(-200px) scale(0.9);
+        opacity: 0;
+    }
+}
         /* Ajustes para el contenido sobre el fondo animado */
         header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
@@ -1289,33 +1289,38 @@
         window.addEventListener('scroll', fadeInOnScroll);
         window.addEventListener('load', fadeInOnScroll);
         
-        // Generador de burbujas 
-        document.addEventListener('DOMContentLoaded', function() {
-            const bubblesContainer = document.querySelector('.bubbles');
-            const bubbleCount = 15;
-            
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('bubble');
-                
-                // Tamaño aleatorio entre 10 y 100px
-                const size = Math.random() * 90 + 10;
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                
-                // Posición inicial aleatoria
-                bubble.style.left = `${Math.random() * 100}%`;
-                
-                // Animación con duración y delay aleatorios
-                bubble.style.animationDuration = `${Math.random() * 20 + 10}s`;
-                bubble.style.animationDelay = `${Math.random() * 5}s`;
-                
-                // Opacidad aleatoria para más realismo
-                bubble.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                bubblesContainer.appendChild(bubble);
-            }
-        });
+       // Generador de burbujas - Versión mejorada
+document.addEventListener('DOMContentLoaded', function() {
+    const bubblesContainer = document.querySelector('.bubbles');
+    const bubbleCount = 20; // Más burbujas
+    
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Tamaño aleatorio entre 20 y 120px (más grandes)
+        const size = Math.random() * 100 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        
+        // Posición inicial aleatoria
+        bubble.style.left = `${Math.random() * 100}%`;
+        
+        // Animación con duración y delay aleatorios
+        const duration = Math.random() * 20 + 15; // Más lentas
+        bubble.style.animationDuration = `${duration}s`;
+        bubble.style.animationDelay = `${Math.random() * 10}s`; // Mayor dispersión
+        
+        // Opacidad aleatoria más visible
+        bubble.style.opacity = Math.random() * 0.6 + 0.4;
+        
+        // Color ligeramente variado
+        const hue = Math.random() * 20 + 250; // Tonos violetas
+        bubble.style.background = `hsla(${hue}, 60%, 70%, ${Math.random() * 0.4 + 0.4})`;
+        
+        bubblesContainer.appendChild(bubble);
+    }
+});
     </script>
 </body>
 </html>
