@@ -673,6 +673,30 @@
                 order: -1;
             }
         }
+        /* Estilos para el logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 40px; /* Ajusta este valor según el tamaño deseado */
+    width: auto; /* Mantiene la proporción original */
+    transition: all 0.3s ease;
+}
+
+.logo-text {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* Opcional: efecto hover */
+.logo:hover .logo-img {
+    transform: scale(1.05);
+}
     </style>
 </head>
 <body>
@@ -681,10 +705,11 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo">
-                  <img src="imagenes/Luum (1).png" alt="Luum Logo" class="logo-img">
-                  Luum
+                    <img src="imagenes/Luum (3).png" alt="Luum Logo" class="logo-img">
+                    <span class="logo-text">Luum</span>
                 </a>
-              </nav>
+            </nav>
+        </div>
               
                 <ul class="menu">
                     <li><a href="#servicios"><i class="fas fa-broom"></i> Servicios</a></li>
