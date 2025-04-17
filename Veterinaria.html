@@ -511,37 +511,40 @@ input:focus, select:focus {
     }
 
     async function cargarCitasDelDia() {
-        try {
-            const hoy = new Date().toISOString().split('T')[0];
-            const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
-            const citas = await response.json();
-            const lista = document.getElementById('appointments-list');
-            
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-MX', opcionesFecha);
-            
-            lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
-            
-            citas.forEach(cita => {
-              let dueno = '---', mascota = '---';
-              if (cita.paciente && cita.paciente.includes('/')) {
-                [dueno, mascota] = cita.paciente.split('/').map(s => s.trim());
-              } 
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
-                    ⏰ ${cita.hora} - ${cita.motivo}<br>
-                    📝 ${cita.notas || 'Sin notas'}
-                `;
-                lista.appendChild(li);
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('appointments-list').innerHTML = `
-                <li style="color: red;">Error al cargar citas. Recarga la página.</li>
-            `;
-        }
-    }
+  try {
+    const hoy = new Date().toISOString().split('T')[0];
+    const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
+    const citas = await response.json();
+    const lista = document.getElementById('appointments-list');
+
+    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('current-date').textContent =
+      "📅 " + new Date().toLocaleDateString('es-MX', opcionesFecha);
+
+    lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
+
+    citas.forEach(cita => {
+      const mascota = cita['Paciente'] || '---';
+      const dueno = cita['Cliente'] || '---';
+      const hora = cita['Hora'] || 'Sin hora';
+      const motivo = cita['Motivo'] || 'Sin motivo';
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
+        ⏰ ${hora}<br>
+        📝 ${motivo}
+      `;
+      lista.appendChild(li);
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    document.getElementById('appointments-list').innerHTML = `
+      <li style="color: red;">Error al cargar citas. Recarga la página.</li>
+    `;
+  }
+}
 
     function configurarBotones() {
         document.getElementById('print-btn').addEventListener('click', () => window.print());
