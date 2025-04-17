@@ -43,14 +43,14 @@
 
         /* Burbujas flotantes */
         .bubbles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            overflow: hidden;
-        }
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2; /* Debe estar detrás del contenido pero delante del fondo */
+    overflow: hidden;
+}
 
         .bubble {
             position: absolute;
@@ -96,6 +96,7 @@
             --text: #495057; /* Gris Oxford para texto */
         }
         body {
+            position: relative;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.7;
             color: var(--text);
