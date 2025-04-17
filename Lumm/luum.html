@@ -682,9 +682,9 @@
 }
 
 .logo-img {
-    height: 40px; /* Ajusta este valor según el tamaño deseado */
-    width: auto; /* Mantiene la proporción original */
-    transition: all 0.3s ease;
+    height: 40px; /* Altura fija */
+    width: auto; /* Ancho proporcional */
+    max-width: 150px; /* Máximo ancho permitido */
 }
 
 .logo-text {
@@ -706,11 +706,8 @@
             <nav>
                 <a href="#" class="logo">
                     <img src="imagenes/Luum (3).png" alt="Luum Logo" class="logo-img">
-                    <span class="logo-text">Luum</span>
                 </a>
-            </nav>
-        </div>
-              
+                
                 <ul class="menu">
                     <li><a href="#servicios"><i class="fas fa-broom"></i> Servicios</a></li>
                     <li><a href="#nosotros"><i class="fas fa-building"></i> Sobre Nosotros</a></li>
