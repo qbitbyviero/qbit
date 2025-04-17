@@ -530,10 +530,8 @@ input:focus, select:focus {
       // ← Aquí es donde ahora formateamos la hora correctamente:
       let hora = '---';
       if (cita['Hora']) {
-        const horaDate = new Date(`1970-01-01T${cita['Hora']}`);
-        hora = horaDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        hora = cita['Hora'].toString().substring(0, 5); // Solo HH:MM
       }
-
       const motivo = cita['Motivo'] || 'Sin motivo';
 
       const li = document.createElement('li');
