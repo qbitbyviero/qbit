@@ -354,9 +354,10 @@ input:focus, select:focus {
     <h2 id="current-date">📅 Cargando fecha...</h2>
     <ul id="appointments-list"></ul>
     <div class="appointment-buttons">
-      <button id="print-btn">Imprimir</button>
-      <button id="show-btn">Mostrar</button>
-      <button id="start-btn">Comenzar</button>
+      <button onclick="window.print()">🖨️ Imprimir</button>
+      <button onclick="mostrarCitasBonitas()">👁️ Mostrar</button>
+      <button id="start-btn" onclick="comenzar()">🚀 Comenzar</button>
+
     </div>
   </div>
 
@@ -527,11 +528,20 @@ input:focus, select:focus {
       const mascota = cita['Paciente'] || '---';
       const dueno = cita['Cliente'] || '---';
 
-      // ← Aquí es donde ahora formateamos la hora correctamente:
       let hora = '---';
       if (cita['Hora']) {
-        hora = cita['Hora'].toString().substring(0, 5); // Solo HH:MM
+        const valor = cita['Hora'];
+        if (!isNaN(valor)) {
+          const minutosTotales = Math.round(parseFloat(valor) * 24 * 60);
+          const horas = Math.floor(minutosTotales / 60);
+          const minutos = minutosTotales % 60;
+          hora = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+        } else if (typeof valor === 'string') {
+          const match = valor.match(/\d{1,2}:\d{2}/);
+          hora = match ? match[0] : valor;
+        }
       }
+
       const motivo = cita['Motivo'] || 'Sin motivo';
 
       const li = document.createElement('li');
@@ -543,6 +553,7 @@ input:focus, select:focus {
       lista.appendChild(li);
     });
 
+    configurarBotones(); // si quieres que se activen los botones después de cargar las citas
   } catch (error) {
     console.error('Error:', error);
     document.getElementById('appointments-list').innerHTML = `
@@ -550,6 +561,7 @@ input:focus, select:focus {
     `;
   }
 }
+
     function configurarBotones() {
         document.getElementById('print-btn').addEventListener('click', () => window.print());
         
@@ -827,6 +839,40 @@ input:focus, select:focus {
             document.body.style.overflow = 'auto';
         }
     });
+    // ===========funcion para abrir las citas del dia========
+    function mostrarCitasBonitas() {
+  const lista = document.getElementById('appointments-list');
+  const nuevaVentana = window.open('', '_blank');
+  nuevaVentana.document.write(`
+    <html>
+      <head>
+        <title>Citas del día</title>
+        <style>
+          body { font-family: Arial; padding: 20px; }
+          h2 { color: #444; }
+          li { margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        </style>
+      </head>
+      <body>
+        <h2>Citas programadas para hoy</h2>
+        <ul>${lista.innerHTML}</ul>
+      </body>
+    </html>
+  `);
+  nuevaVentana.document.close();
+}
+//======== Calendario ============
+let calendarioInicializado = false;
+
+function comenzar() {
+  document.getElementById('daily-appointments').style.display = 'none';
+  document.getElementById('calendar-container').style.display = 'block';
+
+  if (!calendarioInicializado) {
+    initCalendar();
+    calendarioInicializado = true;
+  }
+}
 </script>
 </body>
 </html>
