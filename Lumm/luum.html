@@ -20,7 +20,81 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+        /* Fondo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #f0e6ff 0%, #d9d0e3 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            opacity: 0.3; /* Transparencia para que no sea muy intenso */
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Burbujas flotantes */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(210, 190, 240, 0.3); /* Lila muy suave */
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+
+        /* Ajustes para el contenido sobre el fondo animado */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            /* Añade esto para que el header sea opaco */
+            background-attachment: fixed;
+        }
+
+        section {
+            background-color: rgba(255, 255, 255, 0.85); /* Fondo semi-transparente */
+            position: relative;
+        }
+
+        /* Ajusta los colores según tu paleta */
+        :root {
+            --primary: #6a5acd; /* Cambié a un azul lila (SlateBlue) */
+            --secondary: #b19cd9; /* Lila suave */
+            --accent: #9b59b6; /* Púrpura medio */
+            --light: #f8f9fa; /* Gris Oxford muy claro */
+            --dark: #343a40; /* Gris Oxford oscuro */
+            --text: #495057; /* Gris Oxford para texto */
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.7;
@@ -700,6 +774,7 @@
     </style>
 </head>
 <body>
+    <div class="bubbles"></div>
     <!-- Header con Menú Espectacular -->
     <header>
         <div class="container">
@@ -1212,6 +1287,34 @@
         
         window.addEventListener('scroll', fadeInOnScroll);
         window.addEventListener('load', fadeInOnScroll);
+        
+        // Generador de burbujas 
+        document.addEventListener('DOMContentLoaded', function() {
+            const bubblesContainer = document.querySelector('.bubbles');
+            const bubbleCount = 15;
+            
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Tamaño aleatorio entre 10 y 100px
+                const size = Math.random() * 90 + 10;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Posición inicial aleatoria
+                bubble.style.left = `${Math.random() * 100}%`;
+                
+                // Animación con duración y delay aleatorios
+                bubble.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Opacidad aleatoria para más realismo
+                bubble.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                bubblesContainer.appendChild(bubble);
+            }
+        });
     </script>
 </body>
 </html>
