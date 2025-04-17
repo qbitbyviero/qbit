@@ -523,7 +523,10 @@ input:focus, select:focus {
             lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
             
             citas.forEach(cita => {
-                const [dueno, mascota] = cita.paciente.split('/').map(s => s.trim());
+              let dueno = '---', mascota = '---';
+              if (cita.paciente && cita.paciente.includes('/')) {
+                [dueno, mascota] = cita.paciente.split('/').map(s => s.trim());
+              } 
                 const li = document.createElement('li');
                 li.innerHTML = `
                     🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
