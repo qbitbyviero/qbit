@@ -354,8 +354,8 @@ input:focus, select:focus {
     <h2 id="current-date">📅 Cargando fecha...</h2>
     <ul id="appointments-list"></ul>
     <div class="appointment-buttons">
-      <button onclick="window.print()">🖨️ Imprimir</button>
-      <button onclick="mostrarCitasBonitas()">👁️ Mostrar</button>
+      <button id="print-btn" onclick="window.print()">🖨️ Imprimir</button>
+      <button id="show-btn" onclick="mostrarCitasBonitas()">👁️ Mostrar</button>
       <button id="start-btn" onclick="comenzar()">🚀 Comenzar</button>
 
     </div>
@@ -585,76 +585,78 @@ input:focus, select:focus {
     }
 
     async function initCalendar() {
-        const calendarEl = document.getElementById('calendar');
-        document.getElementById('calendar-container').style.display = 'block';
+  const calendarEl = document.getElementById('calendar');
+  document.getElementById('calendar-container').style.display = 'block';
 
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            height: 'auto',
-            selectable: true,
-            dateClick: async (info) => {
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const fechaSeleccionada = new Date(info.dateStr);
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    locale: 'es',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    height: 'auto',
+    selectable: true,
 
-                if (fechaSeleccionada < hoy) {
-                    mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
-                    return;
-                }
+    // Al hacer clic en un día del calendario
+    dateClick: async (info) => {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const fechaSeleccionada = new Date(info.dateStr);
 
-                const motivo = prompt('¿Motivo de la cita?');
-                if (motivo) {
-                    try {
-                        await fetch(WEBAPP_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({
-                            action: 'guardarCliente',
-                            nombreDueno: formData.nombreDueno,
-                            direccion: formData.direccion,
-                            telefono: formData.telefono,
-                            correo: formData.correo,
-                            nombreMascota: formData.nombreMascota,
-                            edad: formData.edad,
-                            peso: formData.peso,
-                            sexo: formData.sexo,
-                            especie: formData.especie,
-                            raza: formData.raza,
-})
-                        });
-                        calendar.refetchEvents();
-                        mostrarAlerta('Cita agregada correctamente', 'success');
-                    } catch (error) {
-                        console.error('Error:', error);
-                        mostrarAlerta('Error al guardar la cita', 'error');
-                    }
-                }
-            },
-            events: async (fetchInfo, successCallback) => {
-                try {
-                    const response = await fetch(
-                        `${WEBAPP_URL}?action=getCitas&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`
-                    );
-                    const citas = await response.json();
-                    successCallback(citas.map(cita => ({
-                        title: `${cita.paciente.split('/')[1].trim()} - ${cita.motivo}`,
-                        start: cita.fecha,
-                        allDay: true,
-                        extendedProps: cita,
-                        color: getColorForAppointmentType(cita.motivo)
-                    })));
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
+      if (fechaSeleccionada < hoy) {
+        mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
+        return;
+      }
+
+      const motivo = prompt('¿Motivo de la cita?');
+      if (motivo) {
+        mostrarAlerta(`📌 Cita agendada visualmente para ${info.dateStr} - Motivo: ${motivo}`, 'info');
+        // Aquí podrías guardar una cita si deseas.
+      }
+    },
+
+    // Cargar eventos desde el backend
+    events: async (fetchInfo, successCallback) => {
+      try {
+        const response = await fetch(`${WEBAPP_URL}?action=getCitas`);
+        const citas = await response.json();
+
+        const eventos = citas.map(cita => {
+          const paciente = cita.Paciente || 'Mascota';
+          const motivo = cita.Motivo || 'Sin motivo';
+          const fecha = cita.Fecha || cita.fecha || '';
+
+          return {
+            title: `${paciente} - ${motivo}`,
+            start: fecha,
+            allDay: true,
+            extendedProps: cita,
+            color: getColorForAppointmentType(motivo)
+          };
         });
-        calendar.render();
+
+        successCallback(eventos);
+      } catch (error) {
+        console.error('Error al cargar eventos del calendario:', error);
+        mostrarAlerta('❌ Error al cargar citas en el calendario', 'error');
+      }
     }
+  });
+
+  calendar.render();
+}
+function getColorForAppointmentType(motivo) {
+  const colors = {
+    'Control de peso': '#4CAF50',
+    'Consulta general': '#2196F3',
+    'Revisión': '#FFC107',
+    'Vacunación': '#9C27B0',
+    'Desparasitación': '#795548'
+  };
+  return colors[motivo] || '#607D8B'; // Color por defecto
+}
 
     function getColorForAppointmentType(motivo) {
         const colors = {
