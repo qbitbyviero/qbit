@@ -476,7 +476,52 @@ input:focus, select:focus {
     <h2>Servicios de Estética</h2>
     <p>Aquí irá el contenido de estética...</p>
   </div>
+  <!-- MODAL NUEVA CITA -->
+<div id="modalNuevaCita" class="modal">
+  <div class="modal-content">
+    <h3>📅 Agendar nueva cita</h3>
 
+    <label>🐶 Nombre de la mascota:</label>
+    <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
+
+    <div id="preguntaDueno" style="display:none; margin-top: 8px;">
+      <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
+      <button onclick="usarDuenoSugerido()">✅ Sí</button>
+      <button onclick="pedirNuevoDueno()">❌ No</button>
+    </div>
+
+    <div id="campoNuevoDueno" style="display:none; margin-top: 10px;">
+      <label>👤 Dueño:</label>
+      <input type="text" id="duenoInput" />
+    </div>
+
+    <label>📋 Motivo:</label>
+    <input type="text" id="motivoInput" />
+
+    <label>🕐 Hora:</label>
+    <input type="time" id="horaInput" />
+
+    <label>📌 Estatus:</label>
+    <select id="estatusInput">
+      <option value="Activa">Activa</option>
+      <option value="Cancelada">Cancelada</option>
+    </select>
+
+    <label>📝 Notas:</label>
+    <textarea id="notasInput"></textarea>
+
+    <label>📷 Foto:</label>
+    <input type="file" id="fotoInput" accept="image/*" capture="environment" />
+
+    <label>💲 Costo:</label>
+    <input type="number" id="costoInput" />
+
+    <div style="margin-top: 10px;">
+      <button onclick="guardarNuevaCita()">💾 Guardar</button>
+      <button onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
+    </div>
+  </div>
+</div>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
@@ -875,6 +920,77 @@ function comenzar() {
     calendarioInicializado = true;
   }
 }
+let fechaSeleccionada = null;
+
+// Mostrar modal con fecha seleccionada
+function abrirModalNuevaCita(fecha) {
+  fechaSeleccionada = fecha;
+  document.getElementById('modalNuevaCita').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// Verificar si mascota ya existe
+async function verificarMascotaExistente() {
+  const nombreMascota = document.getElementById('mascotaInput').value.trim();
+  if (!nombreMascota) return;
+
+  const response = await fetch(`${WEBAPP_URL}?action=verificarMascota&nombreMascota=${encodeURIComponent(nombreMascota)}`);
+  const resultado = await response.json();
+
+  if (resultado.encontrado) {
+    document.getElementById('duenoSugerido').textContent = resultado.dueno;
+    document.getElementById('preguntaDueno').style.display = 'block';
+  } else {
+    document.getElementById('preguntaDueno').style.display = 'none';
+    document.getElementById('campoNuevoDueno').style.display = 'block';
+  }
+}
+
+function usarDuenoSugerido() {
+  const sugerido = document.getElementById('duenoSugerido').textContent;
+  document.getElementById('duenoInput').value = sugerido;
+  document.getElementById('preguntaDueno').style.display = 'none';
+  document.getElementById('campoNuevoDueno').style.display = 'none';
+}
+
+function pedirNuevoDueno() {
+  document.getElementById('campoNuevoDueno').style.display = 'block';
+  document.getElementById('preguntaDueno').style.display = 'none';
+}
+
+function cerrarModal(id) {
+  document.getElementById(id).style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// Preparar y enviar datos de la cita
+async function guardarNuevaCita() {
+  const cita = {
+    fecha: fechaSeleccionada,
+    hora: document.getElementById('horaInput').value,
+    paciente: document.getElementById('mascotaInput').value,
+    cliente: document.getElementById('duenoInput').value,
+    motivo: document.getElementById('motivoInput').value,
+    estatus: document.getElementById('estatusInput').value,
+    notas: document.getElementById('notasInput').value,
+    costo: document.getElementById('costoInput').value
+  };
+
+  // Aquí luego agregaremos el manejo de la foto 📸
+
+  await fetch(WEBAPP_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      action: 'guardarCitaAvanzada',
+      ...cita
+    })
+  });
+
+  cerrarModal('modalNuevaCita');
+  mostrarAlerta('📌 Cita guardada', 'success');
+  calendar.refetchEvents();
+}
+
 </script>
 </body>
 </html>
