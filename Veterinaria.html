@@ -525,7 +525,7 @@ input:focus, select:focus {
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwN0ck1GzHeGc1QH_G20FCHir-ni5Cn_3OPQV5vx4Gd1zP4qhTvUdJ9g4HOYqOEV_Wg/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby8LIunHcZchOUriC7LJc9c_bIQCCsd9wZpipmpMDC-1CFoS1c8EeyHgXUZ97phzdZO/exec';
     let calendar;
     let citasPendientes = [];
     const razasPorEspecie = {
@@ -628,7 +628,6 @@ input:focus, select:focus {
             initCalendar();
         });
     }
-
     async function initCalendar() {
   const calendarEl = document.getElementById('calendar');
   document.getElementById('calendar-container').style.display = 'block';
@@ -644,25 +643,25 @@ input:focus, select:focus {
     height: 'auto',
     selectable: true,
 
-    // Al hacer clic en un día del calendario
-    dateClick: async (info) => {
+    // ✅ CLICK EN UNA FECHA: ABRIR MODAL
+    dateClick: (info) => {
       const hoy = new Date();
       hoy.setHours(0, 0, 0, 0);
-      const fechaSeleccionada = new Date(info.dateStr);
+      const seleccionada = new Date(info.dateStr);
 
-      if (fechaSeleccionada < hoy) {
+      if (seleccionada < hoy) {
         mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
         return;
       }
 
-      const motivo = prompt('¿Motivo de la cita?');
-      if (motivo) {
-        mostrarAlerta(`📌 Cita agendada visualmente para ${info.dateStr} - Motivo: ${motivo}`, 'info');
-        // Aquí podrías guardar una cita si deseas.
-      }
+      // Guardamos la fecha seleccionada globalmente
+      fechaSeleccionada = info.dateStr;
+
+      // Abrir modal personalizado para nueva cita
+      abrirModal('modalNuevaCita');
     },
 
-    // Cargar eventos desde el backend
+    // ✅ CARGAR CITAS DESDE EL BACKEND
     events: async (fetchInfo, successCallback) => {
       try {
         const response = await fetch(`${WEBAPP_URL}?action=getCitas`);
