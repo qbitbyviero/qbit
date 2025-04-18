@@ -525,7 +525,7 @@ input:focus, select:focus {
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby8LIunHcZchOUriC7LJc9c_bIQCCsd9wZpipmpMDC-1CFoS1c8EeyHgXUZ97phzdZO/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzpVb6-SzbZ6a-nD6dc32xruFoH3VeUIi0Fpwi383al2vmaRaht25ItOJ-lB-xZoBX6/exec';
     let calendar;
     let citasPendientes = [];
     const razasPorEspecie = {
@@ -963,6 +963,7 @@ function cerrarModal(id) {
 }
 
 // Preparar y enviar datos de la cita
+// 🔄 Fragmento que sustituye la función guardarNuevaCita
 async function guardarNuevaCita() {
   const cita = {
     fecha: fechaSeleccionada,
@@ -975,21 +976,34 @@ async function guardarNuevaCita() {
     costo: document.getElementById('costoInput').value
   };
 
-  // Aquí luego agregaremos el manejo de la foto 📸
+  try {
+    const response = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'guardarCitaAvanzada',
+        ...cita
+      })
+    });
 
-  await fetch(WEBAPP_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'guardarCitaAvanzada',
-      ...cita
-    })
-  });
+    const resultado = await response.json();
 
-  cerrarModal('modalNuevaCita');
-  mostrarAlerta('📌 Cita guardada', 'success');
-  calendar.refetchEvents();
+    if (resultado.status === 'success') {
+      cerrarModal('modalNuevaCita');
+      mostrarAlerta('📌 Cita guardada correctamente', 'success');
+      calendar.refetchEvents();
+
+      // Abrir ticket (usando GET)
+      const ticketURL = `${WEBAPP_URL}?action=verTicket&paciente=${encodeURIComponent(cita.paciente)}&cliente=${encodeURIComponent(cita.cliente)}&motivo=${encodeURIComponent(cita.motivo)}&costo=${encodeURIComponent(cita.costo)}`;
+      window.open(ticketURL, '_blank', 'width=400,height=600');
+
+    } else {
+      throw new Error(resultado.message || 'Error al guardar la cita');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarAlerta('❌ Error al guardar la cita', 'error');
+  }
 }
-
 </script>
 </body>
 </html>
