@@ -462,7 +462,7 @@ nav {
       
           <li><a href="#" onclick="abrirModal('modalHistorial'); return false;">📖 Historial</a></li>
           <li><a href="#" onclick="abrirVacuna(); return false;">💉 Vacuna</a></li>
-          <li><a href="#" onclick="abrirTienda(); return false;">🛍️ Tienda</a></li>
+          <li><a href="#" onclick="abrirModal('tienda-section'); return false;">🛍️ Tienda</a></li>
           <li><a href="#" onclick="abrirEstetica(); return false;">✂️ Estética</a></li>
         </ul>
       </nav>
@@ -1536,12 +1536,7 @@ function abrirVacuna() {
 
 // Abre la sección de tienda
 function abrirTienda() {
-  cerrarSecciones();
-  const s = document.getElementById('tienda-section');
-  if (s) {
-    s.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
+  abrirModal('tienda-section');
 }
 
 // Abre la sección de estética
