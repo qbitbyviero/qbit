@@ -339,6 +339,76 @@ input:focus, select:focus {
         margin: 2% auto;
     }
 }
+nav {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.menu-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.menu-nav > li {
+  position: relative;
+}
+
+.menu-nav li a {
+  display: inline-block;
+  background: linear-gradient(135deg, #2AC3FF, #5af2ff);
+  color: #0d2c3b;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.menu-nav li a:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(90, 242, 255, 0.4);
+}
+
+/* Submenú */
+.menu-nav .submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  list-style: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 160px;
+}
+
+.menu-nav .submenu li a {
+  display: block;
+  padding: 10px;
+  border-radius: 0;
+  background: none;
+  color: #0d2c3b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.menu-nav .submenu li a:hover {
+  background: #e6f7ff;
+}
+
+/* Mostrar submenú al pasar el mouse */
+.menu-nav .dropdown:hover .submenu {
+  display: block;
+}
+
   </style>
 </head>
 <body>
@@ -367,20 +437,22 @@ input:focus, select:focus {
       <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
       <h1>Agenda Veterinaria - Posh Posh</h1>
       <nav>
-        <ul>
-          <li>
+        <ul class="menu-nav">
+          <li class="dropdown">
             <a href="#">Cliente ⬇</a>
-            <ul>
+            <ul class="submenu">
               <li><a href="#" onclick="abrirModal('modalNuevoCliente'); return false;">🐾 Nuevo</a></li>
               <li><a href="#" onclick="abrirModal('modalExistente'); return false;">🔎 Existente</a></li>
             </ul>
           </li>
-          <button onclick="mostrarSeccionHistorial()" class="action-button">📖 Historial</button>
-          <li><a href="#vacuna-section">Vacuna</a></li>
-          <li><a href="#tienda-section">Tienda</a></li>
-          <li><a href="#estetica-section">Estética</a></li>
+      
+          <li><a href="#" onclick="abrirHistorial(); return false;">📖 Historial</a></li>
+          <li><a href="#" onclick="abrirVacuna(); return false;">💉 Vacuna</a></li>
+          <li><a href="#" onclick="abrirTienda(); return false;">🛍️ Tienda</a></li>
+          <li><a href="#" onclick="abrirEstetica(); return false;">✂️ Estética</a></li>
         </ul>
       </nav>
+      
     </header>
     <div id="calendar"></div>
   </div>
@@ -1006,12 +1078,38 @@ async function guardarNuevaCita() {
 }
 function abrirHistorial() {
     google.script.run.withSuccessHandler(function(htmlContent) {
-      const iframe = HtmlService.createHtmlOutput(htmlContent)
+      const modal = HtmlService.createHtmlOutput(htmlContent)
         .setWidth(800)
-        .setHeight(650); // puedes ajustar esta altura
-
-      google.script.host.showModalDialog(iframe, "Historial Clínico");
+        .setHeight(600);
+      google.script.host.showModalDialog(modal, "Historial Clínico");
     }).cargarHistorialHTML();
+  }
+
+  function abrirVacuna() {
+    google.script.run.withSuccessHandler(function(htmlContent) {
+      const modal = HtmlService.createHtmlOutput(htmlContent)
+        .setWidth(800)
+        .setHeight(600);
+      google.script.host.showModalDialog(modal, "Vacunación");
+    }).cargarVacunaHTML(); // <-- función en tu .gs
+  }
+
+  function abrirTienda() {
+    google.script.run.withSuccessHandler(function(htmlContent) {
+      const modal = HtmlService.createHtmlOutput(htmlContent)
+        .setWidth(800)
+        .setHeight(600);
+      google.script.host.showModalDialog(modal, "Tienda");
+    }).cargarTiendaHTML();
+  }
+
+  function abrirEstetica() {
+    google.script.run.withSuccessHandler(function(htmlContent) {
+      const modal = HtmlService.createHtmlOutput(htmlContent)
+        .setWidth(800)
+        .setHeight(600);
+      google.script.host.showModalDialog(modal, "Estética");
+    }).cargarEsteticaHTML();
   }
 </script>
 </body>
