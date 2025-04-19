@@ -211,6 +211,24 @@
     max-height: 85vh;
     overflow-y: auto;
 }
+.modal-content.tienda {
+  background: white;
+  margin: 3% auto;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.carrito-flotante {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
 
 @keyframes fadeIn {
     from { opacity: 0; }
@@ -865,7 +883,7 @@ nav {
   </div>
 <!-- Modal Tienda -->
 <div id="tienda-section" class="modal">
-  <div class="modal-content" style="max-width:1000px; max-height:90vh; overflow-y:auto;">
+  <div class="modal-content tienda">
     <div class="modal-header">
       <h3 class="modal-title">🛍️ Tienda</h3>
       <span class="close" onclick="cerrarModal('tienda-section')">&times;</span>
