@@ -375,7 +375,7 @@ input:focus, select:focus {
               <li><a href="#" onclick="abrirModal('modalExistente'); return false;">🔎 Existente</a></li>
             </ul>
           </li>
-          <li><a href="#historial-section">Historial</a></li>
+          <button onclick="mostrarSeccionHistorial()" class="action-button">📖 Historial</button>
           <li><a href="#vacuna-section">Vacuna</a></li>
           <li><a href="#tienda-section">Tienda</a></li>
           <li><a href="#estetica-section">Estética</a></li>
@@ -525,7 +525,7 @@ input:focus, select:focus {
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzYWKpocPcnDqjqPFMghe_17VzkWDiP2J-pd14aCP76ZuBf5g3f4CbocpLypqz0Q6f6/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzS3LtbkWvNQAF4ktWQcm23W2Fuz9l0V79hkYQp4j3zyadzHlI_s5WIRPqn2rwSarDW/exec';
     let calendar;
     let citasPendientes = [];
     const razasPorEspecie = {
@@ -1004,6 +1004,15 @@ async function guardarNuevaCita() {
     mostrarAlerta('❌ Error al guardar la cita', 'error');
   }
 }
+function abrirHistorial() {
+    google.script.run.withSuccessHandler(function(htmlContent) {
+      const iframe = HtmlService.createHtmlOutput(htmlContent)
+        .setWidth(800)
+        .setHeight(650); // puedes ajustar esta altura
+
+      google.script.host.showModalDialog(iframe, "Historial Clínico");
+    }).cargarHistorialHTML();
+  }
 </script>
 </body>
 </html>
