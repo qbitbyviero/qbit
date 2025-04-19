@@ -1539,7 +1539,8 @@ function inicializarTienda() {
 }
 // 2) Mostrar el modal y llamar a inicializar
 function abrirTienda() {
-  abrirModal('tienda-section');
+  document.getElementById('tienda-section').style.display = 'block';
+  document.body.style.overflow = 'hidden';
   inicializarTienda();
 }
 </script>
