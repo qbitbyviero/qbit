@@ -529,10 +529,151 @@ nav {
   </div>
 
   <!-- [SECCIÓN] SECCIONES PARA EL MENÚ -->
-  <div id="historial-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
-    <h2>Historial de Mascotas</h2>
-    <p>Aquí irá el contenido del historial...</p>
-  </div>
+  <div id="historial-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto; background: #ffffffdd; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);">
+    <h2>📋 Historia Clínica Veterinaria</h2>
+
+    <div class="section-title">📑 Información General</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Número Historia Clínica</label>
+            <input type="text" name="num_historia">
+        </div>
+        <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" name="fecha">
+        </div>
+        <div class="form-group">
+            <label>Cliente ID</label>
+            <input type="text" name="cliente_id">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Nombre Dueño</label>
+            <input type="text" name="nombre_dueno">
+        </div>
+        <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" name="direccion">
+        </div>
+        <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" name="telefono">
+        </div>
+        <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" name="correo">
+        </div>
+    </div>
+
+    <div class="section-title">🐾 Datos de la Mascota</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Nombre Mascota</label>
+            <input type="text" name="nombre_mascota">
+        </div>
+        <div class="form-group">
+            <label>Especie</label>
+            <input type="text" name="especie">
+        </div>
+        <div class="form-group">
+            <label>Raza</label>
+            <input type="text" name="raza">
+        </div>
+        <div class="form-group">
+            <label>Sexo</label>
+            <select name="sexo">
+                <option>Macho</option>
+                <option>Hembra</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Edad</label>
+            <input type="text" name="edad">
+        </div>
+        <div class="form-group">
+            <label>Peso</label>
+            <input type="text" name="peso">
+        </div>
+    </div>
+
+    <div class="section-title">🧬 Evaluación Clínica</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Temperatura (°C)</label>
+            <input type="text" name="temperatura">
+        </div>
+        <div class="form-group">
+            <label>Pulso</label>
+            <input type="text" name="pulso">
+        </div>
+        <div class="form-group">
+            <label>Frecuencia Cardíaca</label>
+            <input type="text" name="cardiaca">
+        </div>
+        <div class="form-group">
+            <label>Frecuencia Respiratoria</label>
+            <input type="text" name="respiratoria">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>Estado General</label>
+            <input type="text" name="estado_general">
+        </div>
+        <div class="form-group">
+            <label>Tiempo de Llenado Capilar</label>
+            <input type="text" name="capilar">
+        </div>
+        <div class="form-group">
+            <label>Ojos</label>
+            <input type="text" name="ojos">
+        </div>
+        <div class="form-group">
+            <label>Tegumentario</label>
+            <input type="text" name="tegumentario">
+        </div>
+        <div class="form-group">
+            <label>Hidratación</label>
+            <input type="text" name="hidratacion">
+        </div>
+    </div>
+
+    <div class="section-title">💊 Diagnóstico & Tratamiento</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Diagnóstico</label>
+            <textarea name="diagnostico"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Tratamiento</label>
+            <textarea name="tratamiento"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Observaciones</label>
+            <textarea name="observaciones"></textarea>
+        </div>
+    </div>
+
+    <div class="section-title">💰 Costos</div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Servicios Prestados</label>
+            <textarea name="servicios"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Costo Total</label>
+            <input type="text" name="costo_total">
+        </div>
+    </div>
+
+    <div class="form-buttons" style="text-align: center; margin-top: 30px;">
+        <button onclick="guardarHistorial()">💾 Guardar</button>
+        <button class="close-btn" onclick="cerrarModal()">❌ Cerrar</button>
+    </div>
+</div>
 
   <div id="vacuna-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
     <h2>Registro de Vacunas</h2>
@@ -1076,15 +1217,17 @@ async function guardarNuevaCita() {
     mostrarAlerta('❌ Error al guardar la cita', 'error');
   }
 }
-function abrirHistorial() {
-    google.script.run.withSuccessHandler(function(htmlContent) {
-      const modal = HtmlService.createHtmlOutput(htmlContent)
-        .setWidth(800)
-        .setHeight(600);
-      google.script.host.showModalDialog(modal, "Historial Clínico");
-    }).cargarHistorialHTML();
+function cerrarModal() {
+    if (typeof google !== 'undefined' && google.script) {
+      google.script.host.close();
+    } else {
+      window.close();
+    }
   }
 
+  function guardarHistorial() {
+    alert("💾 Aquí conectarás el guardado con la hoja 'Historial'");
+  }
   function abrirVacuna() {
     google.script.run.withSuccessHandler(function(htmlContent) {
       const modal = HtmlService.createHtmlOutput(htmlContent)
