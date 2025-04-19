@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
   <style>
+    
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -423,6 +424,89 @@ nav {
   #modal-overlay.activo {
     display: flex;
   }
+  /*Tienda*/
+  .selector-categorias {
+          margin: 20px 0;
+          padding: 12px 25px;
+          border: 2px solid #2AC3FF;
+          border-radius: 25px;
+          background: white;
+          font-size: 1.1em;
+          width: 100%;
+          max-width: 400px;
+        }
+        .categoria-section {
+          margin: 30px 0;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 20px;
+          box-shadow: 0 4px 15px rgba(42, 195, 255, 0.1);
+        }
+        .grid-productos {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 20px;
+          padding: 10px;
+        }
+        .producto-card {
+          background: white;
+          border-radius: 15px;
+          padding: 15px;
+          text-align: center;
+          transition: all 0.3s ease;
+          border: 1px solid #e3f2fd;
+          position: relative;
+          min-height: 250px;
+        }
+        .producto-imagen {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 12px;
+          margin: 0 auto 10px;
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+        .badge-categoria {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background: #5af2ff;
+          padding: 4px 10px;
+          border-radius: 15px;
+          font-size: 0.8em;
+          font-weight: bold;
+        }
+        .boton-agregar, .boton-guardar {
+          cursor: pointer;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 8px;
+          font-weight: bold;
+          transition: all 0.2s;
+        }
+        .boton-agregar:hover, .boton-guardar:hover { transform: translateY(-2px); }
+        .controles-venta {
+          background: #fff;
+          padding: 20px;
+          border-radius: 15px;
+          margin: 20px 0;
+          box-shadow: 0 4px 10px rgba(42, 195, 255, 0.1);
+        }
+        .input-group { margin: 15px 0; }
+        .input-group label { display: block; margin-bottom: 8px; color: #2a3f5f; font-weight: 500; }
+        .input-group select,
+        .input-group input,
+        .input-group textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #2AC3FF;
+          border-radius: 8px;
+          font-family: 'Poppins', sans-serif;
+        }
+        @keyframes latido {
+          0%,100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
   </style>
 </head>
 <body>
@@ -462,7 +546,7 @@ nav {
       
           <li><a href="#" onclick="abrirModal('modalHistorial'); return false;">📖 Historial</a></li>
           <li><a href="#" onclick="abrirVacuna(); return false;">💉 Vacuna</a></li>
-          <li><a href="#" onclick="abrirModal('tienda-section'); return false;">🛍️ Tienda</a></li>
+          <li><a href="#" onclick="abrirTienda(); return false;">🛍️ Tienda</a></li>
           <li><a href="#" onclick="abrirEstetica(); return false;">✂️ Estética</a></li>
         </ul>
       </nav>
@@ -780,7 +864,6 @@ nav {
     <p>Aquí irá el contenido de vacunas...</p>
   </div>
 <!-- Modal Tienda -->
-<!-- Modal Tienda -->
 <div id="tienda-section" class="modal">
   <div class="modal-content" style="max-width:1000px; max-height:90vh; overflow-y:auto;">
     <div class="modal-header">
@@ -788,97 +871,10 @@ nav {
       <span class="close" onclick="cerrarModal('tienda-section')">&times;</span>
     </div>
     <div class="modal-body">
-      <!-- Estilos propios de la sección Tienda -->
-      <style>
-        .selector-categorias {
-          margin: 20px 0;
-          padding: 12px 25px;
-          border: 2px solid #2AC3FF;
-          border-radius: 25px;
-          background: white;
-          font-size: 1.1em;
-          width: 100%;
-          max-width: 400px;
-        }
-        .categoria-section {
-          margin: 30px 0;
-          padding: 20px;
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: 20px;
-          box-shadow: 0 4px 15px rgba(42, 195, 255, 0.1);
-        }
-        .grid-productos {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 20px;
-          padding: 10px;
-        }
-        .producto-card {
-          background: white;
-          border-radius: 15px;
-          padding: 15px;
-          text-align: center;
-          transition: all 0.3s ease;
-          border: 1px solid #e3f2fd;
-          position: relative;
-          min-height: 250px;
-        }
-        .producto-imagen {
-          width: 100px;
-          height: 100px;
-          object-fit: cover;
-          border-radius: 12px;
-          margin: 0 auto 10px;
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        }
-        .badge-categoria {
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          background: #5af2ff;
-          padding: 4px 10px;
-          border-radius: 15px;
-          font-size: 0.8em;
-          font-weight: bold;
-        }
-        .boton-agregar, .boton-guardar {
-          cursor: pointer;
-          padding: 8px 16px;
-          border: none;
-          border-radius: 8px;
-          font-weight: bold;
-          transition: all 0.2s;
-        }
-        .boton-agregar:hover, .boton-guardar:hover { transform: translateY(-2px); }
-        .controles-venta {
-          background: #fff;
-          padding: 20px;
-          border-radius: 15px;
-          margin: 20px 0;
-          box-shadow: 0 4px 10px rgba(42, 195, 255, 0.1);
-        }
-        .input-group { margin: 15px 0; }
-        .input-group label { display: block; margin-bottom: 8px; color: #2a3f5f; font-weight: 500; }
-        .input-group select,
-        .input-group input,
-        .input-group textarea {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #2AC3FF;
-          border-radius: 8px;
-          font-family: 'Poppins', sans-serif;
-        }
-        @keyframes latido {
-          0%,100% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-        }
-      </style>
-
       <!-- Contenido -->
-      <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" class="floating-logo" alt="Logo"
-           style="height:50px; display:block; margin:0 auto 20px;">
-
-      <div class="contenedor-principal">
+      <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo" 
+      style="height:50px; display:block; margin:0 auto 20px;">
+ <div class="contenedor-principal">
         <div class="tarjeta-pos">
           <h1 class="titulo-modulo">🛒 Sistema POS Avanzado</h1>
           <div class="controles-venta">
@@ -1520,7 +1516,7 @@ function abrirEstetica() {
 let carrito = [], productos = [], categorias = [];
 
 function inicializarTienda() {
-  // Clientes
+  // 1) Carga clientes
   google.script.run
     .withSuccessHandler(cs => {
       const sel = document.getElementById('selector-cliente');
@@ -1534,7 +1530,7 @@ function inicializarTienda() {
     })
     .obtenerClientes();
 
-  // Productos
+  // 2) Carga productos
   google.script.run
     .withSuccessHandler(datos => {
       productos = datos.productos.filter(p => p.id);
@@ -1549,13 +1545,8 @@ function inicializarTienda() {
     .obtenerProductosPOS();
 }
 
-// Pega aquí, justo debajo, tus funciones:
-// actualizarDescuento(), mostrarProductos(), filtrarProductos(),
-// agregarAlCarrito(), actualizarCantidad(), actualizarCarrito(), procesarVenta()
-
-// Actualiza abrirTienda para inicializar al mostrar:
+// 3) Ajusta abrirTienda para mostrar el modal y cargar datos
 function abrirTienda() {
-  // cerrar otros modales si quieres...
   abrirModal('tienda-section');
   inicializarTienda();
 }
