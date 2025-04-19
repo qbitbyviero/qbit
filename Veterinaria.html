@@ -222,12 +222,62 @@
   overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
+/* Estilos para el carrito flotante */
 .carrito-flotante {
   position: fixed;
   bottom: 30px;
   right: 30px;
+  width: 320px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  padding: 15px;
+  z-index: 1050;
   max-height: 70vh;
   overflow-y: auto;
+}
+
+.carrito-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.carrito-body {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.total-container {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+
+/* Estilos para los productos */
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.producto-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
 }
 
 @keyframes fadeIn {
@@ -882,11 +932,11 @@ nav {
     <p>Aquí irá el contenido de vacunas...</p>
   </div>
 <!-- Modal Tienda -->
-<div id="tienda-section" class="modal">
+<div id="modalTienda" class="modal">
   <div class="modal-content tienda">
     <div class="modal-header">
       <h3 class="modal-title">🛍️ Tienda</h3>
-      <span class="close" onclick="cerrarModal('tienda-section')">&times;</span>
+      <span class="close" onclick="cerrarModal('modalTienda')">&times;</span>
     </div>
     <div class="modal-body">
       <!-- Contenido -->
@@ -1530,18 +1580,149 @@ function abrirEstetica() {
     document.body.style.overflow = 'hidden';
   }
 }
-// — Funciones TIENDA POS —
-let carrito = [], productos = [], categorias = [];
-// Puedes adaptar esta función después para cargar desde otro origen (API, fetch, etc.)
-function inicializarTienda() {
-  // De momento, no se hace nada aquí hasta que conectes tu fuente de datos
-  console.log("🛍️ inicializarTienda(): función lista para usar tu propia carga de datos.");
-}
-// 2) Mostrar el modal y llamar a inicializar
+// Variables globales para la tienda
+let carrito = [];
+let productos = [];
+let categorias = [];
+
 function abrirTienda() {
-  document.getElementById('tienda-section').style.display = 'block';
-  document.body.style.overflow = 'hidden';
+  abrirModal('modalTienda');
   inicializarTienda();
+}
+
+function inicializarTienda() {
+  console.log("Inicializando tienda...");
+  
+  // 1. Configurar eventos
+  document.getElementById('selector-categoria').addEventListener('change', filtrarProductos);
+  document.getElementById('tipo-descuento').addEventListener('change', toggleDescuento);
+  
+  // 2. Cargar datos de ejemplo (deberás reemplazar esto con tu data real)
+  cargarDatosEjemplo();
+  
+  // 3. Actualizar interfaz
+  actualizarCarrito();
+}
+
+function cargarDatosEjemplo() {
+  // Datos de ejemplo - reemplaza con tu data real
+  categorias = ['Alimentos', 'Medicamentos', 'Juguetes', 'Accesorios'];
+  
+  productos = [
+    { id: 1, nombre: 'Alimento Premium', precio: 350, categoria: 'Alimentos' },
+    { id: 2, nombre: 'Shampoo Medicado', precio: 120, categoria: 'Medicamentos' },
+    { id: 3, nombre: 'Juguete para Gato', precio: 85, categoria: 'Juguetes' },
+    { id: 4, nombre: 'Correa Ajustable', precio: 150, categoria: 'Accesorios' }
+  ];
+  
+  // Llenar selector de categorías
+  const selectCategorias = document.getElementById('selector-categoria');
+  categorias.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    selectCategorias.appendChild(option);
+  });
+  
+  // Mostrar todos los productos inicialmente
+  mostrarProductos(productos);
+}
+
+function mostrarProductos(productosMostrar) {
+  const contenedor = document.getElementById('contenedor-categorias');
+  contenedor.innerHTML = '';
+  
+  const grid = document.createElement('div');
+  grid.className = 'grid-productos';
+  
+  productosMostrar.forEach(producto => {
+    const card = document.createElement('div');
+    card.className = 'producto-card';
+    card.innerHTML = `
+      <h4>${producto.nombre}</h4>
+      <p>$${producto.precio.toFixed(2)}</p>
+      <button onclick="agregarAlCarrito(${producto.id})" class="boton-agregar">➕ Añadir</button>
+    `;
+    grid.appendChild(card);
+  });
+  
+  contenedor.appendChild(grid);
+}
+
+function filtrarProductos() {
+  const categoriaSeleccionada = document.getElementById('selector-categoria').value;
+  
+  if (categoriaSeleccionada === 'todas') {
+    mostrarProductos(productos);
+  } else {
+    const productosFiltrados = productos.filter(p => p.categoria === categoriaSeleccionada);
+    mostrarProductos(productosFiltrados);
+  }
+}
+
+function agregarAlCarrito(idProducto) {
+  const producto = productos.find(p => p.id === idProducto);
+  if (!producto) return;
+  
+  const itemExistente = carrito.find(item => item.id === idProducto);
+  
+  if (itemExistente) {
+    itemExistente.cantidad++;
+  } else {
+    carrito.push({ ...producto, cantidad: 1 });
+  }
+  
+  actualizarCarrito();
+  mostrarAlerta(`✅ ${producto.nombre} añadido al carrito`, 'success');
+}
+
+function actualizarCarrito() {
+  const listaCarrito = document.getElementById('lista-carrito');
+  const totalElement = document.getElementById('total-venta');
+  
+  listaCarrito.innerHTML = '';
+  
+  let total = 0;
+  
+  carrito.forEach(item => {
+    const subtotal = item.precio * item.cantidad;
+    total += subtotal;
+    
+    const elemento = document.createElement('div');
+    elemento.className = 'item-carrito';
+    elemento.innerHTML = `
+      <span>${item.nombre} x${item.cantidad}</span>
+      <span>$${subtotal.toFixed(2)}</span>
+      <button onclick="eliminarDelCarrito(${item.id})" class="btn-eliminar">❌</button>
+    `;
+    listaCarrito.appendChild(elemento);
+  });
+  
+  totalElement.textContent = total.toFixed(2);
+}
+
+function eliminarDelCarrito(idProducto) {
+  carrito = carrito.filter(item => item.id !== idProducto);
+  actualizarCarrito();
+}
+
+function toggleDescuento() {
+  const tipoDescuento = document.getElementById('tipo-descuento').value;
+  const inputDescuento = document.getElementById('valor-descuento');
+  
+  inputDescuento.disabled = tipoDescuento === 'ninguno';
+}
+
+function procesarVenta() {
+  if (carrito.length === 0) {
+    mostrarAlerta('🛒 El carrito está vacío', 'error');
+    return;
+  }
+  
+  // Aquí iría la lógica para procesar la venta
+  mostrarAlerta('✅ Venta procesada correctamente', 'success');
+  carrito = [];
+  actualizarCarrito();
 }
 </script>
 </body>
