@@ -460,7 +460,7 @@ nav {
             </ul>
           </li>
       
-          <li><a href="#" onclick="abrirHistorial(); return false;">📖 Historial</a></li>
+          <li><a href="#" onclick="abrirModal('modalHistorial'); return false;">📖 Historial</a></li>
           <li><a href="#" onclick="abrirVacuna(); return false;">💉 Vacuna</a></li>
           <li><a href="#" onclick="abrirTienda(); return false;">🛍️ Tienda</a></li>
           <li><a href="#" onclick="abrirEstetica(); return false;">✂️ Estética</a></li>
@@ -1335,32 +1335,43 @@ function cerrarModalHistorial() {
   document.getElementById('modalHistorial').style.display = 'none';
   document.body.style.overflow = 'auto';
 }
-  function abrirVacuna() {
-    google.script.run.withSuccessHandler(function(htmlContent) {
-      const modal = HtmlService.createHtmlOutput(htmlContent)
-        .setWidth(800)
-        .setHeight(600);
-      google.script.host.showModalDialog(modal, "Vacunación");
-    }).cargarVacunaHTML(); // <-- función en tu .gs
-  }
+function cerrarSecciones() {
+  ['vacuna-section','tienda-section','estetica-section'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.body.style.overflow = 'auto';
+}
 
-  function abrirTienda() {
-    google.script.run.withSuccessHandler(function(htmlContent) {
-      const modal = HtmlService.createHtmlOutput(htmlContent)
-        .setWidth(800)
-        .setHeight(600);
-      google.script.host.showModalDialog(modal, "Tienda");
-    }).cargarTiendaHTML();
+// Abre la sección de vacunas
+function abrirVacuna() {
+  cerrarSecciones();
+  const s = document.getElementById('vacuna-section');
+  if (s) {
+    s.style.display = 'block';
+    document.body.style.overflow = 'hidden';
   }
+}
 
-  function abrirEstetica() {
-    google.script.run.withSuccessHandler(function(htmlContent) {
-      const modal = HtmlService.createHtmlOutput(htmlContent)
-        .setWidth(800)
-        .setHeight(600);
-      google.script.host.showModalDialog(modal, "Estética");
-    }).cargarEsteticaHTML();
+// Abre la sección de tienda
+function abrirTienda() {
+  cerrarSecciones();
+  const s = document.getElementById('tienda-section');
+  if (s) {
+    s.style.display = 'block';
+    document.body.style.overflow = 'hidden';
   }
+}
+
+// Abre la sección de estética
+function abrirEstetica() {
+  cerrarSecciones();
+  const s = document.getElementById('estetica-section');
+  if (s) {
+    s.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+}
 </script>
 </body>
 </html>
