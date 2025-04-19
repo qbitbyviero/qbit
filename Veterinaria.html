@@ -466,7 +466,6 @@ nav {
           <li><a href="#" onclick="abrirEstetica(); return false;">✂️ Estética</a></li>
         </ul>
       </nav>
-      
     </header>
     <div id="calendar"></div>
   </div>
@@ -782,10 +781,192 @@ nav {
     <p>Aquí irá el contenido de vacunas...</p>
   </div>
 <!-- Modal Tienda -->
-  <div id="tienda-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
-    <h2>Tienda</h2>
-    <p>Aquí irá el contenido de la tienda...</p>
+<div id="tienda-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; z-index: 1001; overflow-y: auto; max-height: 90vh;">
+  <!-- Estilos propios de la sección Tienda -->
+  <style>
+    .selector-categorias {
+      margin: 20px 0;
+      padding: 12px 25px;
+      border: 2px solid #2AC3FF;
+      border-radius: 25px;
+      background: white;
+      font-size: 1.1em;
+      width: 100%;
+      max-width: 400px;
+    }
+    .categoria-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(42, 195, 255, 0.1);
+    }
+    .grid-productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 10px;
+    }
+    .producto-card {
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid #e3f2fd;
+      position: relative;
+      min-height: 250px;
+    }
+    .producto-imagen {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin: 0 auto 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    .badge-categoria {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #5af2ff;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+    .boton-agregar, .boton-guardar {
+      cursor: pointer;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .boton-agregar:hover, .boton-guardar:hover { transform: translateY(-2px); }
+    .controles-venta {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      box-shadow: 0 4px 10px rgba(42, 195, 255, 0.1);
+    }
+    .input-group { margin: 15px 0; }
+    .input-group label { display: block; margin-bottom: 8px; color: #2a3f5f; font-weight: 500; }
+    .input-group select,
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #2AC3FF;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+    }
+    @keyframes latido {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+  </style>
+
+  <!-- Contenido -->
+  <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" class="floating-logo" alt="Logo" style="height: 50px; display: block; margin: 0 auto 20px;">
+
+  <div class="contenedor-principal">
+    <div class="tarjeta-pos">
+      <h1 class="titulo-modulo">🛒 Sistema POS Avanzado</h1>
+      <div class="controles-venta">
+        <div class="input-group">
+          <label>🔍 Cliente:</label>
+          <select id="selector-cliente">
+            <option value="">Venta mostrador</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>💸 Método de pago:</label>
+          <select id="metodo-pago">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta</option>
+            <option value="Transferencia">Transferencia</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>🎁 Tipo Descuento:</label>
+          <select id="tipo-descuento">
+            <option value="ninguno">Sin descuento</option>
+            <option value="porcentaje">% Descuento</option>
+            <option value="monto">Monto fijo (MXN)</option>
+            <option value="promocion">Promoción</option>
+            <option value="cliente-frecuente">Cliente frecuente</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>🎁 Valor Descuento:</label>
+          <input type="number" id="valor-descuento" value="0" min="0" disabled>
+        </div>
+        <div class="input-group">
+          <label>📝 Observaciones:</label>
+          <textarea id="observaciones" rows="2"></textarea>
+        </div>
+      </div>
+
+      <select id="selector-categoria" class="selector-categorias">
+        <option value="todas">📦 Todas las categorías</option>
+      </select>
+
+      <div id="contenedor-categorias"></div>
+    </div>
   </div>
+
+  <!-- Carrito flotante -->
+  <div class="carrito-flotante">
+    <div class="carrito-header">
+      <h3>🛒 Tu Carrito</h3>
+      <span class="total-carrito">$0.00</span>
+    </div>
+    <div class="carrito-body" id="lista-carrito"></div>
+    <div class="total-container">
+      <p>Total: $<span id="total-venta">0.00</span></p>
+      <button onclick="procesarVenta()" class="boton-guardar">✅ Finalizar Venta</button>
+    </div>
+  </div>
+
+  <!-- Scripts específicos de tienda -->
+  <script>
+    let carrito = [], productos = [], categorias = [];
+
+    function inicializarTienda() {
+      // Clientes
+      google.script.run.withSuccessHandler(cs => {
+        const sel = document.getElementById('selector-cliente');
+        cs.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.nombre;
+          o.textContent = `${c.nombre} (${c.mascota})`;
+          sel.appendChild(o);
+        });
+      }).obtenerClientes();
+
+      // Productos
+      google.script.run.withSuccessHandler(datos => {
+        productos = datos.productos.filter(p => p.id);
+        categorias = [...new Set(productos.map(p => p.categoria))];
+        const selCat = document.getElementById('selector-categoria');
+        categorias.forEach(cat => {
+          selCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+        mostrarProductos('todas');
+      }).obtenerProductosPOS();
+    }
+
+    // Llamar una sola vez al abrir el modal
+    document.getElementById('tienda-section').addEventListener('show', inicializarTienda);
+
+    // ... y el resto de tus funciones: actualizarDescuento, mostrarProductos, filtrarProductos,
+    // agregarAlCarrito, actualizarCantidad, actualizarCarrito, procesarVenta
+    // (pégalos exactamente como los tienes en tu tienda.html)
+  </script>
+</div>
+
 <!-- Modal Estetica -->
   <div id="estetica-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
     <h2>Servicios de Estética</h2>
