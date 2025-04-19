@@ -1516,33 +1516,38 @@ function abrirEstetica() {
 let carrito = [], productos = [], categorias = [];
 
 function inicializarTienda() {
-  // 1) Carga clientes
-  google.script.run
-    .withSuccessHandler(cs => {
-      const sel = document.getElementById('selector-cliente');
-      sel.innerHTML = '<option value="">Venta mostrador</option>';
-      cs.forEach(c => {
-        const o = document.createElement('option');
-        o.value = c.nombre;
-        o.textContent = `${c.nombre} (${c.mascota})`;
-        sel.appendChild(o);
-      });
-    })
-    .obtenerClientes();
+  // Solo ejecuta si estás dentro de un entorno de Google Apps Script
+  if (typeof google !== 'undefined' && google.script) {
+    // 1) Carga clientes
+    google.script.run
+      .withSuccessHandler(cs => {
+        const sel = document.getElementById('selector-cliente');
+        sel.innerHTML = '<option value="">Venta mostrador</option>';
+        cs.forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.nombre;
+          o.textContent = `${c.nombre} (${c.mascota})`;
+          sel.appendChild(o);
+        });
+      })
+      .obtenerClientes();
 
-  // 2) Carga productos
-  google.script.run
-    .withSuccessHandler(datos => {
-      productos = datos.productos.filter(p => p.id);
-      categorias = [...new Set(productos.map(p => p.categoria))];
-      const selCat = document.getElementById('selector-categoria');
-      selCat.innerHTML = '<option value="todas">📦 Todas las categorías</option>';
-      categorias.forEach(cat => {
-        selCat.innerHTML += `<option value="${cat}">${cat}</option>`;
-      });
-      mostrarProductos('todas');
-    })
-    .obtenerProductosPOS();
+    // 2) Carga productos
+    google.script.run
+      .withSuccessHandler(datos => {
+        productos = datos.productos.filter(p => p.id);
+        categorias = [...new Set(productos.map(p => p.categoria))];
+        const selCat = document.getElementById('selector-categoria');
+        selCat.innerHTML = '<option value="todas">📦 Todas las categorías</option>';
+        categorias.forEach(cat => {
+          selCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+        mostrarProductos('todas');
+      })
+      .obtenerProductosPOS();
+  } else {
+    console.warn("⚠️ google.script no está disponible. ¿Estás ejecutando esto fuera de un Web App de Google Apps Script?");
+  }
 }
 
 // 3) Ajusta abrirTienda para mostrar el modal y cargar datos
