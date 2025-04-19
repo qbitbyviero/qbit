@@ -529,7 +529,7 @@ nav {
   </div>
 
   <!-- [SECCIÓN] SECCIONES PARA EL MENÚ -->
-  <div id="historial-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto; background: #ffffffdd; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);">
+  <div id="historial-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
     <h2>📋 Historia Clínica Veterinaria</h2>
 
     <div class="section-title">📑 Información General</div>
@@ -1217,6 +1217,18 @@ async function guardarNuevaCita() {
     mostrarAlerta('❌ Error al guardar la cita', 'error');
   }
 }
+function abrirHistorial() {
+    const seccion = document.getElementById('historial-section');
+    if (seccion) {
+      seccion.style.display = 'block';
+      window.scrollTo({
+        top: seccion.offsetTop,
+        behavior: 'smooth'
+      });
+    } else {
+      alert("No se encontró la sección del historial.");
+    }
+  }
 function cerrarModal() {
     if (typeof google !== 'undefined' && google.script) {
       google.script.host.close();
