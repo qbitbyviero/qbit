@@ -1514,43 +1514,12 @@ function abrirEstetica() {
 }
 // — Funciones TIENDA POS —
 let carrito = [], productos = [], categorias = [];
-
+// Puedes adaptar esta función después para cargar desde otro origen (API, fetch, etc.)
 function inicializarTienda() {
-  // Solo ejecuta si estás dentro de un entorno de Google Apps Script
-  if (typeof google !== 'undefined' && google.script) {
-    // 1) Carga clientes
-    google.script.run
-      .withSuccessHandler(cs => {
-        const sel = document.getElementById('selector-cliente');
-        sel.innerHTML = '<option value="">Venta mostrador</option>';
-        cs.forEach(c => {
-          const o = document.createElement('option');
-          o.value = c.nombre;
-          o.textContent = `${c.nombre} (${c.mascota})`;
-          sel.appendChild(o);
-        });
-      })
-      .obtenerClientes();
-
-    // 2) Carga productos
-    google.script.run
-      .withSuccessHandler(datos => {
-        productos = datos.productos.filter(p => p.id);
-        categorias = [...new Set(productos.map(p => p.categoria))];
-        const selCat = document.getElementById('selector-categoria');
-        selCat.innerHTML = '<option value="todas">📦 Todas las categorías</option>';
-        categorias.forEach(cat => {
-          selCat.innerHTML += `<option value="${cat}">${cat}</option>`;
-        });
-        mostrarProductos('todas');
-      })
-      .obtenerProductosPOS();
-  } else {
-    console.warn("⚠️ google.script no está disponible. ¿Estás ejecutando esto fuera de un Web App de Google Apps Script?");
-  }
+  // De momento, no se hace nada aquí hasta que conectes tu fuente de datos
+  console.log("🛍️ inicializarTienda(): función lista para usar tu propia carga de datos.");
 }
-
-// 3) Ajusta abrirTienda para mostrar el modal y cargar datos
+// 2) Mostrar el modal y llamar a inicializar
 function abrirTienda() {
   abrirModal('tienda-section');
   inicializarTienda();
