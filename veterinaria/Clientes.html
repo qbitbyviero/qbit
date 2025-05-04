@@ -1,0 +1,122 @@
+ <!-- Modal de Nuevo Cliente -->
+<div id="modalNuevoCliente" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Nuevo Cliente</h3>
+      <span class="close" onclick="cerrarModal('modalNuevoCliente')">&times;</span>
+    </div>
+    <form id="formNuevoCliente" class="modal-form" onsubmit="return guardarCliente(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombreDueno">Nombre del Dueño</label>
+          <input type="text" id="nombreDueno" required>
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono 📱</label>
+          <input type="tel" id="telefono" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="direccion">Dirección 📍</label>
+          <input type="text" id="direccion" required>
+        </div>
+        <div class="form-group">
+          <label for="correo">Correo 📧</label>
+          <input type="email" id="correo" required>
+        </div>
+      </div>
+      
+      <input type="hidden" id="idMascota">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombreMascota">Nombre de Mascota 🐶/🐱</label>
+          <input type="text" id="nombreMascota" required>
+        </div>
+        <div class="form-group">
+          <label for="edad">Edad 🎂</label>
+          <input type="number" id="edad" min="0" required>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="peso">Peso ⚖️ (kg)</label>
+          <input type="number" id="peso" step="0.1" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" required>
+            <option value="">Seleccionar...</option>
+            <option value="Macho">Macho 💙</option>
+            <option value="Hembra">Hembra ❤️</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="especieSelect">Especie 🦄</label>
+          <select id="especieSelect" onchange="actualizarRazas()" required>
+            <option value="">Seleccionar...</option>
+            <option value="Perro">🐶 Perro</option>
+            <option value="Gato">🐱 Gato</option>
+            <option value="Conejo">🐰 Conejo</option>
+            <option value="Ave">🦜 Ave</option>
+            <option value="Hámster">🐹 Hámster</option>
+            <option value="Tortuga">🐢 Tortuga</option>
+            <option value="Reptil">🦎 Reptil</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="raza">Raza 🐕/🐈</label>
+          <select id="raza" required>
+            <option value="">Seleccione especie primero</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="btn-container">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalNuevoCliente')">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+     <!-- Modal Cliente Existente -->
+<div id="modalExistente" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Buscar Cliente Existente</h3>
+      <span class="close" onclick="cerrarModal('modalExistente')">&times;</span>
+    </div>
+    
+    <div class="modal-form">
+      <div class="form-group">
+        <label>Buscar por:</label>
+        <select id="tipoBusqueda">
+          <option value="mascota">Nombre de mascota</option>
+          <option value="dueno">Nombre del dueño</option>
+          <option value="telefono">Teléfono</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <input type="text" id="terminoBusqueda" placeholder="Ej. Luna, Juan Pérez, 5551234567">
+      </div>
+      
+      <button class="btn btn-primary" onclick="buscarCliente()">🔍 Buscar</button>
+      
+      <div id="resultadosBusqueda" style="margin-top: 20px; display: none;">
+        <h4>Resultados:</h4>
+        <div id="listaClientes" style="max-height: 300px; overflow-y: auto;"></div>
+      </div>
+      
+      <div class="btn-container" style="margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="cerrarModal('modalExistente')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

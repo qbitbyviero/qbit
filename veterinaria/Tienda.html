@@ -1,0 +1,72 @@
+<!-- Modal Tienda -->
+<div id="modalTienda" class="modal">
+  <div class="modal-content tienda">
+    <div class="modal-header">
+      <h3 class="modal-title">🛍️ Tienda</h3>
+      <span class="close" onclick="cerrarModal('modalTienda')">&times;</span>
+    </div>
+    <div class="modal-body">
+      <!-- Contenido -->
+      <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo" 
+      style="height:50px; display:block; margin:0 auto 20px;">
+ <div class="contenedor-principal">
+        <div class="tarjeta-pos">
+          <h1 class="titulo-modulo">🛒 Sistema POS Avanzado</h1>
+          <div class="controles-venta">
+            <div class="input-group">
+              <label>🔍 Cliente:</label>
+              <select id="selector-cliente">
+                <option value="">Venta mostrador</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>💸 Método de pago:</label>
+              <select id="metodo-pago">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>🎁 Tipo Descuento:</label>
+              <select id="tipo-descuento">
+                <option value="ninguno">Sin descuento</option>
+                <option value="porcentaje">% Descuento</option>
+                <option value="monto">Monto fijo (MXN)</option>
+                <option value="promocion">Promoción</option>
+                <option value="cliente-frecuente">Cliente frecuente</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>🎁 Valor Descuento:</label>
+              <input type="number" id="valor-descuento" value="0" min="0" disabled>
+            </div>
+            <div class="input-group">
+              <label>📝 Observaciones:</label>
+              <textarea id="observaciones" rows="2"></textarea>
+            </div>
+          </div>
+
+          <select id="selector-categoria" class="selector-categorias">
+            <option value="todas">📦 Todas las categorías</option>
+          </select>
+
+          <div id="contenedor-categorias"></div>
+        </div>
+      </div>
+
+      <!-- Carrito flotante -->
+      <div class="carrito-flotante">
+        <div class="carrito-header">
+          <h3>🛒 Tu Carrito</h3>
+          <span class="total-carrito">$0.00</span>
+        </div>
+        <div class="carrito-body" id="lista-carrito"></div>
+        <div class="total-container">
+          <p>Total: $<span id="total-venta">0.00</span></p>
+          <button onclick="procesarVenta()" class="boton-guardar">✅ Finalizar Venta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

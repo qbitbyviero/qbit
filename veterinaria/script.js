@@ -13,6 +13,15 @@
     };
 
     // ========== FUNCIONES PRINCIPALES ==========
+    function cargarModal(nombreArchivo) {
+        fetch(nombreArchivo)
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById("modales-container").innerHTML = html;
+          })
+          .catch(err => console.error("Error al cargar el modal:", err));
+      }
+      
     async function initApp() {
         const barkSound = document.getElementById('barkSound');
         setTimeout(async () => {
@@ -683,3 +692,19 @@ function procesarVenta() {
   carrito = [];
   actualizarCarrito();
 }
+function cargarYMostrarModal(archivo, idModal) {
+    fetch(archivo)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("modales-container").innerHTML = html;
+        const modal = document.getElementById(idModal);
+        if (modal) modal.style.display = "block";
+        else console.error(`No se encontró el modal con id: ${idModal}`);
+      })
+      .catch(err => console.error("Error al cargar el modal:", err));
+  }
+  
+  function cerrarModal(idModal) {
+    const modal = document.getElementById(idModal);
+    if (modal) modal.style.display = "none";
+  }  
