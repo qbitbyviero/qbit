@@ -267,19 +267,37 @@ function getColorForAppointmentType(motivo) {
     }
 
     function actualizarRazas() {
-        const especie = document.getElementById('especieSelect').value;
-        const razaSelect = document.getElementById('raza');
-        razaSelect.innerHTML = '';
-
-        if (razasPorEspecie[especie]) {
-            razasPorEspecie[especie].forEach(raza => {
-                const option = document.createElement('option');
+        const especieSelect = document.getElementById("especieSelect");
+        const razaSelect = document.getElementById("raza");
+    
+        // Limpiar las razas previas
+        razaSelect.innerHTML = "<option value=''>Seleccione especie primero</option>";
+    
+        // Diccionario de especies y sus razas
+        const razasPorEspecie = {
+            "Perro": ["Labrador", "Chihuahua", "Pastor Alemán", "Bulldog"],
+            "Gato": ["Siames", "Persa", "Sphynx", "Maine Coon"],
+            "Conejo": ["Angora", "Himalayo", "Enano", "Mini Rex"],
+            "Ave": ["Canario", "Perico", "Agaporni", "Cacatúa"],
+            "Hámster": ["Sirio", "Campbell", "Roborovski", "Chino"],
+            "Tortuga": ["Aldabra", "Leopardo", "Caja", "Marina"],
+            "Reptil": ["Gecko", "Iguana", "Serpiente", "Camaleón"]
+        };
+    
+        // Obtener la especie seleccionada
+        const especieSeleccionada = especieSelect.value;
+    
+        // Si se ha seleccionado una especie válida, actualizar las razas
+        if (razasPorEspecie[especieSeleccionada]) {
+            razasPorEspecie[especieSeleccionada].forEach(raza => {
+                const option = document.createElement("option");
                 option.value = raza;
                 option.textContent = raza;
                 razaSelect.appendChild(option);
             });
         }
     }
+    
 
     async function verificarClienteExistente(nombreDueno, nombreMascota) {
         const response = await fetch(`${WEBAPP_URL}?action=verificarCliente&nombreDueno=${encodeURIComponent(nombreDueno)}&nombreMascota=${encodeURIComponent(nombreMascota)}`);
