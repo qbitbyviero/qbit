@@ -1,5 +1,25 @@
 <!-- Modal Estetica -->
-  <div id="estetica-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
-    <h2>Servicios de Estética</h2>
-    <p>Aquí irá el contenido de estética...</p>
-  </div>
+      <div class="modal-content">
+        <h3>✂️ Registro de Estética</h3>
+      
+        <label>🐶 Nombre de la mascota:</label>
+        <input type="text" id="esteticaMascota" />
+      
+        <label>🧼 Servicio realizado:</label>
+        <input type="text" id="esteticaServicio" />
+      
+        <label>📅 Fecha:</label>
+        <input type="date" id="esteticaFecha" />
+      
+        <label>💲 Costo:</label>
+        <input type="number" id="esteticaCosto" />
+      
+        <label>💬 Notas:</label>
+        <textarea id="esteticaNotas"></textarea>
+      
+        <div style="margin-top: 10px;">
+          <button onclick="guardarEstetica()">💾 Guardar</button>
+          <button onclick="cerrarModal()">❌ Cancelar</button>
+        </div>
+      </div>
+      

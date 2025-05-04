@@ -1,5 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Vacunas</title>
+  <style>
+    .modal {
+      display: none;
+      padding: 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, textarea, button {
+      padding: 8px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      cursor: pointer;
+      padding: 6px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+      border-radius: 4px;
+    }
+
+    ul li:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
 <!-- Modal Vacunas -->
-  <div id="vacuna-section" style="display:none; padding: 40px; max-width: 1000px; margin: 0 auto;">
-    <h2>Registro de Vacunas</h2>
-    <p>Aquí irá el contenido de vacunas...</p>
+<div id="vacuna-section" class="modal">
+  <div class="modal-content">
+    <h3>💉 Registro de Vacunas</h3>
+
+    <button onclick="abrirBusquedaCliente()">🔍 Buscar Cliente</button>
+
+    <label>🐶 Nombre de la mascota:</label>
+    <input type="text" id="vacunaMascota" />
+
+    <label>🧪 Vacuna aplicada:</label>
+    <input type="text" id="vacunaNombre" list="listaVacunas" />
+    <datalist id="listaVacunas"></datalist>
+
+    <label>📆 Fecha de aplicación:</label>
+    <input type="date" id="vacunaFecha" />
+
+    <label>📆 Próxima vacuna:</label>
+    <input type="date" id="vacunaProxima" />
+
+    <label>💬 Observaciones:</label>
+    <textarea id="vacunaNotas"></textarea>
+
+    <div style="margin-top: 10px;">
+      <button onclick="guardarVacuna()">💾 Guardar</button>
+      <button onclick="cerrarModal()">❌ Cancelar</button>
+    </div>
   </div>
+</div>
+
+<!-- Modal de Búsqueda de Cliente -->
+<div id="modalBusquedaCliente" class="modal">
+  <div class="modal-content">
+    <h3>🔍 Buscar Cliente</h3>
+
+    <label>Nombre de Mascota:</label>
+    <input type="text" id="busquedaMascota" oninput="filtrarClientes()" />
+
+    <label>Nombre de Cliente:</label>
+    <input type="text" id="busquedaCliente" oninput="filtrarClientes()" />
+
+    <ul id="listaResultadosBusqueda"></ul>
+
+    <div style="margin-top: 10px;">
+      <button onclick="cerrarBusquedaCliente()">❌ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Mostrar u ocultar modales
+  function abrirBusquedaCliente() {
+    document.getElementById("modalBusquedaCliente").style.display = "block";
+  }
+
+  function cerrarBusquedaCliente() {
+    document.getElementById("modalBusquedaCliente").style.display = "none";
+  }
+
+  function cerrarModal() {
+    document.getElementById("vacuna-section").style.display = "none";
+    cerrarBusquedaCliente();
+  }
+
+  // Buscar clientes (simulado por ahora)
+  function filtrarClientes() {
+    const mascota = document.getElementById("busquedaMascota").value.toLowerCase();
+    const cliente = document.getElementById("busquedaCliente").value.toLowerCase();
+    const lista = document.getElementById("listaResultadosBusqueda");
+
+    const clientes = [
+      { mascota: "Firulais", cliente: "Juan Pérez" },
+      { mascota: "Mishi", cliente: "Ana López" },
+      { mascota: "Max", cliente: "Carlos Ruiz" }
+    ];
+
+    lista.innerHTML = "";
+
+    const filtrados = clientes.filter(c =>
+      c.mascota.toLowerCase().includes(mascota) &&
+      c.cliente.toLowerCase().includes(cliente)
+    );
+
+    filtrados.forEach(c => {
+      const li = document.createElement("li");
+      li.textContent = `${c.mascota} - ${c.cliente}`;
+      li.onclick = () => {
+        document.getElementById("vacunaMascota").value = c.mascota;
+        cerrarBusquedaCliente();
+      };
+      lista.appendChild(li);
+    });
+  }
+
+  // Función para guardar vacuna (a conectar con Google Sheets más adelante)
+  function guardarVacuna() {
+    const mascota = document.getElementById("vacunaMascota").value;
+    const vacuna = document.getElementById("vacunaNombre").value;
+    const fecha = document.getElementById("vacunaFecha").value;
+    const proxima = document.getElementById("vacunaProxima").value;
+    const notas = document.getElementById("vacunaNotas").value;
+
+    console.log("Guardar vacuna:", { mascota, vacuna, fecha, proxima, notas });
+
+    alert("Vacuna registrada correctamente (simulado).");
+    cerrarModal();
+  }
+</script>
+
+</body>
+</html>
