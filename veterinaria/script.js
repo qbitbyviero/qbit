@@ -1,5 +1,5 @@
 
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzf9DVM1u9egPIYgu6PuqvgTOKZOHuz5zoqCNOdM3BE7kKlVucxqDzP7oaV7jpNm4Zz/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec';
     let calendar;
     let citasPendientes = [];
     const razasPorEspecie = {
@@ -548,16 +548,11 @@ function abrirEstetica() {
     document.body.style.overflow = 'hidden';
   }
 }
-// Variables globales para la tienda
 let carrito = [];
 let productos = [];
 let categorias = [];
 
-function abrirTienda() {
-  abrirModal('modalTienda');
-  inicializarTienda();
-}
-
+// Función para inicializar la tienda
 function inicializarTienda() {
   console.log("Inicializando tienda...");
   
@@ -565,37 +560,43 @@ function inicializarTienda() {
   document.getElementById('selector-categoria').addEventListener('change', filtrarProductos);
   document.getElementById('tipo-descuento').addEventListener('change', toggleDescuento);
   
-  // 2. Cargar datos de ejemplo (deberás reemplazar esto con tu data real)
-  cargarDatosEjemplo();
+  // 2. Obtener datos desde Google Sheets (ahora utilizando el backend)
+  obtenerProductosDesdeBackend();
   
   // 3. Actualizar interfaz
   actualizarCarrito();
 }
 
-function cargarDatosEjemplo() {
-  // Datos de ejemplo - reemplaza con tu data real
-  categorias = ['Alimentos', 'Medicamentos', 'Juguetes', 'Accesorios'];
+// Función para obtener productos desde el backend (Google Apps Script)
+function obtenerProductosDesdeBackend() {
+  const url = 'https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?action=getProductos';
   
-  productos = [
-    { id: 1, nombre: 'Alimento Premium', precio: 350, categoria: 'Alimentos' },
-    { id: 2, nombre: 'Shampoo Medicado', precio: 120, categoria: 'Medicamentos' },
-    { id: 3, nombre: 'Juguete para Gato', precio: 85, categoria: 'Juguetes' },
-    { id: 4, nombre: 'Correa Ajustable', precio: 150, categoria: 'Accesorios' }
-  ];
-  
-  // Llenar selector de categorías
-  const selectCategorias = document.getElementById('selector-categoria');
-  categorias.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat;
-    option.textContent = cat;
-    selectCategorias.appendChild(option);
-  });
-  
-  // Mostrar todos los productos inicialmente
-  mostrarProductos(productos);
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      productos = data.productos;
+      
+      // Obtener categorías únicas
+      categorias = [...new Set(productos.map(p => p.categoria))];
+      
+      // Llenar el selector de categorías
+      const selectCategorias = document.getElementById('selector-categoria');
+      categorias.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        selectCategorias.appendChild(option);
+      });
+      
+      // Mostrar todos los productos inicialmente
+      mostrarProductos(productos);
+    })
+    .catch(error => {
+      console.error('Error al cargar los datos del backend:', error);
+    });
 }
 
+// Mostrar productos filtrados
 function mostrarProductos(productosMostrar) {
   const contenedor = document.getElementById('contenedor-categorias');
   contenedor.innerHTML = '';
@@ -617,6 +618,7 @@ function mostrarProductos(productosMostrar) {
   contenedor.appendChild(grid);
 }
 
+// Filtrar productos según la categoría seleccionada
 function filtrarProductos() {
   const categoriaSeleccionada = document.getElementById('selector-categoria').value;
   
@@ -628,6 +630,7 @@ function filtrarProductos() {
   }
 }
 
+// Función para agregar al carrito
 function agregarAlCarrito(idProducto) {
   const producto = productos.find(p => p.id === idProducto);
   if (!producto) return;
@@ -644,6 +647,7 @@ function agregarAlCarrito(idProducto) {
   mostrarAlerta(`✅ ${producto.nombre} añadido al carrito`, 'success');
 }
 
+// Función para actualizar el carrito
 function actualizarCarrito() {
   const listaCarrito = document.getElementById('lista-carrito');
   const totalElement = document.getElementById('total-venta');
@@ -669,11 +673,13 @@ function actualizarCarrito() {
   totalElement.textContent = total.toFixed(2);
 }
 
+// Eliminar del carrito
 function eliminarDelCarrito(idProducto) {
   carrito = carrito.filter(item => item.id !== idProducto);
   actualizarCarrito();
 }
 
+// Cambiar el estado del descuento
 function toggleDescuento() {
   const tipoDescuento = document.getElementById('tipo-descuento').value;
   const inputDescuento = document.getElementById('valor-descuento');
@@ -681,6 +687,7 @@ function toggleDescuento() {
   inputDescuento.disabled = tipoDescuento === 'ninguno';
 }
 
+// Procesar la venta
 function procesarVenta() {
   if (carrito.length === 0) {
     mostrarAlerta('🛒 El carrito está vacío', 'error');
@@ -692,6 +699,7 @@ function procesarVenta() {
   carrito = [];
   actualizarCarrito();
 }
+
 function cargarYMostrarModal(archivo, idModal) {
     fetch(archivo)
       .then(res => res.text())
@@ -764,3 +772,204 @@ function eliminarFila(button) {
     const row = button.closest('tr');
     row.remove();
 }
+function guardarEstetica(event) {
+    event.preventDefault();
+  
+    const datos = {
+      nombreMascota: document.getElementById("nombreMascotaEstetica").value,
+      nombreDueno: document.getElementById("nombreDuenoEstetica").value,
+      servicio: document.getElementById("servicioRealizado").value,
+      fecha: document.getElementById("fechaServicio").value,
+      costo: document.getElementById("costoServicio").value,
+      estilista: document.getElementById("estilista").value,
+      productos: document.getElementById("productosUsados").value,
+      notas: document.getElementById("notasEstetica").value,
+      // Las fotos se manejarán por separado
+    };
+  
+    google.script.run
+      .withSuccessHandler(() => {
+        alert("Registro de estética guardado exitosamente.");
+        cerrarModal('modalEstetica');
+      })
+      .withFailureHandler((error) => {
+        alert("Error al guardar el registro: " + error.message);
+      })
+      .guardarRegistroEstetica(datos);
+  }  
+  function cargarVacunas() {
+    fetch('https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?action=getVacunas')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('nombreVacuna');
+        select.innerHTML = '<option value="">Seleccione una vacuna</option>';
+        data.vacunas.forEach(nombre => {
+          const option = document.createElement('option');
+          option.value = nombre;
+          option.textContent = nombre;
+          select.appendChild(option);
+        });
+      })
+      .catch(err => {
+        console.error('Error al cargar vacunas:', err);
+        const select = document.getElementById('nombreVacuna');
+        select.innerHTML = '<option value="">Error al cargar vacunas</option>';
+      });
+  }
+  function guardarVacuna() {
+    const datos = {
+      action: 'guardarVacuna',
+      nombreDueno: document.getElementById('nombreDueno')?.value || '',
+      idCliente: document.getElementById('idCliente')?.value || '',
+      idMascota: document.getElementById('idMascota')?.value || '',
+      nombreMascota: document.getElementById('nombreMascota').value,
+      edad: document.getElementById('edad').value,
+      sexo: document.getElementById('genero').value,
+      peso: document.getElementById('peso')?.value || '',
+      especie: document.getElementById('especieSelect').value,
+      raza: document.getElementById('raza').value,
+      vacuna: document.getElementById('nombreVacuna').value,
+      fechaAplicacion: document.getElementById('fechaAplicacion').value,
+      fechaRefuerzo: document.getElementById('fechaRefuerzo').value,
+      veterinario: document.getElementById('veterinario').value,
+      observaciones: document.getElementById('observaciones').value
+    };
+  
+    fetch('https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec', {
+      method: 'POST',
+      body: JSON.stringify(datos),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(response => {
+      if (response.success) {
+        alert('✅ Vacuna registrada con éxito');
+        agregarFilaTabla(datos); // Esto actualiza la tabla HTML visible
+      } else {
+        alert('❌ Error al guardar: ' + response.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('❌ Error de red o servidor');
+    });
+  }    
+  function cargarVacunas(idCliente, idMascota) {
+    fetch(`https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?idCliente=${idCliente}&idMascota=${idMascota}`)
+      .then(res => res.json())
+      .then(data => {
+        const tabla = document.querySelector('#tablaVacunas tbody');
+        tabla.innerHTML = ''; // limpiar tabla
+  
+        if (data.status === 'success' && data.vacunas.length > 0) {
+          data.vacunas.forEach(vac => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+              <td>${vac.vacuna}</td>
+              <td>${vac.fechaAplicacion}</td>
+              <td>${vac.fechaRefuerzo}</td>
+              <td>${vac.veterinario}</td>
+              <td>${vac.observaciones}</td>
+              <td><button onclick="this.closest('tr').remove()">❌</button></td>
+            `;
+            tabla.appendChild(fila);
+          });
+        } else {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `<td colspan="6">Sin vacunas registradas</td>`;
+          tabla.appendChild(fila);
+        }
+      })
+      .catch(error => {
+        console.error('Error al cargar vacunas:', error);
+      });
+  }
+  function guardarClienteEnHistorial(datos) {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID);  // Asegúrate de tener el ID de tu hoja de cálculo
+    const historialSheet = sheet.getSheetByName('Historial');
+  
+    const clienteRow = [
+      new Date(),                   // Fecha de registro
+      datos.num_historia,           // Número de historia (si es requerido)
+      datos.fecha,                  // Fecha de consulta
+      datos.cliente_id,             // ID del cliente
+      datos.nombre_dueno,           // Nombre del dueño
+      datos.direccion,              // Dirección del dueño
+      datos.telefono,               // Teléfono del dueño
+      datos.correo,                 // Correo electrónico del dueño
+      datos.nombre_mascota,         // Nombre de la mascota
+      datos.especie,                // Especie de la mascota
+      datos.raza,                   // Raza de la mascota
+      datos.sexo,                   // Sexo de la mascota
+      datos.edad,                   // Edad de la mascota
+      datos.peso,                   // Peso de la mascota
+      datos.temperatura,            // Temperatura de la mascota
+      datos.pulso,                  // Pulso de la mascota
+      datos.cardiaca,               // Frecuencia cardíaca de la mascota
+      datos.respiratoria,           // Frecuencia respiratoria
+      datos.estado_general,         // Estado general de la mascota
+      datos.capilar,                // Llenado capilar de la mascota
+      datos.ojos,                   // Observaciones de los ojos
+      datos.tegumentario,           // Estado tegumentario
+      datos.hidratacion,            // Nivel de hidratación
+      datos.diagnostico,            // Diagnóstico del veterinario
+      datos.tratamiento,            // Tratamiento recomendado
+      datos.observaciones,          // Otras observaciones
+      datos.servicios,              // Servicios proporcionados
+      datos.costo_total             // Costo total
+    ];
+  
+    historialSheet.appendRow(clienteRow); // Agregamos la fila a la hoja
+  
+    return 'Cliente guardado exitosamente en Historial';
+  }
+  function guardarVacunaEnHistorial(datos) {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const historialSheet = sheet.getSheetByName('Historial');
+  
+    const vacunaRow = [
+      new Date(),                   // Fecha de registro
+      datos.idCliente,               // ID del cliente
+      datos.nombreDueno,             // Nombre del dueño
+      datos.idMascota,               // ID de la mascota
+      datos.nombreMascota,           // Nombre de la mascota
+      datos.edad,                    // Edad de la mascota
+      datos.sexo,                    // Sexo de la mascota
+      datos.peso,                    // Peso de la mascota
+      datos.especie,                 // Especie de la mascota
+      datos.raza,                    // Raza de la mascota
+      datos.vacuna,                  // Vacuna aplicada
+      datos.fechaAplicacion,         // Fecha de aplicación
+      datos.fechaRefuerzo,           // Fecha de refuerzo (si aplica)
+      datos.veterinario,             // Nombre del veterinario
+      datos.observaciones            // Observaciones
+    ];
+  
+    historialSheet.appendRow(vacunaRow); // Agregamos la fila a la hoja
+  
+    return 'Vacuna guardada exitosamente en Historial';
+  }
+  function guardarCitaEnHistorial(datos) {
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const historialSheet = sheet.getSheetByName('Historial');
+  
+    const citaRow = [
+      new Date(),                   // Fecha de registro
+      datos.fecha || '',             // Fecha de la cita
+      datos.hora || '',              // Hora de la cita
+      datos.cliente || '',           // Cliente asociado
+      datos.paciente || '',          // Mascota asociada
+      datos.motivo || '',            // Motivo de la cita
+      datos.estatus || 'Activa',     // Estatus de la cita
+      datos.notas || '',             // Notas adicionales
+      'sin-foto.jpg',                // Foto asociada (puede dejarse como un valor por defecto)
+      datos.costo || 0               // Costo de la cita
+    ];
+  
+    historialSheet.appendRow(citaRow);  // Agregamos la fila a la hoja
+  
+    return 'Cita guardada exitosamente en Historial';
+  }
+        

@@ -1,181 +1,246 @@
 <!-- Modal Historial -->
 <div id="modalHistorial" class="modal">
-  <div class="modal-content" style="max-width: 1000px;">
-    <div class="modal-header">
-      <h3 class="modal-title">📋 Historia Clínica Veterinaria</h3>
-      <span class="close" onclick="cerrarModal('modalHistorial')">&times;</span>
-    </div>
-    
-    <div class="modal-body">
-      <div class="section-title">📑 Información General</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Número Historia Clínica</label>
-          <input type="text" name="num_historia">
-        </div>
-        <div class="form-group">
-          <label>Fecha</label>
-          <input type="date" name="fecha">
-        </div>
-        <div class="form-group">
-          <label>Cliente ID</label>
-          <input type="text" name="cliente_id">
-        </div>
+    <div class="modal-content" style="max-width: 1000px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📋 Historia Clínica Veterinaria</h3>
+        <span class="close" onclick="cerrarModal('modalHistorial')">&times;</span>
       </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nombre Dueño</label>
-          <input type="text" name="nombre_dueno">
+  
+      <div class="modal-body">
+        <!-- Formulario de Entrada -->
+        <div class="section-title">📑 Información General</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Número Historia Clínica</label>
+            <input type="text" name="num_historia">
+          </div>
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" name="fecha">
+          </div>
+          <div class="form-group">
+            <label>Cliente ID</label>
+            <input type="text" name="cliente_id">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Dirección</label>
-          <input type="text" name="direccion">
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre Dueño</label>
+            <input type="text" name="nombre_dueno">
+          </div>
+          <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" name="direccion">
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" name="telefono">
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" name="correo">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" name="telefono">
+  
+        <div class="section-title">🐾 Datos de la Mascota</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre Mascota</label>
+            <input type="text" name="nombre_mascota">
+          </div>
+          <div class="form-group">
+            <label>Especie</label>
+            <select name="especie">
+              <option value="">Seleccionar...</option>
+              <option value="Perro">🐶 Perro</option>
+              <option value="Gato">🐱 Gato</option>
+              <option value="Conejo">🐰 Conejo</option>
+              <option value="Ave">🦜 Ave</option>
+              <option value="Hámster">🐹 Hámster</option>
+              <option value="Tortuga">🐢 Tortuga</option>
+              <option value="Reptil">🦎 Reptil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Raza</label>
+            <input type="text" name="raza">
+          </div>
+          <div class="form-group">
+            <label>Sexo</label>
+            <select name="sexo">
+              <option value="">Seleccionar...</option>
+              <option value="Macho">Macho</option>
+              <option value="Hembra">Hembra</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edad</label>
+            <input type="text" name="edad" placeholder="Ej. 2 años">
+          </div>
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input type="number" name="peso" step="0.1">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Correo Electrónico</label>
-          <input type="email" name="correo">
+  
+        <div class="section-title">🧬 Evaluación Clínica</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Temperatura (°C)</label>
+            <input type="number" name="temperatura" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Pulso</label>
+            <input type="number" name="pulso">
+          </div>
+          <div class="form-group">
+            <label>Frecuencia Cardíaca</label>
+            <input type="number" name="cardiaca">
+          </div>
+          <div class="form-group">
+            <label>Frecuencia Respiratoria</label>
+            <input type="number" name="respiratoria">
+          </div>
         </div>
-      </div>
-
-      <div class="section-title">🐾 Datos de la Mascota</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nombre Mascota</label>
-          <input type="text" name="nombre_mascota">
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label>Estado General</label>
+            <select name="estado_general">
+              <option value="">Seleccionar...</option>
+              <option value="Excelente">Excelente</option>
+              <option value="Bueno">Bueno</option>
+              <option value="Regular">Regular</option>
+              <option value="Grave">Grave</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tiempo de Llenado Capilar (seg)</label>
+            <input type="number" name="capilar" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Ojos</label>
+            <input type="text" name="ojos" placeholder="Ej. Normal, secreción">
+          </div>
+          <div class="form-group">
+            <label>Tegumentario</label>
+            <input type="text" name="tegumentario" placeholder="Ej. Piel normal">
+          </div>
+          <div class="form-group">
+            <label>Hidratación</label>
+            <select name="hidratacion">
+              <option value="">Seleccionar...</option>
+              <option value="Normal">Normal</option>
+              <option value="Deshidratación leve">Deshidratación leve</option>
+              <option value="Deshidratación moderada">Deshidratación moderada</option>
+              <option value="Deshidratación severa">Deshidratación severa</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Especie</label>
-          <select name="especie">
-            <option value="">Seleccionar...</option>
-            <option value="Perro">🐶 Perro</option>
-            <option value="Gato">🐱 Gato</option>
-            <option value="Conejo">🐰 Conejo</option>
-            <option value="Ave">🦜 Ave</option>
-            <option value="Hámster">🐹 Hámster</option>
-            <option value="Tortuga">🐢 Tortuga</option>
-            <option value="Reptil">🦎 Reptil</option>
-          </select>
+  
+        <div class="section-title">💊 Diagnóstico & Tratamiento</div>
+        <div class="form-row">
+          <div class="form-group" style="flex: 1 1 100%;">
+            <label>Diagnóstico</label>
+            <textarea name="diagnostico" rows="4"></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Raza</label>
-          <input type="text" name="raza">
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 1 1 100%;">
+            <label>Tratamiento</label>
+            <textarea name="tratamiento" rows="4"></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Sexo</label>
-          <select name="sexo">
-            <option value="">Seleccionar...</option>
-            <option value="Macho">Macho</option>
-            <option value="Hembra">Hembra</option>
-          </select>
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 1 1 100%;">
+            <label>Observaciones</label>
+            <textarea name="observaciones" rows="3"></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Edad</label>
-          <input type="text" name="edad" placeholder="Ej. 2 años">
+  
+        <div class="section-title">💰 Costos</div>
+        <div class="form-row">
+          <div class="form-group" style="flex: 1 1 70%;">
+            <label>Servicios Prestados</label>
+            <textarea name="servicios" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Costo Total ($)</label>
+            <input type="number" name="costo_total" step="0.01">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Peso (kg)</label>
-          <input type="number" name="peso" step="0.1">
+  
+        <!-- Tabla para mostrar los datos ingresados -->
+        <div class="section-title">📋 Datos Ingresados</div>
+        <table id="historialTable" border="1" style="width: 100%; margin-top: 20px;">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Número Historia Clínica</th>
+              <th>Fecha de Consulta</th>
+              <th>Cliente ID</th>
+              <th>Nombre Dueño</th>
+              <th>Nombre Mascota</th>
+              <th>Especie</th>
+              <th>Raza</th>
+              <th>Edad</th>
+              <th>Peso</th>
+              <th>Costo Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Los datos se agregarán dinámicamente aquí -->
+          </tbody>
+        </table>
+  
+        <div class="btn-container" style="margin-top: 30px;">
+          <button type="button" class="btn btn-primary" onclick="guardarHistorial()">💾 Guardar</button>
+          <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalHistorial')">❌ Cerrar</button>
         </div>
-      </div>
-
-      <div class="section-title">🧬 Evaluación Clínica</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Temperatura (°C)</label>
-          <input type="number" name="temperatura" step="0.1">
-        </div>
-        <div class="form-group">
-          <label>Pulso</label>
-          <input type="number" name="pulso">
-        </div>
-        <div class="form-group">
-          <label>Frecuencia Cardíaca</label>
-          <input type="number" name="cardiaca">
-        </div>
-        <div class="form-group">
-          <label>Frecuencia Respiratoria</label>
-          <input type="number" name="respiratoria">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Estado General</label>
-          <select name="estado_general">
-            <option value="">Seleccionar...</option>
-            <option value="Excelente">Excelente</option>
-            <option value="Bueno">Bueno</option>
-            <option value="Regular">Regular</option>
-            <option value="Grave">Grave</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tiempo de Llenado Capilar (seg)</label>
-          <input type="number" name="capilar" step="0.1">
-        </div>
-        <div class="form-group">
-          <label>Ojos</label>
-          <input type="text" name="ojos" placeholder="Ej. Normal, secreción">
-        </div>
-        <div class="form-group">
-          <label>Tegumentario</label>
-          <input type="text" name="tegumentario" placeholder="Ej. Piel normal">
-        </div>
-        <div class="form-group">
-          <label>Hidratación</label>
-          <select name="hidratacion">
-            <option value="">Seleccionar...</option>
-            <option value="Normal">Normal</option>
-            <option value="Deshidratación leve">Deshidratación leve</option>
-            <option value="Deshidratación moderada">Deshidratación moderada</option>
-            <option value="Deshidratación severa">Deshidratación severa</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="section-title">💊 Diagnóstico & Tratamiento</div>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1 1 100%;">
-          <label>Diagnóstico</label>
-          <textarea name="diagnostico" rows="4"></textarea>
-        </div>
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group" style="flex: 1 1 100%;">
-          <label>Tratamiento</label>
-          <textarea name="tratamiento" rows="4"></textarea>
-        </div>
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group" style="flex: 1 1 100%;">
-          <label>Observaciones</label>
-          <textarea name="observaciones" rows="3"></textarea>
-        </div>
-      </div>
-
-      <div class="section-title">💰 Costos</div>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1 1 70%;">
-          <label>Servicios Prestados</label>
-          <textarea name="servicios" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Costo Total ($)</label>
-          <input type="number" name="costo_total" step="0.01">
-        </div>
-      </div>
-
-      <div class="btn-container" style="margin-top: 30px;">
-        <button type="button" class="btn btn-primary" onclick="guardarHistorial()">💾 Guardar</button>
-        <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalHistorial')">❌ Cerrar</button>
       </div>
     </div>
   </div>
-</div>
+  
+  <script>
+    // Función para guardar el historial y actualizar la tabla
+    function guardarHistorial() {
+      // Obtenemos los valores del formulario
+      const datos = {
+        num_historia: document.querySelector('[name="num_historia"]').value,
+        fecha: document.querySelector('[name="fecha"]').value,
+        cliente_id: document.querySelector('[name="cliente_id"]').value,
+        nombre_dueno: document.querySelector('[name="nombre_dueno"]').value,
+        nombre_mascota: document.querySelector('[name="nombre_mascota"]').value,
+        especie: document.querySelector('[name="especie"]').value,
+        raza: document.querySelector('[name="raza"]').value,
+        edad: document.querySelector('[name="edad"]').value,
+        peso: document.querySelector('[name="peso"]').value,
+        costo_total: document.querySelector('[name="costo_total"]').value
+      };
+  
+      // Insertar los datos en la tabla
+      const tabla = document.getElementById('historialTable').getElementsByTagName('tbody')[0];
+      const nuevaFila = tabla.insertRow();
+      Object.values(datos).forEach((dato, index) => {
+        const celda = nuevaFila.insertCell(index);
+        celda.textContent = dato;
+      });
+  
+      // Limpiar el formulario
+      document.querySelectorAll('input, textarea, select').forEach(element => element.value = '');
+    }
+  
+    // Función para cerrar el modal
+    function cerrarModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+  
+    // Función para abrir el modal
+    function abrirModal(modalId) {
+      document.getElementById(modalId).style.display = 'block';
+    }
+  </script>
+  
