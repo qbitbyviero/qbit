@@ -1,179 +1,67 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Registro de Vacunas</title>
-  <style>
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .modal {
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 600px;
-      width: 90%;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    input, textarea, button, select {
-      padding: 8px;
-      font-size: 16px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    ul li {
-      cursor: pointer;
-      padding: 6px;
-      border: 1px solid #ccc;
-      margin-top: 5px;
-      border-radius: 4px;
-    }
-
-    ul li:hover {
-      background-color: #f0f0f0;
-    }
-  </style>
-</head>
-<body>
-
-<!-- Overlay para el modal de Vacunas -->
-<div id="overlayVacunas" class="overlay">
-  <div class="modal">
+<!-- Modal Vacunas -->
+<div id="modalVacunas" class="modal">
     <div class="modal-content">
-      <h3>💉 Registro de Vacunas</h3>
-
-      <button onclick="abrirBusquedaCliente()">🔍 Buscar Cliente</button>
-
-      <label>🐶 Nombre de la mascota:</label>
-      <input type="text" id="vacunaMascota" />
-
-      <label>🧪 Vacuna aplicada:</label>
-      <input type="text" id="vacunaNombre" list="listaVacunas" />
-      <datalist id="listaVacunas"></datalist>
-
-      <label>📆 Fecha de aplicación:</label>
-      <input type="date" id="vacunaFecha" />
-
-      <label>📆 Próxima vacuna:</label>
-      <input type="date" id="vacunaProxima" />
-
-      <label>💬 Observaciones:</label>
-      <textarea id="vacunaNotas"></textarea>
-
-      <div style="margin-top: 10px;">
-        <button onclick="guardarVacuna()">💾 Guardar</button>
-        <button onclick="cerrarModal('overlayVacunas')">❌ Cancelar</button>
+      <div class="modal-header">
+        <h3 class="modal-title">Registro de Vacunas</h3>
+        <span class="close" onclick="cerrarModal('modalVacunas')">&times;</span>
       </div>
+  
+      <form id="formVacunas" class="modal-form" onsubmit="return guardarVacuna(event)">
+        <!-- Botón Buscar Cliente -->
+        <div class="form-row">
+          <div class="form-group" style="width: 100%;">
+            <button type="button" class="btn btn-info" onclick="abrirModal('modalExistente')">🔍 Buscar Cliente</button>
+          </div>
+        </div>
+  
+        <!-- Datos de la mascota -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombreMascotaVacuna">Nombre de Mascota 🐾</label>
+            <input type="text" id="nombreMascotaVacuna" required>
+          </div>
+          <div class="form-group">
+            <label for="nombreDuenoVacuna">Nombre del Dueño 👤</label>
+            <input type="text" id="nombreDuenoVacuna" required>
+          </div>
+        </div>
+  
+        <!-- Lista de Vacunas -->
+        <div class="form-row">
+          <div class="form-group" style="width: 100%;">
+            <label for="vacunaAplicada">Vacuna 💉</label>
+            <select id="vacunaAplicada" required>
+              <option value="">Cargando vacunas...</option>
+              <!-- Aquí se cargarán desde el Spreadsheet -->
+            </select>
+          </div>
+        </div>
+  
+        <!-- Fecha -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fechaVacuna">Fecha de Aplicación 📅</label>
+            <input type="date" id="fechaVacuna" required>
+          </div>
+          <div class="form-group">
+            <label for="proximaVacuna">Próxima Vacuna 📆</label>
+            <input type="date" id="proximaVacuna">
+          </div>
+        </div>
+  
+        <!-- Observaciones -->
+        <div class="form-row">
+          <div class="form-group" style="width: 100%;">
+            <label for="observacionesVacuna">Observaciones 📝</label>
+            <textarea id="observacionesVacuna" rows="3"></textarea>
+          </div>
+        </div>
+  
+        <!-- Botones -->
+        <div class="btn-container">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">Cancelar</button>
+        </div>
+      </form>
     </div>
-  </div>
-</div>
-
-<!-- Overlay para búsqueda de cliente -->
-<div id="overlayBusqueda" class="overlay">
-  <div class="modal">
-    <div class="modal-content">
-      <h3>🔍 Buscar Cliente</h3>
-
-      <label>Nombre de Mascota:</label>
-      <input type="text" id="busquedaMascota" oninput="filtrarClientes()" />
-
-      <label>Nombre de Cliente:</label>
-      <input type="text" id="busquedaCliente" oninput="filtrarClientes()" />
-
-      <ul id="listaResultadosBusqueda"></ul>
-
-      <div style="margin-top: 10px;">
-        <button onclick="cerrarModal('overlayBusqueda')">❌ Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Mostrar modal
-  function abrirModal(id) {
-    document.getElementById(id).style.display = "flex";
-  }
-
-  function cerrarModal(id) {
-    document.getElementById(id).style.display = "none";
-  }
-
-  // Abre el modal de búsqueda de cliente
-  function abrirBusquedaCliente() {
-    abrirModal("overlayBusqueda");
-  }
-
-  // Simulación búsqueda de cliente
-  function filtrarClientes() {
-    const mascota = document.getElementById("busquedaMascota").value.toLowerCase();
-    const cliente = document.getElementById("busquedaCliente").value.toLowerCase();
-    const lista = document.getElementById("listaResultadosBusqueda");
-
-    const clientes = [
-      { mascota: "Firulais", cliente: "Juan Pérez" },
-      { mascota: "Mishi", cliente: "Ana López" },
-      { mascota: "Max", cliente: "Carlos Ruiz" }
-    ];
-
-    lista.innerHTML = "";
-
-    const filtrados = clientes.filter(c =>
-      c.mascota.toLowerCase().includes(mascota) &&
-      c.cliente.toLowerCase().includes(cliente)
-    );
-
-    filtrados.forEach(c => {
-      const li = document.createElement("li");
-      li.textContent = `${c.mascota} - ${c.cliente}`;
-      li.onclick = () => {
-        document.getElementById("vacunaMascota").value = c.mascota;
-        cerrarModal("overlayBusqueda");
-      };
-      lista.appendChild(li);
-    });
-  }
-
-  function guardarVacuna() {
-    const mascota = document.getElementById("vacunaMascota").value;
-    const vacuna = document.getElementById("vacunaNombre").value;
-    const fecha = document.getElementById("vacunaFecha").value;
-    const proxima = document.getElementById("vacunaProxima").value;
-    const notas = document.getElementById("vacunaNotas").value;
-
-    console.log("Vacuna:", { mascota, vacuna, fecha, proxima, notas });
-
-    alert("Vacuna registrada correctamente (simulado)");
-    cerrarModal("overlayVacunas");
-  }
-
-  // Para abrir el modal manualmente (por ejemplo desde un botón externo)
-  // Puedes llamar: abrirModal("overlayVacunas");
-</script>
-
-</body>
-</html>
+  </div>  
