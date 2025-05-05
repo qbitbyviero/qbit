@@ -1,25 +1,78 @@
 <!-- Modal Estetica -->
-      <div class="modal-content">
-        <h3>✂️ Registro de Estética</h3>
-      
-        <label>🐶 Nombre de la mascota:</label>
-        <input type="text" id="esteticaMascota" />
-      
-        <label>🧼 Servicio realizado:</label>
-        <input type="text" id="esteticaServicio" />
-      
-        <label>📅 Fecha:</label>
+<div id="modalEstetica" class="modal">
+    <div class="modal-content">
+      <h2>✂️ Registro de Estética</h2>
+  
+      <!-- 🐾 Datos de la Mascota -->
+      <section>
+        <h3>🐶 Información de la Mascota</h3>
+        <label for="esteticaMascota">🐕 Nombre de la mascota:</label>
+        <input type="text" id="esteticaMascota" placeholder="Firulais, Michi..." />
+  
+        <label for="esteticaServicio">🧼 Servicio realizado:</label>
+        <input type="text" id="esteticaServicio" placeholder="Corte de pelo, baño, etc." />
+  
+        <label for="esteticaFecha">📅 Fecha del servicio:</label>
         <input type="date" id="esteticaFecha" />
-      
-        <label>💲 Costo:</label>
-        <input type="number" id="esteticaCosto" />
-      
-        <label>💬 Notas:</label>
-        <textarea id="esteticaNotas"></textarea>
-      
-        <div style="margin-top: 10px;">
-          <button onclick="guardarEstetica()">💾 Guardar</button>
-          <button onclick="cerrarModal()">❌ Cancelar</button>
-        </div>
+  
+        <label for="esteticaCosto">💲 Costo del servicio:</label>
+        <input type="number" id="esteticaCosto" placeholder="Costo del servicio" />
+      </section>
+  
+      <!-- 💇‍♂️ Detalles del Estilista -->
+      <section>
+        <h3>💇‍♂️ Información del Estilista</h3>
+        <label for="esteticaEstilista">👨‍🔬 Estilista encargado:</label>
+        <input type="text" id="esteticaEstilista" placeholder="Juanito Pérez, Ana López..." />
+  
+        <label for="esteticaProducto">🧴 Productos utilizados:</label>
+        <textarea id="esteticaProducto" placeholder="Shampoo anti-alérgico, crema hidratante..."></textarea>
+      </section>
+  
+      <!-- 📸 Fotos de Antes y Después -->
+      <section>
+        <h3>📸 Fotos de "Antes" y "Después"</h3>
+        <label for="fotoAntes">📷 Foto antes del servicio:</label>
+        <input type="file" id="fotoAntes" accept="image/*" capture="environment" />
+  
+        <label for="fotoDespues">📸 Foto después del servicio:</label>
+        <input type="file" id="fotoDespues" accept="image/*" capture="environment" />
+      </section>
+  
+      <!-- 💬 Notas Adicionales -->
+      <section>
+        <h3>📝 Notas adicionales</h3>
+        <label for="esteticaNotas">💬 Observaciones:</label>
+        <textarea id="esteticaNotas" rows="4" placeholder="Detalles del servicio, reacciones de la mascota..."></textarea>
+      </section>
+  
+      <!-- 📊 Historial de Servicios Estéticos -->
+      <section>
+        <h3>📊 Historial de Estética</h3>
+        <table border="1" id="tablaEstetica">
+          <thead>
+            <tr>
+              <th>🐶 Mascota</th>
+              <th>🧼 Servicio</th>
+              <th>📅 Fecha</th>
+              <th>💲 Costo</th>
+              <th>👨‍🔬 Estilista</th>
+              <th>📸 Fotos</th>
+              <th>📝 Notas</th>
+              <th>🗑️</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí se agregarán las filas con JS -->
+          </tbody>
+        </table>
+      </section>
+  
+      <!-- ✅ Acciones -->
+      <div class="acciones">
+        <button onclick="guardarEstetica()">💾 Guardar Estética</button>
+        <button onclick="cerrarModal('modalEstetica')">❌ Cancelar</button>
       </div>
-      
+    </div>
+  </div>
+  

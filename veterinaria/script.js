@@ -720,3 +720,47 @@ function cargarYMostrarModal(archivo, idModal) {
     const modal = document.getElementById(idModal);
     if (modal) modal.style.display = "none";
   }  
+  function guardarEstetica() {
+    // Obtener los valores de los inputs
+    const mascota = document.getElementById('esteticaMascota').value;
+    const servicio = document.getElementById('esteticaServicio').value;
+    const fecha = document.getElementById('esteticaFecha').value;
+    const costo = document.getElementById('esteticaCosto').value;
+    const estilista = document.getElementById('esteticaEstilista').value;
+    const notas = document.getElementById('esteticaNotas').value;
+
+    // Foto antes y después (puedes hacer algo con las imágenes, pero aquí solo los nombres como ejemplo)
+    const fotoAntes = document.getElementById('fotoAntes').files[0] ? document.getElementById('fotoAntes').files[0].name : "No disponible";
+    const fotoDespues = document.getElementById('fotoDespues').files[0] ? document.getElementById('fotoDespues').files[0].name : "No disponible";
+
+    // Crear la nueva fila para la tabla de historial
+    const tabla = document.getElementById('tablaEstetica').getElementsByTagName('tbody')[0];
+    const nuevaFila = tabla.insertRow();
+
+    nuevaFila.innerHTML = `
+        <td>${mascota}</td>
+        <td>${servicio}</td>
+        <td>${fecha}</td>
+        <td>${costo} 💲</td>
+        <td>${estilista}</td>
+        <td>📸 Antes: ${fotoAntes} / Después: ${fotoDespues}</td>
+        <td>${notas}</td>
+        <td><button onclick="eliminarFila(this)">🗑️</button></td>
+    `;
+
+    // Limpiar los campos
+    document.getElementById('esteticaMascota').value = '';
+    document.getElementById('esteticaServicio').value = '';
+    document.getElementById('esteticaFecha').value = '';
+    document.getElementById('esteticaCosto').value = '';
+    document.getElementById('esteticaEstilista').value = '';
+    document.getElementById('esteticaNotas').value = '';
+    document.getElementById('fotoAntes').value = '';
+    document.getElementById('fotoDespues').value = '';
+}
+
+function eliminarFila(button) {
+    // Eliminar la fila donde se encuentra el botón
+    const row = button.closest('tr');
+    row.remove();
+}
