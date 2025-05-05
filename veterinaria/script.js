@@ -425,6 +425,111 @@ function abrirModalNuevaCita(fecha) {
   document.getElementById('modalNuevaCita').style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
+async function obtenerProductosDesdeBackend() {
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=getProductos`);
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+        
+        const data = await response.json();
+        if (!data.productos) throw new Error('Formato de datos inválido');
+
+        productos = data.productos;
+        categorias = [...new Set(productos.map(p => p.categoria))];
+
+        const selectCategorias = document.getElementById('selector-categoria');
+        if (selectCategorias) {
+            selectCategorias.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = 'todas';
+            defaultOption.textContent = '-- Todas las categorías --';
+            selectCategorias.appendChild(defaultOption);
+
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                selectCategorias.appendChild(option);
+            });
+        }
+
+        mostrarProductos(productos);
+    } catch (error) {
+        console.error('Error al cargar productos:', error);
+        mostrarAlerta('❌ Error al cargar productos. Recargue la página', 'error');
+    }
+}
+async function guardarVacuna(event) {
+    if (event) event.preventDefault();
+    
+    try {
+        // Validación básica
+        const nombreMascota = document.getElementById('nombreMascota').value;
+        const vacunaSeleccionada = document.getElementById('nombreVacuna').value;
+        if (!nombreMascota || !vacunaSeleccionada) {
+            mostrarAlerta('❌ Nombre de mascota y vacuna son requeridos', 'error');
+            return;
+        }
+
+        const datos = {
+            action: 'guardarVacuna',
+            nombreDueno: document.getElementById('nombreDueno')?.value || '',
+            idCliente: document.getElementById('idCliente')?.value || 'N/A',
+            idMascota: document.getElementById('idMascota')?.value || 'N/A',
+            nombreMascota: nombreMascota,
+            edad: document.getElementById('edad')?.value || '0',
+            sexo: document.getElementById('genero')?.value || 'No especificado',
+            peso: document.getElementById('peso')?.value || '0',
+            especie: document.getElementById('especieSelect')?.value || 'No especificada',
+            raza: document.getElementById('raza')?.value || 'No especificada',
+            vacuna: vacunaSeleccionada,
+            fechaAplicacion: document.getElementById('fechaAplicacion')?.value || new Date().toISOString().split('T')[0],
+            fechaRefuerzo: document.getElementById('fechaRefuerzo')?.value || '',
+            veterinario: document.getElementById('veterinario')?.value || 'No especificado',
+            observaciones: document.getElementById('observaciones')?.value || 'Ninguna'
+        };
+
+        const response = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+
+        const resultado = await response.json();
+
+        if (resultado.status !== 'success') {
+            throw new Error(resultado.message || 'Error en el servidor');
+        }
+
+        mostrarAlerta('✅ Vacuna registrada correctamente', 'success');
+        
+        // Actualizar interfaz si existe
+        if (typeof agregarFilaTabla === 'function') {
+            agregarFilaTabla(datos);
+        }
+        
+        // Opcional: Recargar vacunas
+        await cargarVacunas();
+        
+    } catch (error) {
+        console.error('Error al guardar vacuna:', error);
+        mostrarAlerta(`❌ Error: ${error.message}`, 'error');
+    }
+}
+async function inicializarTienda() {
+    try {
+        // Configurar eventos
+        document.getElementById('selector-categoria')?.addEventListener('change', filtrarProductos);
+        document.getElementById('tipo-descuento')?.addEventListener('change', toggleDescuento);
+        
+        // Cargar productos
+        await obtenerProductosDesdeBackend();
+        
+        // Inicializar carrito
+        actualizarCarrito();
+    } catch (error) {
+        console.error('Error al inicializar tienda:', error);
+    }
+}
 
 // Verificar si mascota ya existe
 async function verificarMascotaExistente() {
@@ -813,46 +918,78 @@ function guardarEstetica(event) {
         select.innerHTML = '<option value="">Error al cargar vacunas</option>';
       });
   }
-  function guardarVacuna() {
-    const datos = {
-      action: 'guardarVacuna',
-      nombreDueno: document.getElementById('nombreDueno')?.value || '',
-      idCliente: document.getElementById('idCliente')?.value || '',
-      idMascota: document.getElementById('idMascota')?.value || '',
-      nombreMascota: document.getElementById('nombreMascota').value,
-      edad: document.getElementById('edad').value,
-      sexo: document.getElementById('genero').value,
-      peso: document.getElementById('peso')?.value || '',
-      especie: document.getElementById('especieSelect').value,
-      raza: document.getElementById('raza').value,
-      vacuna: document.getElementById('nombreVacuna').value,
-      fechaAplicacion: document.getElementById('fechaAplicacion').value,
-      fechaRefuerzo: document.getElementById('fechaRefuerzo').value,
-      veterinario: document.getElementById('veterinario').value,
-      observaciones: document.getElementById('observaciones').value
-    };
-  
-    fetch('https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec', {
-      method: 'POST',
-      body: JSON.stringify(datos),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(res => res.json())
-    .then(response => {
-      if (response.success) {
-        alert('✅ Vacuna registrada con éxito');
-        agregarFilaTabla(datos); // Esto actualiza la tabla HTML visible
-      } else {
-        alert('❌ Error al guardar: ' + response.message);
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('❌ Error de red o servidor');
-    });
-  }    
+  async function guardarVacuna() {
+    const btnGuardar = document.querySelector('#modalVacunas button[onclick="guardarVacuna()"]');
+    const btnOriginalText = btnGuardar.innerHTML;
+    
+    try {
+        // 1. Cambiar el botón a estado "cargando"
+        btnGuardar.innerHTML = '⏳ Guardando...';
+        btnGuardar.disabled = true;
+
+        // 2. Validación básica
+        const nombreMascota = document.getElementById('nombreMascota').value;
+        const vacunaSeleccionada = document.getElementById('nombreVacuna').value;
+        
+        if (!nombreMascota || !vacunaSeleccionada) {
+            mostrarAlerta('❌ Nombre de mascota y vacuna son requeridos', 'error');
+            return;
+        }
+
+        // 3. Preparar datos
+        const datos = {
+            action: 'guardarVacuna',
+            nombreMascota: nombreMascota,
+            nombreDueno: document.getElementById('nombreDueno')?.value || '',
+            idCliente: document.getElementById('idCliente')?.value || 'N/A',
+            idMascota: document.getElementById('idMascota')?.value || 'N/A',
+            edad: document.getElementById('edad')?.value || '0',
+            sexo: document.getElementById('genero')?.value || 'No especificado',
+            peso: document.getElementById('peso')?.value || '0',
+            especie: document.getElementById('especieSelect')?.value || 'No especificada',
+            raza: document.getElementById('raza')?.value || 'No especificada',
+            vacuna: vacunaSeleccionada,
+            fechaAplicacion: document.getElementById('fechaAplicacion')?.value || new Date().toISOString().split('T')[0],
+            fechaRefuerzo: document.getElementById('fechaRefuerzo')?.value || '',
+            veterinario: document.getElementById('veterinario')?.value || 'No especificado',
+            observaciones: document.getElementById('observaciones')?.value || 'Ninguna'
+        };
+
+        // 4. Enviar datos
+        const response = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+
+        const resultado = await response.json();
+
+        if (resultado.status !== 'success') {
+            throw new Error(resultado.message || 'Error en el servidor');
+        }
+
+        // 5. Éxito
+        mostrarAlerta('✅ Vacuna registrada correctamente', 'success');
+        
+        // Actualizar tabla si existe
+        if (typeof agregarFilaTabla === 'function') {
+            agregarFilaTabla(datos);
+        }
+        
+        // Cerrar modal después de 1 segundo (opcional)
+        setTimeout(() => {
+            cerrarModal('modalVacunas');
+        }, 1000);
+
+    } catch (error) {
+        console.error('Error al guardar vacuna:', error);
+        mostrarAlerta(`❌ Error: ${error.message}`, 'error');
+    } finally {
+        // 6. Restaurar botón
+        btnGuardar.innerHTML = btnOriginalText;
+        btnGuardar.disabled = false;
+    }
+}
   function cargarVacunas(idCliente, idMascota) {
     fetch(`https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?idCliente=${idCliente}&idMascota=${idMascota}`)
       .then(res => res.json())
