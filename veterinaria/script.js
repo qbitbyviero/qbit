@@ -694,14 +694,26 @@ function procesarVenta() {
 }
 function cargarYMostrarModal(archivo, idModal) {
     fetch(archivo)
-      .then(response => response.text())
+      .then(res => res.text())
       .then(html => {
-        document.getElementById("modales-container").innerHTML = html;
-        const modal = document.getElementById(idModal);
-        if (modal) modal.style.display = "block";
-        else console.error(`No se encontró el modal con id: ${idModal}`);
-      })
-      .catch(err => console.error("Error al cargar el modal:", err));
+        const contenedor = document.getElementById("modales-container");
+        contenedor.innerHTML = html;
+  
+        // Espera un ciclo de render para asegurar que los elementos ya están en el DOM
+        requestAnimationFrame(() => {
+          const modal = document.getElementById(idModal);
+          if (modal) {
+            modal.style.display = "block";
+  
+            // SOLO si estamos cargando el modal de vacunas, llama actualizarRazas()
+            if (archivo === "Vacunas.html") {
+              actualizarRazas(); // ← Aquí ya existe el select con id "raza"
+            }
+          } else {
+            console.warn("No se encontró el modal con id:", idModal);
+          }
+        });
+      });
   }
   
   function cerrarModal(idModal) {

@@ -1,66 +1,85 @@
+<!-- MODAL VACUNAS -->
 <div id="modalVacunas" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Registro de Vacunas 💉</h3>
-        <span class="close" onclick="cerrarModal('modalVacunas')">&times;</span>
+      <h2>💉 Registro de Vacunas</h2>
+      
+      <!-- 🐾 Datos de la Mascota -->
+      <section>
+        <h3>🐾 Información de la Mascota</h3>
+        <label for="nombreMascota">🐶 Nombre:</label>
+        <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." />
+  
+        <label for="especieSelect">🦴 Especie:</label>
+        <select id="especieSelect" onchange="actualizarRazas()">
+          <option value="">Seleccione especie</option>
+          <option value="Perro">Perro</option>
+          <option value="Gato">Gato</option>
+          <option value="Conejo">Conejo</option>
+          <option value="Ave">Ave</option>
+          <option value="Hámster">Hámster</option>
+          <option value="Tortuga">Tortuga</option>
+          <option value="Reptil">Reptil</option>
+        </select>
+  
+        <label for="raza">🐕 Raza:</label>
+        <select id="raza">
+          <option value="">Seleccione especie primero</option>
+        </select>
+  
+        <label for="edad">🎂 Edad:</label>
+        <input type="number" id="edad" min="0" placeholder="Años" />
+  
+        <label for="genero">⚧️ Sexo:</label>
+        <select id="genero">
+          <option value="Macho">Macho</option>
+          <option value="Hembra">Hembra</option>
+        </select>
+      </section>
+  
+      <!-- 💉 Información de Vacunación -->
+      <section>
+        <h3>🧬 Detalles de Vacunación</h3>
+        <label for="nombreVacuna">🧪 Vacuna:</label>
+        <input type="text" id="nombreVacuna" placeholder="Antirrábica, Triple Felina..." />
+  
+        <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
+        <input type="date" id="fechaAplicacion" />
+  
+        <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
+        <input type="date" id="fechaRefuerzo" />
+  
+        <label for="veterinario">👨‍⚕️ Aplicado por:</label>
+        <input type="text" id="veterinario" placeholder="Dr. Posh" />
+  
+        <label for="observaciones">📝 Observaciones:</label>
+        <textarea id="observaciones" rows="3" placeholder="Ninguna reacción, necesita seguimiento..."></textarea>
+      </section>
+  
+      <!-- 📋 Tabla de Vacunas -->
+      <section>
+        <h3>📊 Historial de Vacunación</h3>
+        <table border="1" id="tablaVacunas">
+          <thead>
+            <tr>
+              <th>💉 Vacuna</th>
+              <th>📅 Aplicación</th>
+              <th>🔁 Refuerzo</th>
+              <th>👨‍⚕️ Veterinario</th>
+              <th>📝 Observaciones</th>
+              <th>🗑️</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí se agregan las filas con JS -->
+          </tbody>
+        </table>
+      </section>
+  
+      <!-- ✅ Acciones -->
+      <div class="acciones">
+        <button onclick="guardarVacuna()">💾 Guardar Vacuna</button>
+        <button onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
       </div>
-  
-      <form id="formVacunas" class="modal-form" onsubmit="return guardarVacuna(event)">
-        <!-- Botón Buscar Cliente -->
-        <div class="form-row">
-          <div class="form-group" style="width: 100%;">
-            <button type="button" class="btn btn-info" onclick="abrirModal('modalExistente')">🔍 Buscar Cliente</button>
-          </div>
-        </div>
-  
-        <!-- Datos de la mascota -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="nombreMascotaVacuna">Nombre de Mascota 🐾</label>
-            <input type="text" id="nombreMascotaVacuna" required>
-          </div>
-          <div class="form-group">
-            <label for="nombreDuenoVacuna">Nombre del Dueño 👤</label>
-            <input type="text" id="nombreDuenoVacuna" required>
-          </div>
-        </div>
-  
-        <!-- Lista de Vacunas -->
-        <div class="form-row">
-          <div class="form-group" style="width: 100%;">
-            <label for="vacunaAplicada">Vacuna 💉</label>
-            <select id="vacunaAplicada" required>
-              <option value="">Cargando vacunas...</option>
-              <!-- Aquí se cargarán desde el Spreadsheet -->
-            </select>
-          </div>
-        </div>
-  
-        <!-- Fecha -->
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fechaVacuna">Fecha de Aplicación 📅</label>
-            <input type="date" id="fechaVacuna" required>
-          </div>
-          <div class="form-group">
-            <label for="proximaVacuna">Próxima Vacuna 📆</label>
-            <input type="date" id="proximaVacuna">
-          </div>
-        </div>
-  
-        <!-- Observaciones -->
-        <div class="form-row">
-          <div class="form-group" style="width: 100%;">
-            <label for="observacionesVacuna">Observaciones 📝</label>
-            <textarea id="observacionesVacuna" rows="3"></textarea>
-          </div>
-        </div>
-  
-        <!-- Botones -->
-        <div class="btn-container">
-          <button type="submit" class="btn btn-primary">Guardar</button>
-          <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">Cancelar</button>
-        </div>
-      </form>
     </div>
-  </div>  
+  </div>
+  
