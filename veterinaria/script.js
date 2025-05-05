@@ -32,7 +32,7 @@
                 barkSound.play().catch(e => console.log('Sonido omitido'));
                 document.body.removeEventListener('click', playSoundOnce);
             });
-            
+            configurarSelectores();
             await cargarCitasDelDia();
             setupMenuNavigation();
             actualizarRazas();
@@ -276,68 +276,65 @@ function getColorForAppointmentType(motivo) {
     }
 
     function actualizarRazas() {
-        const especieSelect = document.getElementById("especieSelect");
-        const razaSelect = document.getElementById("raza");
+    // 1. Verificar primero si los elementos existen en el DOM
+    const especieSelect = document.getElementById("especieSelect");
+    const razaSelect = document.getElementById("raza");
     
-        // Limpiar las razas previas
-        razaSelect.innerHTML = "<option value=''>Seleccione especie primero</option>";
+    // Si no existe el select de razas, salir silenciosamente
+    if (!razaSelect) {
+        console.log("Select de razas no encontrado en el DOM");
+        return;
+    }
     
-        // Diccionario de especies y sus razas
-        const razasPorEspecie = {
-            "Perro": ["Labrador", "Chihuahua", "Pastor Alemán", "Bulldog"],
-            "Gato": ["Siames", "Persa", "Sphynx", "Maine Coon"],
-            "Conejo": ["Angora", "Himalayo", "Enano", "Mini Rex"],
-            "Ave": ["Canario", "Perico", "Agaporni", "Cacatúa"],
-            "Hámster": ["Sirio", "Campbell", "Roborovski", "Chino"],
-            "Tortuga": ["Aldabra", "Leopardo", "Caja", "Marina"],
-            "Reptil": ["Gecko", "Iguana", "Serpiente", "Camaleón"]
-        };
+    // 2. Limpiar las razas previas (solo si existe el select)
+    razaSelect.innerHTML = "<option value=''>Seleccione especie primero</option>";
     
-        // Obtener la especie seleccionada
-        const especieSeleccionada = especieSelect.value;
+    // 3. Si no hay select de especies o no tiene valor seleccionado, terminar
+    if (!especieSelect || !especieSelect.value) {
+        return;
+    }
     
-        // Si se ha seleccionado una especie válida, actualizar las razas
-        if (razasPorEspecie[especieSeleccionada]) {
-            razasPorEspecie[especieSeleccionada].forEach(raza => {
-                const option = document.createElement("option");
-                option.value = raza;
-                option.textContent = raza;
-                razaSelect.appendChild(option);
-            });
+    // 4. Diccionario mejorado de especies y razas (con emojis)
+    const razasPorEspecie = {
+        "Perro": ["Labrador 🐕", "Chihuahua 🐶", "Pastor Alemán 🦮", "Bulldog 🐕"],
+        "Gato": ["Siamés 😼", "Persa 😺", "Sphynx 🐈", "Maine Coon 🐱"],
+        "Conejo": ["Angora 🐇", "Himalayo 🐰", "Enano 🐇", "Mini Rex 🐰"],
+        "Ave": ["Canario 🐦", "Perico 🦜", "Agaporni 🦜", "Cacatúa 🦜"],
+        "Hámster": ["Sirio 🐹", "Campbell 🐹", "Roborovski 🐹", "Chino 🐹"],
+        "Tortuga": ["Aldabra 🐢", "Leopardo 🐢", "Caja 🐢", "Marina 🐢"],
+        "Reptil": ["Gecko 🦎", "Iguana 🦎", "Serpiente 🐍", "Camaleón 🦎"]
+    };
+    
+    // 5. Obtener la especie seleccionada
+    const especieSeleccionada = especieSelect.value;
+    
+    // 6. Actualizar las razas si la especie es válida
+    if (razasPorEspecie[especieSeleccionada]) {
+        razasPorEspecie[especieSeleccionada].forEach(raza => {
+            const option = document.createElement("option");
+            option.value = raza.split(' ')[0]; // Guarda solo el nombre sin emoji
+            option.textContent = raza;         // Muestra nombre + emoji
+            razaSelect.appendChild(option);
+        });
+    }
+}
+
+// Función para inicializar los event listeners (debes llamarla en initApp())
+function configurarSelectores() {
+    // Actualizar razas cuando cambie la especie
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'especieSelect') {
+            actualizarRazas();
         }
-    }
+    });
     
-
-    async function verificarClienteExistente(nombreDueno, nombreMascota) {
-        const response = await fetch(`${WEBAPP_URL}?action=verificarCliente&nombreDueno=${encodeURIComponent(nombreDueno)}&nombreMascota=${encodeURIComponent(nombreMascota)}`);
-        return await response.json();
-    }
-
-    async function generarNuevosIDs() {
-        try {
-            const response = await fetch(`${WEBAPP_URL}?action=generarIDs`);
-            return await response.json();
-        } catch (error) {
-            return {
-                idCliente: 'PP-' + Math.floor(1000 + Math.random() * 9000),
-                idMascota: 'PP-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(100 + Math.random() * 900)
-            };
+    // También actualizar al cargar modales que contengan estos selects
+    document.addEventListener('modalLoaded', function() {
+        if (document.getElementById('especieSelect')) {
+            actualizarRazas();
         }
-    }
-
-    async function guardarEnSpreadsheet(data) {
-        try {
-            await fetch(WEBAPP_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'guardarCliente', data })
-            });
-            return { ok: true };
-        } catch (error) {
-            console.error('Error:', error);
-            return { ok: false };
-        }
-    }
-
+    });
+}
     function validarFormulario() {
         const camposRequeridos = [
             'nombreDueno', 'direccion', 'telefono', 
