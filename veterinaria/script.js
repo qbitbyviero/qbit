@@ -1,5 +1,5 @@
 
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec';
+    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec';
     let calendar;
     let citasPendientes = [];
     const razasPorEspecie = {
@@ -671,7 +671,7 @@ function inicializarTienda() {
 
 // Función para obtener productos desde el backend (Google Apps Script)
 function obtenerProductosDesdeBackend() {
-  const url = 'https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?action=getProductos';
+  const url = 'https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec?action=getProductos';
   
   fetch(url)
     .then(response => response.json())
@@ -900,7 +900,7 @@ function guardarEstetica(event) {
       .guardarRegistroEstetica(datos);
   }  
   function cargarVacunas() {
-    fetch('https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?action=getVacunas')
+    fetch('https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec?action=getVacunas')
       .then(res => res.json())
       .then(data => {
         const select = document.getElementById('nombreVacuna');
@@ -991,7 +991,7 @@ function guardarEstetica(event) {
     }
 }
   function cargarVacunas(idCliente, idMascota) {
-    fetch(`https://script.google.com/macros/s/AKfycbzGWufYinuNR2A-ESF-sKVzSEjmBE--O0cHEjCSDZUgdo3TUPjkITtk0zbgxwdnjf24/exec?idCliente=${idCliente}&idMascota=${idMascota}`)
+    fetch(`https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec?idCliente=${idCliente}&idMascota=${idMascota}`)
       .then(res => res.json())
       .then(data => {
         const tabla = document.querySelector('#tablaVacunas tbody');
