@@ -1,430 +1,488 @@
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec';
+let calendar;
+let citasPendientes = [];
+const razasPorEspecie = {
+    '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
+    '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
+    '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
+    '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
+    '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
+    '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
+    '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+};
 
-    const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec';
-    let calendar;
-    let citasPendientes = [];
-    const razasPorEspecie = {
-        '🐶 Perro': ['Labrador 🐶', 'Pug 😛', 'Chihuahua 💅', 'Pitbull 💪'],
-        '🐱 Gato': ['Persa 😽', 'Siames 😸', 'Sphynx 🐱', 'Maine Coon 🧶'],
-        '🐰 Conejo': ['Cabeza de león 🦁', 'Mini Lop 🐰', 'Angora ✨'],
-        '🦜 Ave': ['Periquito 🐦', 'Cacatúa 🎵', 'Loro 💚'],
-        '🐹 Hámster': ['Sirio 🧡', 'Enano ruso ❄️', 'Roborovski ⚡'],
-        '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
-        '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
+// ========== FUNCIONES PRINCIPALES ==========
+function cargarModal(nombreArchivo) {
+    fetch(nombreArchivo)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("modales-container").innerHTML = html;
+      })
+      .catch(err => console.error("Error al cargar el modal:", err));
+}
+      
+async function initApp() {
+    const barkSound = document.getElementById('barkSound');
+    setTimeout(async () => {
+        document.getElementById('splash').style.display = 'none';
+        document.getElementById('daily-appointments').style.display = 'block';
+        
+        document.body.addEventListener('click', function playSoundOnce() {
+            barkSound.play().catch(e => console.log('Sonido omitido'));
+            document.body.removeEventListener('click', playSoundOnce);
+        });
+        configurarSelectores();
+        await cargarCitasDelDia();
+        setupMenuNavigation();
+        actualizarRazas();
+    }, 3000);
+}
+
+async function cargarCitasDelDia() {
+    try {
+        const hoy = new Date().toISOString().split('T')[0];
+        const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
+        const citas = await response.json();
+        const lista = document.getElementById('appointments-list');
+
+        const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent =
+            "📅 " + new Date().toLocaleDateString('es-MX', opcionesFecha);
+
+        lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
+
+        citas.forEach(cita => {
+            const mascota = cita['Paciente'] || '---';
+            const dueno = cita['Cliente'] || '---';
+
+            let hora = '---';
+            if (cita['Hora']) {
+                const valor = cita['Hora'];
+                if (!isNaN(valor)) {
+                    const minutosTotales = Math.round(parseFloat(valor) * 24 * 60);
+                    const horas = Math.floor(minutosTotales / 60);
+                    const minutos = minutosTotales % 60;
+                    hora = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+                } else if (typeof valor === 'string') {
+                    const match = valor.match(/\d{1,2}:\d{2}/);
+                    hora = match ? match[0] : valor;
+                }
+            }
+
+            const motivo = cita['Motivo'] || 'Sin motivo';
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
+                ⏰ ${hora}<br>
+                📝 ${motivo}
+            `;
+            lista.appendChild(li);
+        });
+
+        configurarBotones();
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('appointments-list').innerHTML = `
+            <li style="color: red;">Error al cargar citas. Recarga la página.</li>
+        `;
+    }
+}
+
+function configurarBotones() {
+    document.getElementById('print-btn').addEventListener('click', () => window.print());
+    
+    document.getElementById('show-btn').addEventListener('click', () => {
+        const contenido = document.getElementById('daily-appointments').outerHTML;
+        const ventana = window.open('', '_blank');
+        ventana.document.write(`
+            <html>
+                <head><title>Citas del Día - Posh Posh</title>
+                <style>${document.querySelector('style').innerHTML}</style></head>
+                <body>${contenido}</body>
+            </html>
+        `);
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+        document.getElementById('daily-appointments').style.display = 'none';
+        document.getElementById('calendar-container').style.display = 'block';
+        initCalendar();
+    });
+}
+
+async function initCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    document.getElementById('calendar-container').style.display = 'block';
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        height: 'auto',
+        selectable: true,
+
+        dateClick: (info) => {
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const seleccionada = new Date(info.dateStr);
+
+            if (seleccionada < hoy) {
+                mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
+                return;
+            }
+
+            fechaSeleccionada = info.dateStr;
+            abrirModal('modalNuevaCita');
+        },
+
+        events: async (fetchInfo, successCallback) => {
+            try {
+                const response = await fetch(`${WEBAPP_URL}?action=getCitas`);
+                const citas = await response.json();
+
+                const eventos = citas.map(cita => {
+                    const paciente = cita.Paciente || 'Mascota';
+                    const motivo = cita.Motivo || 'Sin motivo';
+                    const fecha = cita.Fecha || cita.fecha || '';
+
+                    return {
+                        title: `${paciente} - ${motivo}`,
+                        start: fecha,
+                        allDay: true,
+                        extendedProps: cita,
+                        color: getColorForAppointmentType(motivo)
+                    };
+                });
+
+                successCallback(eventos);
+            } catch (error) {
+                console.error('Error al cargar eventos del calendario:', error);
+                mostrarAlerta('❌ Error al cargar citas en el calendario', 'error');
+            }
+        }
+    });
+
+    calendar.render();
+}
+
+function getColorForAppointmentType(motivo) {
+    const colors = {
+        'Control de peso': '#4CAF50',
+        'Consulta general': '#2196F3',
+        'Revisión': '#FFC107',
+        'Vacunación': '#9C27B0',
+        'Desparasitación': '#795548',
+        'Estética': '#FF9800',
+        'Vacunas': '#4CAF50',
+        'Consulta': '#2196F3',
+        'Eutanasia': '#9C27B0',
+        'Cirugía': '#F44336'
+    };
+    return colors[motivo] || '#607D8B';
+}
+
+// ========== FUNCIONES DE CLIENTES ==========
+async function guardarCliente(event) {
+    event.preventDefault();
+
+    if (!validarFormulario()) return false;
+
+    const formData = {
+        nombreDueno: document.getElementById('nombreDueno').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        correo: document.getElementById('correo').value.trim(),
+        nombreMascota: document.getElementById('nombreMascota').value.trim(),
+        edad: document.getElementById('edad').value,
+        peso: document.getElementById('peso').value,
+        sexo: document.getElementById('sexo').value,
+        especie: document.getElementById('especieSelect').value,
+        raza: document.getElementById('raza').value
     };
 
-    // ========== FUNCIONES PRINCIPALES ==========
-    function cargarModal(nombreArchivo) {
-        fetch(nombreArchivo)
-          .then(response => response.text())
-          .then(html => {
-            document.getElementById("modales-container").innerHTML = html;
-          })
-          .catch(err => console.error("Error al cargar el modal:", err));
-      }
-      
-    async function initApp() {
-        const barkSound = document.getElementById('barkSound');
-        setTimeout(async () => {
-            document.getElementById('splash').style.display = 'none';
-            document.getElementById('daily-appointments').style.display = 'block';
-            
-            document.body.addEventListener('click', function playSoundOnce() {
-                barkSound.play().catch(e => console.log('Sonido omitido'));
-                document.body.removeEventListener('click', playSoundOnce);
-            });
-            configurarSelectores();
-            await cargarCitasDelDia();
-            setupMenuNavigation();
-            actualizarRazas();
-        }, 3000);
-    }
-
-    async function cargarCitasDelDia() {
-  try {
-    const hoy = new Date().toISOString().split('T')[0];
-    const response = await fetch(`${WEBAPP_URL}?action=getCitas&fecha=${hoy}`);
-    const citas = await response.json();
-    const lista = document.getElementById('appointments-list');
-
-    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('current-date').textContent =
-      "📅 " + new Date().toLocaleDateString('es-MX', opcionesFecha);
-
-    lista.innerHTML = citas.length ? '' : '<li>No hay citas programadas para hoy.</li>';
-
-    citas.forEach(cita => {
-      const mascota = cita['Paciente'] || '---';
-      const dueno = cita['Cliente'] || '---';
-
-      let hora = '---';
-      if (cita['Hora']) {
-        const valor = cita['Hora'];
-        if (!isNaN(valor)) {
-          const minutosTotales = Math.round(parseFloat(valor) * 24 * 60);
-          const horas = Math.floor(minutosTotales / 60);
-          const minutos = minutosTotales % 60;
-          hora = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
-        } else if (typeof valor === 'string') {
-          const match = valor.match(/\d{1,2}:\d{2}/);
-          hora = match ? match[0] : valor;
+    try {
+        const existe = await verificarClienteExistente(formData.nombreDueno, formData.nombreMascota);
+        if (existe.duenoYmascota) {
+            mostrarAlerta('¡Este cliente y mascota ya están registrados!', 'error');
+            return;
         }
-      }
 
-      const motivo = cita['Motivo'] || 'Sin motivo';
+        const response = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'guardarCliente',
+                ...formData
+            })
+        });
 
-      const li = document.createElement('li');
-      li.innerHTML = `
-        🐶 <strong>${mascota}</strong> (Dueño: ${dueno})<br>
-        ⏰ ${hora}<br>
-        📝 ${motivo}
-      `;
-      lista.appendChild(li);
-    });
+        const result = await response.json();
 
-    configurarBotones(); // si quieres que se activen los botones después de cargar las citas
-  } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('appointments-list').innerHTML = `
-      <li style="color: red;">Error al cargar citas. Recarga la página.</li>
-    `;
-  }
+        if (result.status === 'success') {
+            mostrarAlerta('✅ Registro exitoso!', 'success');
+            cerrarModal('modalNuevoCliente');
+            document.getElementById('formNuevoCliente').reset();
+        } else {
+            throw new Error(result.message || 'Fallo en el servidor');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarAlerta('❌ Error al guardar: ' + error.message, 'error');
+    }
 }
 
-    function configurarBotones() {
-        document.getElementById('print-btn').addEventListener('click', () => window.print());
+// ========== FUNCIONES DE VACUNAS ==========
+function abrirModalVacunas() {
+    document.getElementById('modalVacunas').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    cargarListaVacunas();
+    actualizarRazas();
+}
+
+async function cargarListaVacunas() {
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=getVacunas`);
+        if (!response.ok) throw new Error('Error al cargar vacunas');
         
-        document.getElementById('show-btn').addEventListener('click', () => {
-            const contenido = document.getElementById('daily-appointments').outerHTML;
-            const ventana = window.open('', '_blank');
-            ventana.document.write(`
-                <html>
-                    <head><title>Citas del Día - Posh Posh</title>
-                    <style>${document.querySelector('style').innerHTML}</style></head>
-                    <body>${contenido}</body>
-                </html>
-            `);
-        });
-
-        document.getElementById('start-btn').addEventListener('click', () => {
-            document.getElementById('daily-appointments').style.display = 'none';
-            document.getElementById('calendar-container').style.display = 'block';
-            initCalendar();
-        });
+        const data = await response.json();
+        const select = document.getElementById('nombreVacuna');
+        
+        select.innerHTML = '<option value="">Seleccione una vacuna</option>';
+        
+        if (data.vacunas && data.vacunas.length > 0) {
+            data.vacunas.forEach(vacuna => {
+                const option = document.createElement('option');
+                option.value = vacuna.nombre || vacuna;
+                option.textContent = vacuna.nombre || vacuna;
+                select.appendChild(option);
+            });
+        } else {
+            console.warn('No se encontraron vacunas');
+            select.innerHTML = '<option value="">No hay vacunas registradas</option>';
+        }
+    } catch (error) {
+        console.error('Error al cargar vacunas:', error);
+        mostrarAlerta('❌ Error al cargar lista de vacunas', 'error');
     }
-    async function initCalendar() {
-  const calendarEl = document.getElementById('calendar');
-  document.getElementById('calendar-container').style.display = 'block';
-
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    locale: 'es',
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay'
-    },
-    height: 'auto',
-    selectable: true,
-
-    // ✅ CLICK EN UNA FECHA: ABRIR MODAL
-    dateClick: (info) => {
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      const seleccionada = new Date(info.dateStr);
-
-      if (seleccionada < hoy) {
-        mostrarAlerta('No puedes agendar una cita en una fecha pasada.', 'error');
-        return;
-      }
-
-      // Guardamos la fecha seleccionada globalmente
-      fechaSeleccionada = info.dateStr;
-
-      // Abrir modal personalizado para nueva cita
-      abrirModal('modalNuevaCita');
-    },
-
-    // ✅ CARGAR CITAS DESDE EL BACKEND
-    events: async (fetchInfo, successCallback) => {
-      try {
-        const response = await fetch(`${WEBAPP_URL}?action=getCitas`);
-        const citas = await response.json();
-
-        const eventos = citas.map(cita => {
-          const paciente = cita.Paciente || 'Mascota';
-          const motivo = cita.Motivo || 'Sin motivo';
-          const fecha = cita.Fecha || cita.fecha || '';
-
-          return {
-            title: `${paciente} - ${motivo}`,
-            start: fecha,
-            allDay: true,
-            extendedProps: cita,
-            color: getColorForAppointmentType(motivo)
-          };
-        });
-
-        successCallback(eventos);
-      } catch (error) {
-        console.error('Error al cargar eventos del calendario:', error);
-        mostrarAlerta('❌ Error al cargar citas en el calendario', 'error');
-      }
-    }
-  });
-
-  calendar.render();
-}
-function getColorForAppointmentType(motivo) {
-  const colors = {
-    'Control de peso': '#4CAF50',
-    'Consulta general': '#2196F3',
-    'Revisión': '#FFC107',
-    'Vacunación': '#9C27B0',
-    'Desparasitación': '#795548'
-  };
-  return colors[motivo] || '#607D8B'; // Color por defecto
 }
 
-    function getColorForAppointmentType(motivo) {
-        const colors = {
-            'Estética': '#FF9800',
-            'Vacunas': '#4CAF50',
-            'Consulta': '#2196F3',
-            'Eutanasia': '#9C27B0',
-            'Cirugía': '#F44336'
+async function guardarVacuna(event) {
+    if (event) event.preventDefault();
+    
+    const btnGuardar = document.querySelector('#modalVacunas button[onclick="guardarVacuna()"]');
+    const btnOriginalText = btnGuardar.innerHTML;
+    btnGuardar.innerHTML = '⏳ Guardando...';
+    btnGuardar.disabled = true;
+
+    try {
+        // Validación básica
+        const nombreMascota = document.getElementById('nombreMascota').value.trim();
+        const vacunaSeleccionada = document.getElementById('nombreVacuna').value;
+        
+        if (!nombreMascota || !vacunaSeleccionada) {
+            mostrarAlerta('❌ Nombre de mascota y vacuna son requeridos', 'error');
+            return;
+        }
+
+        // Preparar datos
+        const datos = {
+            action: 'guardarVacuna',
+            nombreMascota: nombreMascota,
+            nombreDueno: document.getElementById('nombreDueno')?.value.trim() || '',
+            idCliente: document.getElementById('idCliente')?.value || 'N/A',
+            idMascota: document.getElementById('idMascota')?.value || 'N/A',
+            edad: document.getElementById('edad')?.value || '0',
+            sexo: document.getElementById('genero')?.value || 'No especificado',
+            peso: document.getElementById('peso')?.value || '0',
+            especie: document.getElementById('especieSelect')?.value || 'No especificada',
+            raza: document.getElementById('raza')?.value || 'No especificada',
+            vacuna: vacunaSeleccionada,
+            fechaAplicacion: document.getElementById('fechaAplicacion')?.value || new Date().toISOString().split('T')[0],
+            fechaRefuerzo: document.getElementById('fechaRefuerzo')?.value || '',
+            veterinario: document.getElementById('veterinario')?.value.trim() || 'No especificado',
+            observaciones: document.getElementById('observaciones')?.value.trim() || 'Ninguna'
         };
-        return colors[motivo] || '#607D8B';
-    }
 
-    // ========== FUNCIONES DE CLIENTES ==========
-    async function guardarCliente(event) {
-  event.preventDefault();
-
-  if (!validarFormulario()) return false;
-
-  const formData = {
-    nombreDueno: document.getElementById('nombreDueno').value.trim(),
-    direccion: document.getElementById('direccion').value.trim(),
-    telefono: document.getElementById('telefono').value.trim(),
-    correo: document.getElementById('correo').value.trim(),
-    nombreMascota: document.getElementById('nombreMascota').value.trim(),
-    edad: document.getElementById('edad').value,
-    peso: document.getElementById('peso').value,
-    sexo: document.getElementById('sexo').value,
-    especie: document.getElementById('especieSelect').value,
-    raza: document.getElementById('raza').value
-  };
-
-  try {
-    const existe = await verificarClienteExistente(formData.nombreDueno, formData.nombreMascota);
-    if (existe.duenoYmascota) {
-      mostrarAlerta('¡Este cliente y mascota ya están registrados!', 'error');
-      return;
-    }
-
-    const response = await fetch(WEBAPP_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'guardarCliente',
-        ...formData // ← IMPORTANTE: aquí estás mandando los datos planos como espera el GAS
-      })
-    });
-
-    const result = await response.json();
-
-    if (result.status === 'success') {
-      mostrarAlerta('✅ Registro exitoso!', 'success');
-      cerrarModal('modalNuevoCliente');
-      document.getElementById('formNuevoCliente').reset();
-    } else {
-      throw new Error(result.message || 'Fallo en el servidor');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    mostrarAlerta('❌ Error al guardar: ' + error.message, 'error');
-  }
-}
-    // ========== FUNCIONES AUXILIARES ==========
-    function setupMenuNavigation() {
-        document.querySelectorAll('nav a').forEach(link => {
-            if (link.getAttribute('href').startsWith('#')) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('href').substring(1);
-                    document.querySelectorAll('[id$="-section"]').forEach(section => {
-                        section.style.display = section.id === `${targetId}-section` ? 'block' : 'none';
-                    });
-                });
-            }
+        // Enviar datos
+        const response = await fetch(WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
         });
-    }
 
-    function abrirModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+        const resultado = await response.json();
+
+        if (resultado.status !== 'success') {
+            throw new Error(resultado.message || 'Error en el servidor');
         }
-    }
 
-    function cerrarModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+        mostrarAlerta('✅ Vacuna registrada correctamente', 'success');
+        
+        // Limpiar formulario
+        document.getElementById('formVacuna').reset();
+        
+        // Cerrar modal después de 1 segundo
+        setTimeout(() => {
+            cerrarModal('modalVacunas');
+        }, 1000);
+
+    } catch (error) {
+        console.error('Error al guardar vacuna:', error);
+        mostrarAlerta(`❌ Error: ${error.message}`, 'error');
+    } finally {
+        btnGuardar.innerHTML = btnOriginalText;
+        btnGuardar.disabled = false;
+    }
+}
+
+// ========== FUNCIONES AUXILIARES ==========
+function setupMenuNavigation() {
+    document.querySelectorAll('nav a').forEach(link => {
+        if (link.getAttribute('href').startsWith('#')) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                document.querySelectorAll('[id$="-section"]').forEach(section => {
+                    section.style.display = section.id === `${targetId}-section` ? 'block' : 'none';
+                });
+            });
         }
-    }
+    });
+}
 
-    function actualizarRazas() {
-    // 1. Verificar primero si los elementos existen en el DOM
+function abrirModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function cerrarModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function actualizarRazas() {
     const especieSelect = document.getElementById("especieSelect");
     const razaSelect = document.getElementById("raza");
     
-    // Si no existe el select de razas, salir silenciosamente
-    if (!razaSelect) {
-        console.log("Select de razas no encontrado en el DOM");
-        return;
-    }
+    if (!razaSelect) return;
     
-    // 2. Limpiar las razas previas (solo si existe el select)
     razaSelect.innerHTML = "<option value=''>Seleccione especie primero</option>";
     
-    // 3. Si no hay select de especies o no tiene valor seleccionado, terminar
-    if (!especieSelect || !especieSelect.value) {
-        return;
-    }
+    if (!especieSelect || !especieSelect.value) return;
     
-    // 4. Diccionario mejorado de especies y razas (con emojis)
-    const razasPorEspecie = {
-        "Perro": ["Labrador 🐕", "Chihuahua 🐶", "Pastor Alemán 🦮", "Bulldog 🐕"],
-        "Gato": ["Siamés 😼", "Persa 😺", "Sphynx 🐈", "Maine Coon 🐱"],
-        "Conejo": ["Angora 🐇", "Himalayo 🐰", "Enano 🐇", "Mini Rex 🐰"],
-        "Ave": ["Canario 🐦", "Perico 🦜", "Agaporni 🦜", "Cacatúa 🦜"],
-        "Hámster": ["Sirio 🐹", "Campbell 🐹", "Roborovski 🐹", "Chino 🐹"],
-        "Tortuga": ["Aldabra 🐢", "Leopardo 🐢", "Caja 🐢", "Marina 🐢"],
-        "Reptil": ["Gecko 🦎", "Iguana 🦎", "Serpiente 🐍", "Camaleón 🦎"]
-    };
+    const razas = razasPorEspecie[especieSelect.value] || [];
     
-    // 5. Obtener la especie seleccionada
-    const especieSeleccionada = especieSelect.value;
-    
-    // 6. Actualizar las razas si la especie es válida
-    if (razasPorEspecie[especieSeleccionada]) {
-        razasPorEspecie[especieSeleccionada].forEach(raza => {
-            const option = document.createElement("option");
-            option.value = raza.split(' ')[0]; // Guarda solo el nombre sin emoji
-            option.textContent = raza;         // Muestra nombre + emoji
-            razaSelect.appendChild(option);
-        });
-    }
+    razas.forEach(raza => {
+        const option = document.createElement("option");
+        option.value = raza.split(' ')[0];
+        option.textContent = raza;
+        razaSelect.appendChild(option);
+    });
 }
 
-// Función para inicializar los event listeners (debes llamarla en initApp())
 function configurarSelectores() {
-    // Actualizar razas cuando cambie la especie
     document.addEventListener('change', function(e) {
         if (e.target.id === 'especieSelect') {
             actualizarRazas();
         }
     });
-    
-    // También actualizar al cargar modales que contengan estos selects
-    document.addEventListener('modalLoaded', function() {
-        if (document.getElementById('especieSelect')) {
-            actualizarRazas();
-        }
-    });
 }
-    function validarFormulario() {
-        const camposRequeridos = [
-            'nombreDueno', 'direccion', 'telefono', 
-            'correo', 'nombreMascota', 'edad', 'peso'
-        ];
-        
-        for (const campoId of camposRequeridos) {
-            const valor = document.getElementById(campoId).value.trim();
-            if (!valor) {
-                mostrarAlerta(`Complete el campo ${campoId.replace('nombre', '')}`, 'error');
-                return false;
-            }
-        }
-        
-        const email = document.getElementById('correo').value;
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            mostrarAlerta('Ingrese un correo válido', 'error');
+
+function validarFormulario() {
+    const camposRequeridos = [
+        'nombreDueno', 'direccion', 'telefono', 
+        'correo', 'nombreMascota', 'edad', 'peso'
+    ];
+    
+    for (const campoId of camposRequeridos) {
+        const valor = document.getElementById(campoId).value.trim();
+        if (!valor) {
+            mostrarAlerta(`Complete el campo ${campoId.replace('nombre', '')}`, 'error');
             return false;
         }
-        
-        return true;
     }
-
-    function mostrarAlerta(mensaje, tipo = 'info') {
-        const colores = {
-            success: '#4CAF50',
-            error: '#F44336',
-            info: '#2196F3'
-        };
-        
-        Toastify({
-            text: mensaje,
-            duration: 3000,
-            backgroundColor: colores[tipo],
-            close: true,
-            gravity: "top",
-            position: "right"
-        }).showToast();
+    
+    const email = document.getElementById('correo').value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        mostrarAlerta('Ingrese un correo válido', 'error');
+        return false;
     }
-
-    // ========== INICIALIZACIÓN ==========
-    document.addEventListener('DOMContentLoaded', initApp);
-    window.addEventListener('click', (event) => {
-        if (event.target.className === 'modal') {
-            event.target.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-    // ===========funcion para abrir las citas del dia========
-    function mostrarCitasBonitas() {
-  const lista = document.getElementById('appointments-list');
-  const nuevaVentana = window.open('', '_blank');
-  nuevaVentana.document.write(`
-    <html>
-      <head>
-        <title>Citas del día</title>
-        <style>
-          body { font-family: Arial; padding: 20px; }
-          h2 { color: #444; }
-          li { margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-        </style>
-      </head>
-      <body>
-        <h2>Citas programadas para hoy</h2>
-        <ul>${lista.innerHTML}</ul>
-      </body>
-    </html>
-  `);
-  nuevaVentana.document.close();
+    
+    return true;
 }
-//======== Calendario ============
+
+function mostrarAlerta(mensaje, tipo = 'info') {
+    const colores = {
+        success: '#4CAF50',
+        error: '#F44336',
+        info: '#2196F3'
+    };
+    
+    Toastify({
+        text: mensaje,
+        duration: 3000,
+        backgroundColor: colores[tipo],
+        close: true,
+        gravity: "top",
+        position: "right"
+    }).showToast();
+}
+
+// ========== OTRAS FUNCIONES EXISTENTES ==========
+// (Mantén aquí todas tus otras funciones que no están relacionadas con vacunas)
+
+function mostrarCitasBonitas() {
+    const lista = document.getElementById('appointments-list');
+    const nuevaVentana = window.open('', '_blank');
+    nuevaVentana.document.write(`
+        <html>
+            <head>
+                <title>Citas del día</title>
+                <style>
+                    body { font-family: Arial; padding: 20px; }
+                    h2 { color: #444; }
+                    li { margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+                </style>
+            </head>
+            <body>
+                <h2>Citas programadas para hoy</h2>
+                <ul>${lista.innerHTML}</ul>
+            </body>
+        </html>
+    `);
+    nuevaVentana.document.close();
+}
+
 let calendarioInicializado = false;
 
 function comenzar() {
-  document.getElementById('daily-appointments').style.display = 'none';
-  document.getElementById('calendar-container').style.display = 'block';
+    document.getElementById('daily-appointments').style.display = 'none';
+    document.getElementById('calendar-container').style.display = 'block';
 
-  if (!calendarioInicializado) {
-    initCalendar();
-    calendarioInicializado = true;
-  }
+    if (!calendarioInicializado) {
+        initCalendar();
+        calendarioInicializado = true;
+    }
 }
+
 let fechaSeleccionada = null;
 
-// Mostrar modal con fecha seleccionada
 function abrirModalNuevaCita(fecha) {
-  fechaSeleccionada = fecha;
-  document.getElementById('modalNuevaCita').style.display = 'block';
-  document.body.style.overflow = 'hidden';
+    fechaSeleccionada = fecha;
+    document.getElementById('modalNuevaCita').style.display = 'block';
+    document.body.style.overflow = 'hidden';
 }
+
 async function obtenerProductosDesdeBackend() {
     try {
         const response = await fetch(`${WEBAPP_URL}?action=getProductos`);
@@ -458,6 +516,7 @@ async function obtenerProductosDesdeBackend() {
         mostrarAlerta('❌ Error al cargar productos. Recargue la página', 'error');
     }
 }
+
 async function guardarVacuna(event) {
     if (event) event.preventDefault();
     
@@ -918,78 +977,6 @@ function guardarEstetica(event) {
         select.innerHTML = '<option value="">Error al cargar vacunas</option>';
       });
   }
-  async function guardarVacuna() {
-    const btnGuardar = document.querySelector('#modalVacunas button[onclick="guardarVacuna()"]');
-    const btnOriginalText = btnGuardar.innerHTML;
-    
-    try {
-        // 1. Cambiar el botón a estado "cargando"
-        btnGuardar.innerHTML = '⏳ Guardando...';
-        btnGuardar.disabled = true;
-
-        // 2. Validación básica
-        const nombreMascota = document.getElementById('nombreMascota').value;
-        const vacunaSeleccionada = document.getElementById('nombreVacuna').value;
-        
-        if (!nombreMascota || !vacunaSeleccionada) {
-            mostrarAlerta('❌ Nombre de mascota y vacuna son requeridos', 'error');
-            return;
-        }
-
-        // 3. Preparar datos
-        const datos = {
-            action: 'guardarVacuna',
-            nombreMascota: nombreMascota,
-            nombreDueno: document.getElementById('nombreDueno')?.value || '',
-            idCliente: document.getElementById('idCliente')?.value || 'N/A',
-            idMascota: document.getElementById('idMascota')?.value || 'N/A',
-            edad: document.getElementById('edad')?.value || '0',
-            sexo: document.getElementById('genero')?.value || 'No especificado',
-            peso: document.getElementById('peso')?.value || '0',
-            especie: document.getElementById('especieSelect')?.value || 'No especificada',
-            raza: document.getElementById('raza')?.value || 'No especificada',
-            vacuna: vacunaSeleccionada,
-            fechaAplicacion: document.getElementById('fechaAplicacion')?.value || new Date().toISOString().split('T')[0],
-            fechaRefuerzo: document.getElementById('fechaRefuerzo')?.value || '',
-            veterinario: document.getElementById('veterinario')?.value || 'No especificado',
-            observaciones: document.getElementById('observaciones')?.value || 'Ninguna'
-        };
-
-        // 4. Enviar datos
-        const response = await fetch(WEBAPP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-
-        const resultado = await response.json();
-
-        if (resultado.status !== 'success') {
-            throw new Error(resultado.message || 'Error en el servidor');
-        }
-
-        // 5. Éxito
-        mostrarAlerta('✅ Vacuna registrada correctamente', 'success');
-        
-        // Actualizar tabla si existe
-        if (typeof agregarFilaTabla === 'function') {
-            agregarFilaTabla(datos);
-        }
-        
-        // Cerrar modal después de 1 segundo (opcional)
-        setTimeout(() => {
-            cerrarModal('modalVacunas');
-        }, 1000);
-
-    } catch (error) {
-        console.error('Error al guardar vacuna:', error);
-        mostrarAlerta(`❌ Error: ${error.message}`, 'error');
-    } finally {
-        // 6. Restaurar botón
-        btnGuardar.innerHTML = btnOriginalText;
-        btnGuardar.disabled = false;
-    }
-}
   function cargarVacunas(idCliente, idMascota) {
     fetch(`https://script.google.com/macros/s/AKfycbztH4mP_jjhB52a_MLwjDDgdles-xxndb01zRWOHLDYyRnh3th9WIrsAxsxuZzfwG57/exec?idCliente=${idCliente}&idMascota=${idMascota}`)
       .then(res => res.json())
@@ -1106,4 +1093,54 @@ function guardarEstetica(event) {
   
     return 'Cita guardada exitosamente en Historial';
   }
+document.addEventListener('DOMContentLoaded', initApp);
+window.addEventListener('click', (event) => {
+    if (event.target.className === 'modal') {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+async function cargarHistorialVacunas(idCliente, idMascota) {
+    try {
+        const response = await fetch(`${WEBAPP_URL}?action=getHistorialVacunas&idCliente=${idCliente}&idMascota=${idMascota}`);
+        const data = await response.json();
+        const tabla = document.querySelector('#tablaVacunas tbody');
         
+        tabla.innerHTML = '';
+        
+        if (data.status === 'success' && data.vacunas.length > 0) {
+            data.vacunas.forEach(vac => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${vac.vacuna}</td>
+                    <td>${new Date(vac.fechaAplicacion).toLocaleDateString()}</td>
+                    <td>${vac.fechaRefuerzo ? new Date(vac.fechaRefuerzo).toLocaleDateString() : '---'}</td>
+                    <td>${vac.veterinario}</td>
+                    <td>${vac.observaciones}</td>
+                    <td><button onclick="this.closest('tr').remove()">❌</button></td>
+                `;
+                tabla.appendChild(fila);
+            });
+        } else {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `<td colspan="6">Sin vacunas registradas</td>`;
+            tabla.appendChild(fila);
+        }
+    } catch (error) {
+        console.error('Error al cargar historial de vacunas:', error);
+        mostrarAlerta('Error al cargar historial de vacunas', 'error');
+    }
+}
+
+// Asegúrate que solo tengas un evento DOMContentLoaded al final:
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+    
+    // Manejo de cierre de modales
+    window.addEventListener('click', (event) => {
+        if (event.target.className === 'modal') {
+            event.target.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+});
