@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi Caja de Herramientas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      text-align: center;
+      color: #4fc3f7;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .tool-button {
+      background: #1e1e1e;
+      border: 2px solid #4fc3f7;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .tool-button:hover {
+      background: #4fc3f7;
+      color: #000;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧰 Mi Caja de Herramientas</h1>
+
+  <div class="container">
+    <div class="tool-button" onclick="location.href='gestoria.html'">📁 Gestoría</div>
+    <div class="tool-button" onclick="location.href='finanzas.html'">💰 Finanzas</div>
+    <div class="tool-button" onclick="location.href='compras.html'">🛒 Lista de Compras</div>
+    <div class="tool-button" onclick="location.href='diario.html'">📝 Diario Emocional</div>
+    <div class="tool-button" onclick="location.href='proyectos.html'">📊 Proyectos</div>
+    <div class="tool-button" onclick="location.href='notas.html'">📌 Notas Rápidas</div>
+  </div>
+
+  <footer>
+    Proyecto local creado por ti 😎 | HTML local sin conexión
+  </footer>
+
+</body>
+</html>

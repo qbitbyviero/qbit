@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🛒 Lista de Compras</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #f1f1f1;
+      padding: 20px;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    h1 {
+      text-align: center;
+      color: #4fc3f7;
+      text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+    }
+    .resumen-flotante {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #000;
+      border: 2px solid #4caf50;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 0 10px #4caf50;
+      z-index: 999;
+    }
+    section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(30,30,30,0.9);
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+    label, input, select, button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+    input, select, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #4fc3f7;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0288d1;
+      color: #fff;
+    }
+    .categoria-seccion {
+      margin-top: 20px;
+    }
+    .categoria-titulo {
+      font-weight: bold;
+      margin-top: 10px;
+      border-bottom: 1px solid #4fc3f7;
+      padding-bottom: 5px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 8px;
+      background: #2e3b4e;
+      margin-top: 5px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .edit-price {
+      background: none;
+      border: none;
+      color: #4fc3f7;
+      cursor: pointer;
+    }
+    a {
+      color: #4fc3f7;
+      text-align: center;
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="resumen-flotante" id="saldoTotal">$0.00</div>
+  <h1>🛒 Lista de Compras</h1>
+
+  <section>
+    <h2>📝 Agregar artículo</h2>
+    <label>Nombre del artículo:</label>
+    <input type="text" id="itemNombre">
+    <label>Precio (opcional):</label>
+    <input type="number" id="itemPrecio">
+    <label>Categoría:</label>
+    <input type="text" id="itemCategoria" placeholder="Ej. Abarrotes, Higiene, etc.">
+    <button onclick="agregarArticulo()">Agregar</button>
+    <div id="listaCategorias"></div>
+  </section>
+
+  <section>
+    <h2>📷 Escanear ticket</h2>
+    <input type="file" accept="image/*" onchange="leerTicket(event)" />
+    <p id="resultadoOCR"></p>
+  </section>
+
+  <a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+  <script>
+    let compras = JSON.parse(localStorage.getItem('compras')) || [];
+
+    function actualizarUI() {
+      const listaCategorias = document.getElementById('listaCategorias');
+      listaCategorias.innerHTML = '';
+
+      const agrupadas = {};
+      compras.forEach(item => {
+        const cat = item.categoria || 'Sin categoría';
+        if (!agrupadas[cat]) agrupadas[cat] = [];
+        agrupadas[cat].push(item);
+      });
+
+      let total = 0;
+      Object.keys(agrupadas).sort().forEach(cat => {
+        const section = document.createElement('div');
+        section.classList.add('categoria-seccion');
+        section.innerHTML = `<div class='categoria-titulo'>📂 ${cat}</div>`;
+        const ul = document.createElement('ul');
+
+        agrupadas[cat]
+          .sort((a, b) => a.nombre.localeCompare(b.nombre))
+          .forEach((item, i) => {
+            const index = compras.indexOf(item);
+            const li = document.createElement('li');
+            const precio = item.precio ? `$${item.precio.toFixed(2)}` : '💲Editar';
+            li.innerHTML = `
+              ${item.nombre} - <strong>${precio}</strong>
+              <span>
+                <button class="edit-price" onclick="editarPrecio(${index})">✏️</button>
+                <button class="edit-price" onclick="eliminar(${index})">❌</button>
+              </span>`;
+            ul.appendChild(li);
+            if (item.precio) total += item.precio;
+          });
+
+        section.appendChild(ul);
+        listaCategorias.appendChild(section);
+      });
+
+      localStorage.setItem('compras', JSON.stringify(compras));
+      document.getElementById('saldoTotal').textContent = `$${total.toFixed(2)}`;
+      localStorage.setItem('saldo_compras', total);
+    }
+
+    function agregarArticulo() {
+      const nombre = document.getElementById('itemNombre').value.trim();
+      const precio = parseFloat(document.getElementById('itemPrecio').value);
+      const categoria = document.getElementById('itemCategoria').value.trim();
+      if (nombre) {
+        compras.push({ nombre, precio: isNaN(precio) ? 0 : precio, categoria });
+        document.getElementById('itemNombre').value = '';
+        document.getElementById('itemPrecio').value = '';
+        document.getElementById('itemCategoria').value = '';
+        actualizarUI();
+      }
+    }
+
+    function eliminar(index) {
+      compras.splice(index, 1);
+      actualizarUI();
+    }
+
+    function editarPrecio(index) {
+      const nuevo = prompt("Introduce el nuevo precio:", compras[index].precio || '');
+      const valor = parseFloat(nuevo);
+      if (!isNaN(valor)) {
+        compras[index].precio = valor;
+        actualizarUI();
+      }
+    }
+
+    function leerTicket(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function() {
+        Tesseract.recognize(reader.result, 'eng', { logger: m => console.log(m) })
+          .then(({ data: { text } }) => {
+            document.getElementById('resultadoOCR').textContent = text;
+            const match = text.match(/\$?\d+\.\d{2}/g);
+            if (match) {
+              const max = Math.max(...match.map(n => parseFloat(n.replace('$',''))));
+              compras.push({ nombre: 'Total ticket', precio: max, categoria: 'Tickets' });
+              actualizarUI();
+              alert('🧾 Total detectado: $' + max.toFixed(2));
+            } else {
+              alert('❌ No se encontró total en el ticket.');
+            }
+          });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    actualizarUI();
+  </script>
+</body>
+</html>

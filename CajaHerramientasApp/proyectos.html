@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Proyectos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+  * { margin:0; padding:0; box-sizing: border-box; }
+  :root {
+    --bg-gradient-start: #0f2027;
+    --bg-gradient-end: #2c5364;
+    --card-bg: rgba(255,255,255,0.05);
+    --card-shadow: rgba(0,0,0,0.7);
+    --accent: #4fc3f7;
+    --accent-shine: rgba(79, 195, 247, 0.5);
+    --text-light: #f0f0f0;
+  }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    color: var(--text-light);
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  h1, h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-shine));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent); }
+    to   { text-shadow: 0 0 20px var(--accent-shine), 0 0 30px var(--accent-shine); }
+  }
+  section {
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    box-shadow: 0 10px 30px var(--card-shadow);
+  }
+  label {
+    font-weight: 600;
+    margin-top: 1rem;
+    color: var(--accent);
+  }
+  input, textarea, button, select {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--accent);
+    background: rgba(255,255,255,0.1);
+    color: var(--text-light);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-shine);
+    box-shadow: 0 0 10px var(--accent-shine);
+    outline: none;
+  }
+  button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-shine));
+    color: #000;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px var(--accent-shine);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px var(--accent-shine);
+  }
+  #proyectos {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 10px;
+  }
+  .proyecto-card {
+    flex: 0 0 300px;
+    scroll-snap-align: start;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .proyecto-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 40px rgba(79, 195, 247, 0.4);
+  }
+  canvas {
+    width: 100% !important;
+    height: 180px !important;
+  }
+  .historial {
+    margin-top: 1rem;
+    background: rgba(0,0,0,0.2);
+    padding: .8rem;
+    border-radius: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  .historial ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .historial li {
+    margin-bottom: .4rem;
+  }
+  .historial li::before {
+    content: '•';
+    color: var(--accent);
+    margin-right: 0.5rem;
+  }
+  @media (max-width: 768px) {
+    section { padding: 1rem; }
+    .proyecto-card { width: 280px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🌟 Gestión de Proyectos</h1>
+
+<section>
+  <h2>Nuevo Proyecto</h2>
+  <label for="nombreProyecto">Nombre del Proyecto</label>
+  <input type="text" id="nombreProyecto" placeholder="Ej. Proyecto de App" />
+
+  <label for="descripcionProyecto">Descripción</label>
+  <textarea id="descripcionProyecto" placeholder="Breve descripción del proyecto"></textarea>
+
+  <label for="fechaInicio">Fecha de Inicio</label>
+  <input type="date" id="fechaInicio" />
+
+  <label for="avanceProyecto">Avance (%)</label>
+  <input type="number" id="avanceProyecto" min="0" max="100" placeholder="Avance en porcentaje" />
+
+  <label for="colorProyecto">Color del Proyecto</label>
+  <input type="color" id="colorProyecto" value="#00c6ff" />
+
+  <button onclick="agregarProyecto()">Añadir Proyecto</button>
+</section>
+
+<section>
+  <h2>Mis Proyectos</h2>
+  <div id="proyectos"></div>
+</section>
+
+<a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
+<script>
+  let proyectos = JSON.parse(localStorage.getItem('proyectos')) || [];
+
+  function guardarProyectos() {
+    localStorage.setItem('proyectos', JSON.stringify(proyectos));
+  }
+
+  function agregarProyecto() {
+    const nombre = document.getElementById('nombreProyecto').value.trim();
+    const descripcion = document.getElementById('descripcionProyecto').value.trim();
+    const avance = parseInt(document.getElementById('avanceProyecto').value);
+    const color = document.getElementById('colorProyecto').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+
+    if (nombre && descripcion && !isNaN(avance) && avance >= 0 && avance <= 100 && fechaInicio) {
+      const proyecto = {
+        nombre,
+        descripcion,
+        avance,
+        color,
+        fechaInicio,
+        historial: [{ fecha: new Date().toLocaleString(), descripcion: "Inicio del proyecto", avance }]
+      };
+      proyectos.push(proyecto);
+      guardarProyectos();
+      limpiarFormulario();
+      mostrarProyectos();
+    } else {
+      alert("Completa todos los campos correctamente.");
+    }
+  }
+
+  function limpiarFormulario() {
+    document.getElementById('nombreProyecto').value = '';
+    document.getElementById('descripcionProyecto').value = '';
+    document.getElementById('avanceProyecto').value = '';
+    document.getElementById('colorProyecto').value = '#00c6ff';
+    document.getElementById('fechaInicio').value = '';
+  }
+
+  function mostrarProyectos() {
+    const contenedor = document.getElementById('proyectos');
+    contenedor.innerHTML = '';
+
+    proyectos.forEach((proyecto, index) => {
+      const card = document.createElement('div');
+      card.className = 'proyecto-card';
+      card.style.borderLeft = `10px solid ${proyecto.color || '#00c6ff'}`;
+
+      const canvas = document.createElement('canvas');
+
+      const historialHTML = proyecto.historial.map(h => `<li>${h.fecha} - ${h.descripcion} (${h.avance}%)</li>`).join('');
+
+      card.innerHTML = `
+        <h3 contenteditable="true" onblur="editarCampo(${index}, 'nombre', this.innerText)">${proyecto.nombre}</h3>
+        <p contenteditable="true" onblur="editarCampo(${index}, 'descripcion', this.innerText)">${proyecto.descripcion}</p>
+        <p><strong>Avance:</strong> ${proyecto.avance}%</p>
+        <p><strong>Inicio:</strong> ${proyecto.fechaInicio}</p>
+        <button onclick="abrirDialogo(${index})">📈 Registrar Progreso</button>
+        <button onclick="eliminarProyecto(${index})">🗑️ Eliminar</button>
+        <div class="historial">
+          <strong>Historial:</strong>
+          <ul>${historialHTML}</ul>
+        </div>
+      `;
+
+      card.appendChild(canvas);
+      contenedor.appendChild(card);
+
+      new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Avance', 'Pendiente'],
+          datasets: [{
+            data: [proyecto.avance, 100 - proyecto.avance],
+            backgroundColor: [proyecto.color || '#00c6ff', '#ffffff33']
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: { color: "#fff" }
+            }
+          }
+        }
+      });
+    });
+  }
+
+  function editarCampo(index, campo, valor) {
+    proyectos[index][campo] = valor.trim();
+    guardarProyectos();
+  }
+
+  function abrirDialogo(index) {
+    const progreso = prompt("¿Qué progreso nuevo quieres registrar?");
+    const nuevoAvance = prompt("¿Porcentaje actualizado?");
+    const avanceNum = parseInt(nuevoAvance);
+    if (progreso && !isNaN(avanceNum) && avanceNum >= 0 && avanceNum <= 100) {
+      proyectos[index].avance = avanceNum;
+      proyectos[index].historial.push({
+        fecha: new Date().toLocaleString(),
+        descripcion: progreso,
+        avance: avanceNum
+      });
+      guardarProyectos();
+      mostrarProyectos();
+    } else {
+      alert("Datos inválidos.");
+    }
+  }
+
+  function eliminarProyecto(index) {
+    if (confirm("¿Eliminar este proyecto?")) {
+      proyectos.splice(index, 1);
+      guardarProyectos();
+      mostrarProyectos();
+    }
+  }
+
+  mostrarProyectos();
+</script>
+
+</body>
+</html>

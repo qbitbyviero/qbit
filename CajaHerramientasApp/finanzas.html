@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💸 Finanzas Personales</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #f1f1f1;
+      padding: 20px;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    h1 {
+      text-align: center;
+      color: #4fc3f7;
+      text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+    }
+    section {
+      margin-bottom: 30px;
+      border-radius: 12px;
+      padding: 20px;
+      background: rgba(30, 30, 30, 0.9);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+    h2, h3 {
+      color: #4fc3f7;
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      background: #4fc3f7;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0288d1;
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #2e3b4e;
+    }
+    .categoria {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .categoria div {
+      flex: 1 1 48%;
+      padding: 20px;
+      background: #2b2b2b;
+      border-radius: 12px;
+    }
+    .grafico {
+      width: 100%;
+      height: 400px;
+    }
+    .compra {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .resumen-flotante {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #000;
+      border: 2px solid #4caf50;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 0 10px #4caf50;
+      z-index: 999;
+    }
+    a {
+      color: #4fc3f7;
+      text-align: center;
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    @media (max-width: 600px) {
+      .categoria div {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="resumen-flotante" id="resumenFlotante">$0.00</div>
+  <h1>💸 Finanzas Personales</h1>
+
+  <section>
+    <h2>➕ Ingreso</h2>
+    <label>Monto:</label>
+    <input type="number" id="ingresoMonto">
+    <label>Descripción:</label>
+    <input type="text" id="ingresoDesc">
+    <button onclick="agregarIngreso()">Agregar Ingreso</button>
+    <table id="tablaIngresos"><thead><tr><th>Monto</th><th>Descripción</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section>
+    <h2>➖ Gasto</h2>
+    <label>Monto (puedes usar 10+20+30):</label>
+    <input type="text" id="gastoMonto">
+    <label>Descripción:</label>
+    <input type="text" id="gastoDesc">
+    <button onclick="agregarGasto()">Agregar Gasto</button>
+    <table id="tablaGastos"><thead><tr><th>Monto</th><th>Descripción</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section>
+    <h2>🛍️ Cosas que quiero comprar</h2>
+    <div class="compra">
+      <input type="text" id="compraArticulo" placeholder="Artículo">
+      <input type="number" id="compraPrecio" placeholder="Precio estimado">
+      <button onclick="agregarCompra()">Agregar Compra</button>
+    </div>
+    <table id="tablaCompras"><thead><tr><th>Artículo</th><th>Precio</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section>
+    <h2>📉 Deudas</h2>
+    <label>Persona:</label>
+    <input type="text" id="deudaPersona">
+    <label>Total:</label>
+    <input type="number" id="deudaTotal">
+    <label>Abonado:</label>
+    <input type="number" id="deudaAbono">
+    <button onclick="agregarDeuda()">Registrar Deuda</button>
+    <table id="tablaDeudas"><thead><tr><th>Persona</th><th>Total</th><th>Abonado</th><th>Restante</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <section class="categoria">
+    <div>
+      <h3>💡 Pagos Hormiga</h3>
+      <label>Monto:</label>
+      <input type="number" id="hormigaMonto">
+      <label>Descripción:</label>
+      <input type="text" id="hormigaDesc">
+      <button onclick="agregarHormiga()">Agregar Hormiga</button>
+      <table id="tablaHormiga"><thead><tr><th>Monto</th><th>Descripción</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div>
+      <h3>🔒 Pagos Fijos</h3>
+      <label>Monto:</label>
+      <input type="number" id="fijosMonto">
+      <label>Descripción:</label>
+      <input type="text" id="fijosDesc">
+      <button onclick="agregarFijos()">Agregar Fijo</button>
+      <table id="tablaFijos"><thead><tr><th>Monto</th><th>Descripción</th></tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <section>
+    <h2>📊 Resumen</h2>
+    <div class="grafico">
+      <canvas id="graficoFinanzas"></canvas>
+    </div>
+  </section>
+
+  <a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
+  <script>
+    let ingresos = JSON.parse(localStorage.getItem('ingresos')) || [];
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+    let compras = JSON.parse(localStorage.getItem('compras')) || [];
+    let deudas = JSON.parse(localStorage.getItem('deudas')) || [];
+    let hormigas = JSON.parse(localStorage.getItem('hormigas')) || [];
+    let fijos = JSON.parse(localStorage.getItem('fijos')) || [];
+
+    function guardarDatos() {
+      localStorage.setItem('ingresos', JSON.stringify(ingresos));
+      localStorage.setItem('gastos', JSON.stringify(gastos));
+      localStorage.setItem('compras', JSON.stringify(compras));
+      localStorage.setItem('deudas', JSON.stringify(deudas));
+      localStorage.setItem('hormigas', JSON.stringify(hormigas));
+      localStorage.setItem('fijos', JSON.stringify(fijos));
+    }
+
+    function mostrar(tablaId, datos, cols) {
+      const tbody = document.querySelector(`#${tablaId} tbody`);
+      tbody.innerHTML = '';
+      datos.forEach(item => {
+        const tr = document.createElement('tr');
+        cols.forEach(col => {
+          const td = document.createElement('td');
+          td.textContent = col === 'monto' || col === 'precio' || col === 'total' || col === 'abonado' || col === 'restante'
+            ? `$${item[col].toFixed(2)}`
+            : item[col];
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function actualizarSaldoDisponible(monto) {
+      const resumen = document.getElementById('resumenFlotante');
+      resumen.textContent = `$${monto.toFixed(2)}`;
+    }
+
+    function actualizarResumen() {
+  let totalIngresos = ingresos.reduce((sum, i) => sum + i.monto, 0);
+  let totalGastos = gastos.reduce((sum, g) => sum + g.monto, 0);
+  let totalCompras = compras.reduce((sum, c) => sum + c.precio, 0);
+  let totalHormigas = hormigas.reduce((sum, h) => sum + h.monto, 0);
+  let totalFijos = fijos.reduce((sum, f) => sum + f.monto, 0);
+
+  // 👉 Aquí agregas estas dos líneas
+  const comprasExtras = parseFloat(localStorage.getItem('saldo_compras')) || 0;
+  totalCompras += comprasExtras;
+
+  let disponible = totalIngresos - totalGastos - totalCompras - totalHormigas - totalFijos;
+  actualizarSaldoDisponible(disponible);
+
+  const ctx = document.getElementById('graficoFinanzas')?.getContext('2d');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Ingresos', 'Gastos', 'Compras', 'Hormigas', 'Fijos'],
+        datasets: [{
+          data: [totalIngresos, totalGastos, totalCompras, totalHormigas, totalFijos],
+          backgroundColor: ['#4caf50', '#f44336', '#ff9800', '#9c27b0', '#2196f3'],
+        }]
+      }
+    });
+  }
+}
+
+
+    function agregarIngreso() {
+      const monto = parseFloat(document.getElementById("ingresoMonto").value);
+      const desc = document.getElementById("ingresoDesc").value;
+      if (!isNaN(monto)) {
+        ingresos.push({ monto, desc });
+        guardarDatos();
+        mostrar("tablaIngresos", ingresos, ['monto', 'desc']);
+        actualizarResumen();
+        document.getElementById("ingresoMonto").value = '';
+        document.getElementById("ingresoDesc").value = '';
+      }
+    }
+
+    function agregarGasto() {
+      let expr = document.getElementById("gastoMonto").value;
+      let desc = document.getElementById("gastoDesc").value;
+      let monto;
+      try {
+        monto = eval(expr);
+      } catch (e) {
+        alert("Expresión inválida");
+        return;
+      }
+      if (!isNaN(monto)) {
+        gastos.push({ monto, desc });
+        guardarDatos();
+        mostrar("tablaGastos", gastos, ['monto', 'desc']);
+        actualizarResumen();
+        document.getElementById("gastoMonto").value = '';
+        document.getElementById("gastoDesc").value = '';
+      }
+    }
+
+    function agregarCompra() {
+      let nombre = document.getElementById("compraArticulo").value;
+      let precio = parseFloat(document.getElementById("compraPrecio").value);
+      if (nombre && !isNaN(precio)) {
+        compras.push({ nombre, precio });
+        guardarDatos();
+        mostrar("tablaCompras", compras, ['nombre', 'precio']);
+        actualizarResumen();
+        document.getElementById("compraArticulo").value = '';
+        document.getElementById("compraPrecio").value = '';
+      }
+    }
+
+    function agregarHormiga() {
+      const monto = parseFloat(document.getElementById("hormigaMonto").value);
+      const desc = document.getElementById("hormigaDesc").value;
+      if (!isNaN(monto)) {
+        hormigas.push({ monto, desc });
+        guardarDatos();
+        mostrar("tablaHormiga", hormigas, ['monto', 'desc']);
+        actualizarResumen();
+        document.getElementById("hormigaMonto").value = '';
+        document.getElementById("hormigaDesc").value = '';
+      }
+    }
+
+    function agregarFijos() {
+      const monto = parseFloat(document.getElementById("fijosMonto").value);
+      const desc = document.getElementById("fijosDesc").value;
+      if (!isNaN(monto)) {
+        fijos.push({ monto, desc });
+        guardarDatos();
+        mostrar("tablaFijos", fijos, ['monto', 'desc']);
+        actualizarResumen();
+        document.getElementById("fijosMonto").value = '';
+        document.getElementById("fijosDesc").value = '';
+      }
+    }
+
+    mostrar("tablaIngresos", ingresos, ['monto', 'desc']);
+    mostrar("tablaGastos", gastos, ['monto', 'desc']);
+    mostrar("tablaCompras", compras, ['nombre', 'precio']);
+    mostrar("tablaDeudas", deudas, ['persona', 'total', 'abonado', 'restante']);
+    mostrar("tablaHormiga", hormigas, ['monto', 'desc']);
+    mostrar("tablaFijos", fijos, ['monto', 'desc']);
+    actualizarResumen();
+  </script>
+</body>
+</html>

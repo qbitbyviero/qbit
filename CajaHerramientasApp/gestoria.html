@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📁 Módulo Gestoría</title>
+  <style>
+    /* Fondo animado */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #4fc3f7;
+      margin-bottom: 40px;
+      text-shadow: 0 0 5px #4fc3f7, 0 0 10px #4fc3f7;
+      animation: fadeInDown 1s ease-out;
+      text-align: center;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-button {
+      background: rgba(30, 30, 30, 0.9);
+      border: 2px solid #4fc3f7;
+      color: #ffffff;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      perspective: 800px;
+      transform-style: preserve-3d;
+    }
+
+    .custom-button:hover {
+      background: #4fc3f7;
+      color: #000;
+      transform: scale(1.07) rotateY(5deg);
+      box-shadow: 0 20px 30px rgba(79, 195, 247, 0.5);
+    }
+
+    #contador {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #f1f1f1;
+    }
+
+    #preview {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #preview img {
+      width: 100px;
+      height: auto;
+      border: 1px solid #4fc3f7;
+      border-radius: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    #preview img:hover {
+      transform: scale(1.05);
+    }
+
+    a {
+      color: #4fc3f7;
+      display: block;
+      margin-top: 30px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📁 Módulo Gestoría</h1>
+
+  <div class="button-group">
+    <button class="custom-button" onclick="abrirCamara()">📷 Tomar Foto</button>
+    <button class="custom-button" onclick="abrirGaleria()">🖼️ Agregar desde galería</button>
+    <button class="custom-button" onclick="generarPDF()">🧾 Generar PDF</button>
+  </div>
+
+  <p id="contador">Imágenes seleccionadas: 0</p>
+  <input type="file" id="fileInputReal" accept="image/*" multiple style="display:none;">
+  <div id="preview"></div>
+
+  <a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
+  <script>
+    let imagenes = [];
+
+    function abrirCamara() {
+      crearInput(true);
+    }
+
+    function abrirGaleria() {
+      crearInput(false);
+    }
+
+    function crearInput(usandoCamara) {
+      const inputExistente = document.getElementById('fileInputReal');
+      if (inputExistente) inputExistente.remove();
+
+      const nuevoInput = document.createElement('input');
+      nuevoInput.type = 'file';
+      nuevoInput.id = 'fileInputReal';
+      nuevoInput.accept = 'image/*';
+      nuevoInput.multiple = true;
+      if (usandoCamara) nuevoInput.setAttribute('capture', 'environment');
+      nuevoInput.style.display = 'none';
+      document.body.appendChild(nuevoInput);
+
+      nuevoInput.addEventListener('change', manejarArchivos);
+      nuevoInput.click();
+    }
+
+    function manejarArchivos(event) {
+      const nuevasImagenes = Array.from(event.target.files);
+      imagenes = imagenes.concat(nuevasImagenes);
+      document.getElementById('contador').textContent = `Imágenes seleccionadas: ${imagenes.length}`;
+
+      nuevasImagenes.forEach((imgFile) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.maxWidth = '100px';
+          img.style.margin = '5px';
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(imgFile);
+      });
+    }
+
+    async function generarPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+      for (let i = 0; i < imagenes.length; i++) {
+        const base64 = await toBase64(imagenes[i]);
+        const img = await loadImage(base64);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 816;
+        canvas.height = 1056;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const newWidth = img.width * ratio;
+        const newHeight = img.height * ratio;
+        const x = (canvas.width - newWidth) / 2;
+        const y = (canvas.height - newHeight) / 2;
+
+        ctx.drawImage(img, x, y, newWidth, newHeight);
+        const finalImg = canvas.toDataURL('image/jpeg');
+
+        if (i !== 0) pdf.addPage();
+        pdf.addImage(finalImg, 'JPEG', 0, 0, 215.9, 279.4);
+      }
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      const nombreArchivo = `gestoria_${fecha}.pdf`;
+      pdf.save(nombreArchivo);
+
+      imagenes = [];
+      preview.innerHTML = '';
+      document.getElementById('contador').textContent = 'Imágenes seleccionadas: 0';
+      alert("✅ PDF generado y guardado como " + nombreArchivo);
+    }
+
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = src;
+      });
+    }
+  </script>
+</body>
+</html>

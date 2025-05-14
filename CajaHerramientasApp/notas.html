@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notas Rápidas</title>
+  <style>
+    :root {
+      --bg-gradient-start: #0f2027;
+      --bg-gradient-end: #2c5364;
+      --card-bg: rgba(255,255,255,0.05);
+      --card-shadow: rgba(0,0,0,0.7);
+      --accent: #4fc3f7;
+      --accent-shine: rgba(79, 195, 247, 0.5);
+      --text-light: #f0f0f0;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-light);
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-shine));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent); }
+      to   { text-shadow: 0 0 20px var(--accent-shine), 0 0 30px var(--accent-shine); }
+    }
+    section {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px var(--card-shadow);
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 10px;
+      resize: vertical;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    textarea:focus {
+      border-color: var(--accent-shine);
+      box-shadow: 0 0 10px var(--accent-shine);
+      outline: none;
+    }
+    button {
+      background: linear-gradient(135deg, var(--accent), var(--accent-shine));
+      border: none;
+      padding: 10px 15px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 10px;
+      margin-top: 10px;
+      box-shadow: 0 5px 15px var(--accent-shine);
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--accent-shine);
+    }
+    .nota {
+      background: rgba(0,0,0,0.2);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .nota textarea {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--text-light);
+      resize: none;
+      font-size: 1rem;
+      min-height: 80px;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: var(--accent);
+      font-weight: bold;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📝 Notas Rápidas</h1>
+
+<section>
+  <h2>Crear Nueva Nota</h2>
+  <textarea id="nuevaNota" placeholder="Escribe algo rápido..."></textarea>
+  <button onclick="guardarNota()">Guardar Nota</button>
+</section>
+
+<section>
+  <h2>Mis Notas</h2>
+  <div id="contenedorNotas"></div>
+</section>
+
+<a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
+<script>
+  let notas = JSON.parse(localStorage.getItem('notasRapidas')) || [];
+
+  function guardarNotasEnStorage() {
+    localStorage.setItem('notasRapidas', JSON.stringify(notas));
+  }
+
+  function guardarNota() {
+    const texto = document.getElementById('nuevaNota').value.trim();
+    if (texto) {
+      notas.unshift({ texto, fecha: new Date().toLocaleString() });
+      guardarNotasEnStorage();
+      document.getElementById('nuevaNota').value = '';
+      renderizarNotas();
+    } else {
+      alert('No puedes guardar una nota vacía.');
+    }
+  }
+
+  function eliminarNota(index) {
+    if (confirm('¿Estás seguro de eliminar esta nota?')) {
+      notas.splice(index, 1);
+      guardarNotasEnStorage();
+      renderizarNotas();
+    }
+  }
+
+  function editarNota(index, nuevoTexto) {
+    notas[index].texto = nuevoTexto;
+    guardarNotasEnStorage();
+  }
+
+  function renderizarNotas() {
+    const contenedor = document.getElementById('contenedorNotas');
+    contenedor.innerHTML = '';
+    notas.forEach((nota, i) => {
+      const notaDiv = document.createElement('div');
+      notaDiv.className = 'nota';
+
+      const fecha = document.createElement('p');
+      fecha.style.fontSize = '0.8rem';
+      fecha.style.opacity = '0.7';
+      fecha.textContent = `🕒 ${nota.fecha || 'Sin fecha'}`;
+
+      const textarea = document.createElement('textarea');
+      textarea.value = nota.texto;
+      textarea.onchange = () => editarNota(i, textarea.value);
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.onclick = () => eliminarNota(i);
+
+      notaDiv.appendChild(fecha);
+      notaDiv.appendChild(textarea);
+      notaDiv.appendChild(btnEliminar);
+      contenedor.appendChild(notaDiv);
+    });
+  }
+
+  renderizarNotas();
+</script>
+
+</body>
+</html>
