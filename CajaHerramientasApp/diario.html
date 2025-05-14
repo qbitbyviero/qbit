@@ -1,258 +1,235 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Diario Emocional</title>
+  <title>Diario Emocional V2</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg-gradient-start: #0f2027;
-      --bg-gradient-end: #2c5364;
-      --card-bg: rgba(255,255,255,0.05);
-      --card-shadow: rgba(0,0,0,0.7);
+      --bg-start: #0f2027;
+      --bg-end: #2c5364;
       --accent: #4fc3f7;
-      --accent-shine: rgba(79, 195, 247, 0.5);
-      --text-light: #f0f0f0;
+      --accent-light: rgba(79, 195, 247, 0.5);
+      --text: #f0f0f0;
     }
     body {
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      color: var(--text-light);
+      background: linear-gradient(to bottom right, var(--bg-start), var(--bg-end));
+      color: var(--text);
       padding: 20px;
     }
     h1, h2 {
       text-align: center;
       margin-bottom: 1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-shine));
+      font-weight: bold;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent); }
-      to   { text-shadow: 0 0 20px var(--accent-shine), 0 0 30px var(--accent-shine); }
     }
     section {
-      background: var(--card-bg);
-      backdrop-filter: blur(8px);
-      border-radius: 20px;
-      margin-bottom: 2rem;
-      padding: 2rem;
-      box-shadow: 0 10px 30px var(--card-shadow);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
-    label {
-      font-weight: 600;
-      color: var(--accent);
+    label, select {
       display: block;
-      margin-top: 1rem;
+      margin-top: 10px;
+      color: var(--accent);
+      font-weight: bold;
     }
-    input, textarea, button {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
-      margin-top: 0.5rem;
-      border: 1px solid var(--accent);
+      margin-top: 5px;
+      border: none;
       border-radius: 10px;
       background: rgba(255,255,255,0.1);
-      color: var(--text-light);
+      color: var(--text);
     }
-    textarea { resize: vertical; }
     button {
-      background: linear-gradient(135deg, var(--accent), var(--accent-shine));
+      background: var(--accent);
       color: #000;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 15px;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px var(--accent-shine);
+    .carrusel {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 10px;
     }
-    .emocion-item {
-      margin-bottom: 20px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 10px;
+    .emocion-card {
+      min-width: 280px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
       padding: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
-    audio { width: 100%; margin-top: 5px; }
-    a {
-      display: block;
-      text-align: center;
-      color: var(--accent);
-      margin-top: 30px;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .eliminar-btn {
-      background: #f44336;
-      color: white;
+    audio {
+      width: 100%;
       margin-top: 10px;
     }
-    .warning {
-      color: #ffc107;
-      text-align: center;
-      font-size: 0.95em;
-      margin-top: 10px;
+    .grafico-container {
+      margin-top: 20px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .color-select {
+      width: 100%;
+      height: 40px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
 
-<h1>📔 Diario Emocional</h1>
+<h1>📔 Diario Emocional V2</h1>
 
 <section>
-  <h2>🖋️ Registrar Emoción</h2>
-  <label for="titulo">Título</label>
-  <input type="text" id="titulo" placeholder="Ej. Estoy feliz porque...">
-  <label>🎤 Grabar tu emoción</label>
-  <button id="grabarBtn" onclick="grabarAudio()">🎙️ Iniciar Grabación</button>
+  <h2>Registrar Emoción</h2>
+  <label>Título</label>
+  <input type="text" id="titulo" placeholder="Ej. Hoy me sentí feliz..."/>
+
+  <label>Tipo de emoción</label>
+  <select id="tipo">
+    <option value="positiva">Positiva</option>
+    <option value="negativa">Negativa</option>
+    <option value="neutral">Neutral</option>
+  </select>
+
+  <label>Color</label>
+  <input type="color" id="color" class="color-select" value="#4fc3f7"/>
+
+  <button onclick="grabarAudio()">🎤 Iniciar grabación</button>
   <div id="audioContainer"></div>
-  <div id="warning" class="warning" style="display: none;">
-    ⚠️ Tu navegador no admite transcripción por voz. Puedes grabar el audio y escribir la emoción manualmente.
-  </div>
+
   <button onclick="guardarEmocion()">💾 Guardar Emoción</button>
 </section>
 
 <section>
-  <h2>📚 Galería de Emociones</h2>
-  <div id="tablaEmociones"></div>
+  <h2>Mis Emociones</h2>
+  <div class="carrusel" id="carruselEmociones"></div>
 </section>
 
-<a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+<section class="grafico-container">
+  <h2>Resumen Semanal</h2>
+  <canvas id="grafico"></canvas>
+</section>
 
 <script>
-  let emociones = JSON.parse(localStorage.getItem('emociones')) || [];
+  let emociones = JSON.parse(localStorage.getItem('emocionesV2')) || [];
 
-  function guardarDatos() {
-    localStorage.setItem('emociones', JSON.stringify(emociones));
+  function guardarLocal() {
+    localStorage.setItem('emocionesV2', JSON.stringify(emociones));
   }
 
-  function eliminarEmocion(index) {
-    if (confirm("¿Eliminar esta emoción?")) {
-      emociones.splice(index, 1);
-      guardarDatos();
-      renderizarEmociones();
-    }
-  }
-
-  function renderizarEmociones() {
-    const contenedor = document.getElementById('tablaEmociones');
-    contenedor.innerHTML = '';
-    emociones.forEach((emo, i) => {
-      const div = document.createElement('div');
-      div.className = 'emocion-item';
-
-      const titulo = document.createElement('h3');
-      titulo.textContent = 'Título: ' + emo.texto;
-
-      const audio = document.createElement('audio');
-      audio.controls = true;
-      audio.src = emo.audio;
-
-      const transcripcion = document.createElement('textarea');
-      transcripcion.value = emo.transcripcion;
-      transcripcion.onchange = () => {
-        emociones[i].transcripcion = transcripcion.value;
-        guardarDatos();
-      };
-
-      const eliminarBtn = document.createElement('button');
-      eliminarBtn.textContent = '🗑️ Eliminar';
-      eliminarBtn.className = 'eliminar-btn';
-      eliminarBtn.onclick = () => eliminarEmocion(i);
-
-      div.appendChild(titulo);
-      div.appendChild(audio);
-      div.appendChild(transcripcion);
-      div.appendChild(eliminarBtn);
-      contenedor.appendChild(div);
+  function toBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
   }
 
-  let mediaRecorder;
-  let audioChunks = [];
-  let audioURL = '';
-  let transcripcionActual = '';
-  const soporteVoz = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+  let mediaRecorder, audioChunks = [];
 
   function grabarAudio() {
-    const btn = document.getElementById("grabarBtn");
-    const warning = document.getElementById("warning");
-
-    if (!soporteVoz) {
-      warning.style.display = 'block';
-    }
-
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
-      btn.textContent = "🎙️ Iniciar Grabación";
-      return;
-    }
-
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
-      transcripcionActual = '';
-
-      let recognition;
-      if (soporteVoz) {
-        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'es-MX';
-        recognition.interimResults = false;
-        recognition.continuous = true;
-
-        recognition.onresult = event => {
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              transcripcionActual += event.results[i][0].transcript + ' ';
-            }
-          }
-        };
-        recognition.start();
-      }
-
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        if (recognition) recognition.stop();
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        audioURL = URL.createObjectURL(audioBlob);
-
-        const audioElement = document.createElement('audio');
-        audioElement.controls = true;
-        audioElement.src = audioURL;
-        const container = document.getElementById('audioContainer');
-        container.innerHTML = '';
-        container.appendChild(audioElement);
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: 'audio/wav' });
+        const base64 = await toBase64(blob);
+        const audioEl = document.createElement('audio');
+        audioEl.controls = true;
+        audioEl.src = base64;
+        document.getElementById('audioContainer').innerHTML = '';
+        document.getElementById('audioContainer').appendChild(audioEl);
+        document.getElementById('audioContainer').dataset.audio = base64;
       };
-
       mediaRecorder.start();
-      btn.textContent = "⏹️ Detener Grabación";
-    }).catch(() => alert("No se puede acceder al micrófono."));
+      setTimeout(() => mediaRecorder.stop(), 10000); // Graba por 10 seg máx
+    });
   }
 
   function guardarEmocion() {
-    const texto = document.getElementById("titulo").value.trim();
-    if (texto && audioURL) {
-      emociones.unshift({
-        texto,
-        audio: audioURL,
-        transcripcion: transcripcionActual.trim() || '[sin transcripción]'
-      });
-      guardarDatos();
-      renderizarEmociones();
-      document.getElementById("titulo").value = '';
-      document.getElementById("audioContainer").innerHTML = '';
-      transcripcionActual = '';
+    const titulo = document.getElementById('titulo').value;
+    const tipo = document.getElementById('tipo').value;
+    const color = document.getElementById('color').value;
+    const audio = document.getElementById('audioContainer').dataset.audio || '';
+    const fecha = new Date().toLocaleString();
+    if (titulo && audio) {
+      emociones.unshift({ titulo, tipo, color, audio, fecha });
+      guardarLocal();
+      mostrarEmociones();
+      document.getElementById('titulo').value = '';
+      document.getElementById('audioContainer').innerHTML = '';
+      document.getElementById('audioContainer').dataset.audio = '';
     } else {
-      alert("Por favor, ingresa un título y graba tu emoción.");
+      alert("Escribe un título y graba una emoción.");
     }
   }
 
-  renderizarEmociones();
+  function mostrarEmociones() {
+    const carrusel = document.getElementById('carruselEmociones');
+    carrusel.innerHTML = '';
+    emociones.forEach((emo, i) => {
+      const div = document.createElement('div');
+      div.className = 'emocion-card';
+      div.style.borderLeft = '10px solid ' + emo.color;
+      div.innerHTML = `
+        <strong>${emo.fecha}</strong><br>
+        <h3>${emo.titulo}</h3>
+        <p>Tipo: ${emo.tipo}</p>
+        <audio controls src="${emo.audio}"></audio>
+      `;
+      carrusel.appendChild(div);
+    });
+    graficar();
+  }
+
+  function graficar() {
+    const ctx = document.getElementById('grafico').getContext('2d');
+    const data = { positiva: 0, negativa: 0, neutral: 0 };
+    const semana = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
+    emociones.forEach(e => {
+      const t = new Date(e.fecha).getTime();
+      if (t >= semana) data[e.tipo]++;
+    });
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Positivas', 'Negativas', 'Neutrales'],
+        datasets: [{
+          label: 'Emociones esta semana',
+          data: [data.positiva, data.negativa, data.neutral],
+          backgroundColor: ['#4caf50', '#f44336', '#ffc107']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  mostrarEmociones();
 </script>
 
 </body>
