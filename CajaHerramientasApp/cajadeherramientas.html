@@ -3,23 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mi Caja de Herramientas</title>
+  <title>Viero's World - Herramientas</title>
   <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #f1f1f1;
+      --accent-color: #4fc3f7;
+      --button-bg: #1e1e1e;
+      --button-border: #4fc3f7;
+      --button-hover-bg: #4fc3f7;
+      --button-hover-text: #000000;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #121212;
-      color: #f1f1f1;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
+      transition: all 0.3s ease;
+      background-image: var(--bg-image);
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      overflow-x: hidden;
     }
 
     h1 {
       margin-bottom: 30px;
       text-align: center;
-      color: #4fc3f7;
+      color: var(--accent-color);
+    }
+
+    .logo {
+      width: 100px;
+      animation: spin 5s infinite linear;
+    }
+
+    @keyframes spin {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
     }
 
     .container {
@@ -31,20 +57,20 @@
     }
 
     .tool-button {
-      background: #1e1e1e;
-      border: 2px solid #4fc3f7;
-      color: #ffffff;
+      background: var(--button-bg);
+      border: 2px solid var(--button-border);
+      color: var(--text-color);
       padding: 20px;
       text-align: center;
       font-size: 16px;
       border-radius: 12px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      transition: background 0.3s, transform 0.2s, color 0.3s;
     }
 
     .tool-button:hover {
-      background: #4fc3f7;
-      color: #000;
+      background: var(--button-hover-bg);
+      color: var(--button-hover-text);
       transform: scale(1.05);
     }
 
@@ -54,11 +80,68 @@
       opacity: 0.6;
       text-align: center;
     }
+
+    select {
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .background-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .stars::before { background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); }
+    .ocean::before { background-image: url('https://www.transparenttextures.com/patterns/wavecut.png'); }
+    .desert::before { background-image: url('https://www.transparenttextures.com/patterns/sandpaper.png'); }
+    .neon::before  { background-image: url('https://www.transparenttextures.com/patterns/shine.png'); }
+    .selva::before { background-image: url('https://www.transparenttextures.com/patterns/leaves.png'); }
+    .lluvia::before { background-image: url('https://www.transparenttextures.com/patterns/rain.png'); }
+    .rosita::before { background-image: url('https://www.transparenttextures.com/patterns/flowers.png'); }
+    .tecnologico::before { background-image: url('https://www.transparenttextures.com/patterns/circuits.png'); }
+    .cristal::before { background-image: url('https://www.transparenttextures.com/patterns/glass.png'); }
+
+    .background-effect::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background-repeat: repeat;
+      opacity: 0.3;
+      animation: move 25s linear infinite;
+    }
+
+    @keyframes move {
+      from { background-position: 0 0; }
+      to { background-position: 100% 100%; }
+    }
   </style>
 </head>
 <body>
 
-  <h1>🧰 Mi Caja de Herramientas</h1>
+  <img src="ChatGPT Image 14 may 2025, 13_55_42.png" alt="Logo Viero" class="logo">
+  <h1>🌍 Viero's World presenta las herramientas del Sitio</h1>
+
+  <select onchange="changeTheme(this.value)">
+    <option value="default">🌑 Ciudad de Noche</option>
+    <option value="selva">🌿 Selva</option>
+    <option value="lluvia">🌧️ Lluvia</option>
+    <option value="rosita">🌸 Rosita</option>
+    <option value="tecnologico">🧠 Tecnológico</option>
+    <option value="cristal">💎 Cristal</option>
+    <option value="desierto">🏜️ Desierto</option>
+    <option value="neon">🌈 Neón</option>
+    <option value="espacio">🚀 Espacio</option>
+    <option value="oceano">🌊 Océano</option>
+  </select>
 
   <div class="container">
     <div class="tool-button" onclick="location.href='gestoria.html'">📁 Gestoría</div>
@@ -70,8 +153,50 @@
   </div>
 
   <footer>
-    Proyecto local creado por ti 😎 | HTML local sin conexión
+    Proyecto local de Viero's World 😎 | HTML local sin conexión
   </footer>
+
+  <div id="themeEffect" class="background-effect"></div>
+
+  <script>
+    const themes = {
+      "default":      { bg: "#0b0c1a", text: "#e0e0e0", accent: "#4fc3f7", image: "", effect: "stars" },
+      "selva":        { bg: "#2e4628", text: "#e1ffe1", accent: "#8bc34a", image: "", effect: "selva" },
+      "lluvia":       { bg: "#263238", text: "#cfd8dc", accent: "#4dd0e1", image: "", effect: "lluvia" },
+      "rosita":       { bg: "#fce4ec", text: "#880e4f", accent: "#f06292", image: "", effect: "rosita" },
+      "tecnologico":  { bg: "#0d1b2a", text: "#e0e1dd", accent: "#00bcd4", image: "", effect: "tecnologico" },
+      "cristal":      { bg: "#ffffffcc", text: "#000", accent: "#81d4fa", image: "", effect: "cristal" },
+      "desierto":     { bg: "#f4e2d8", text: "#4e342e", accent: "#ff9800", image: "", effect: "desert" },
+      "neon":         { bg: "#1a1a2e", text: "#fff", accent: "#e91e63", image: "", effect: "neon" },
+      "espacio":      { bg: "#000", text: "#cfcfcf", accent: "#7e57c2", image: "", effect: "stars" },
+      "oceano":       { bg: "#01579b", text: "#e0f7fa", accent: "#4dd0e1", image: "", effect: "ocean" }
+    };
+
+    function applyTheme(themeName) {
+      const theme = themes[themeName] || themes["default"];
+      document.documentElement.style.setProperty('--bg-color', theme.bg);
+      document.documentElement.style.setProperty('--text-color', theme.text);
+      document.documentElement.style.setProperty('--accent-color', theme.accent);
+      document.documentElement.style.setProperty('--bg-image', theme.image);
+
+      const effectEl = document.getElementById("themeEffect");
+      effectEl.className = "background-effect";
+      if (theme.effect) {
+        effectEl.classList.add(theme.effect);
+      }
+    }
+
+    function changeTheme(theme) {
+      localStorage.setItem('vieroTheme', theme);
+      applyTheme(theme);
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem('vieroTheme') || 'default';
+      document.querySelector('select').value = savedTheme;
+      applyTheme(savedTheme);
+    }
+  </script>
 
 </body>
 </html>
