@@ -32,7 +32,7 @@
       -webkit-text-fill-color: transparent;
     }
     section {
-      background: rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.5);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 30px;
@@ -51,8 +51,14 @@
       margin-top: 5px;
       border: none;
       border-radius: 10px;
-      background: rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.5);
       color: var(--text);
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(240,240,240,0.7);
+    }
+    input[type="file"] {
+      padding: 3px;
     }
     button {
       background: var(--accent);
@@ -64,37 +70,57 @@
       font-weight: bold;
       cursor: pointer;
     }
+    .deleteBtn {
+      background: transparent;
+      color: #f44336;
+      border: 1px solid #f44336;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
     .carrusel {
       display: flex;
-      overflow-x: auto;
+      flex-wrap: wrap;
       gap: 20px;
-      padding: 10px;
+      justify-content: center;
     }
     .emocion-card {
-      min-width: 280px;
+      width: 300px;
       background: rgba(0,0,0,0.4);
       border-radius: 12px;
       padding: 15px;
-      flex-shrink: 0;
       scroll-snap-align: center;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      border-left: 10px solid;
+    }
+    .emocion-card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
     audio {
       width: 100%;
       margin-top: 10px;
+    }
+    .grab-buttons button {
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    .transcript {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 5px;
+      max-height: 100px;
+      overflow-y: auto;
+      color: #fff;
     }
     .grafico-container {
       margin-top: 20px;
       background: rgba(0,0,0,0.3);
       border-radius: 12px;
       padding: 20px;
-    }
-    .color-select {
-      width: 100%;
-      height: 40px;
-      border-radius: 10px;
-      border: none;
-      margin-top: 5px;
     }
   </style>
 </head>
@@ -115,12 +141,19 @@
   </select>
 
   <label>Color</label>
-  <input type="color" id="color" class="color-select" value="#4fc3f7"/>
+  <input type="color" id="color" value="#4fc3f7"/>
 
-  <button onclick="grabarAudio()">🎤 Iniciar grabación</button>
+  <label>Imagen</label>
+  <input type="file" id="imagen" accept="image/*"/>
+  <div id="imagenPreview"></div>
+
+  <div class="grab-buttons">
+    <button id="recordBtn">🎤 Grabar</button>
+    <button id="stopBtn" disabled>Detener</button>
+  </div>
   <div id="audioContainer"></div>
 
-  <button onclick="guardarEmocion()">💾 Guardar Emoción</button>
+  <button id="saveBtn">💾 Guardar Emoción</button>
 </section>
 
 <section>
@@ -133,8 +166,11 @@
   <canvas id="grafico"></canvas>
 </section>
 <a href="cajadeherramientas.html">⬅️ Volver al menú</a>
+
 <script>
   let emociones = JSON.parse(localStorage.getItem('emocionesV2')) || [];
+  let tempRecordings = [];
+  let mediaRecorder, recognition, transcript;
 
   function guardarLocal() {
     localStorage.setItem('emocionesV2', JSON.stringify(emociones));
@@ -149,99 +185,118 @@
     });
   }
 
-  let mediaRecorder, audioChunks = [];
-
-  function grabarAudio() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunks, { type: 'audio/wav' });
-        const base64 = await toBase64(blob);
-        const audioEl = document.createElement('audio');
-        audioEl.controls = true;
-        audioEl.src = base64;
-        document.getElementById('audioContainer').innerHTML = '';
-        document.getElementById('audioContainer').appendChild(audioEl);
-        document.getElementById('audioContainer').dataset.audio = base64;
-      };
-      mediaRecorder.start();
-      setTimeout(() => mediaRecorder.stop(), 10000); // Graba por 10 seg máx
+  document.getElementById('imagen').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) toBase64(file).then(data => {
+      const img = document.createElement('img');
+      img.src = data; img.style.width = '100%'; img.style.borderRadius = '8px';
+      document.getElementById('imagenPreview').innerHTML = '';
+      document.getElementById('imagenPreview').appendChild(img);
     });
+  });
+
+  // Speech recognition
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRec) {
+    recognition = new SpeechRec();
+    recognition.lang = 'es-MX';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.onresult = e => {
+      let result = e.results[e.results.length - 1];
+      transcript += result[0].transcript + ' ';
+    };
+    recognition.onend = () => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') recognition.start();
+    };
   }
 
-  function guardarEmocion() {
-    const titulo = document.getElementById('titulo').value;
+  document.getElementById('recordBtn').addEventListener('click', () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      tempRecordings = [];
+      transcript = '';
+      mediaRecorder.ondataavailable = e => tempRecordings.push(e.data);
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(tempRecordings, { type: 'audio/webm' });
+        const audioData = await toBase64(blob);
+        recognition && recognition.stop();
+        addRecording(audioData, transcript);
+      };
+      mediaRecorder.start();
+      recognition && recognition.start();
+      document.getElementById('recordBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+    });
+  });
+
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    mediaRecorder.stop();
+    recognition && recognition.stop();
+    document.getElementById('recordBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+  });
+
+  function addRecording(audio, text) {
+    const container = document.getElementById('audioContainer');
+    const div = document.createElement('div');
+    const audioEl = document.createElement('audio'); audioEl.controls = true; audioEl.src = audio;
+    const txtEl = document.createElement('div'); txtEl.className = 'transcript'; txtEl.textContent = text;
+    div.appendChild(audioEl); div.appendChild(txtEl);
+    container.appendChild(div);
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const titulo = document.getElementById('titulo').value.trim();
     const tipo = document.getElementById('tipo').value;
     const color = document.getElementById('color').value;
-    const audio = document.getElementById('audioContainer').dataset.audio || '';
-    const fecha = new Date().toLocaleString();
-    if (titulo && audio) {
-      emociones.unshift({ titulo, tipo, color, audio, fecha });
-      guardarLocal();
-      mostrarEmociones();
-      document.getElementById('titulo').value = '';
-      document.getElementById('audioContainer').innerHTML = '';
-      document.getElementById('audioContainer').dataset.audio = '';
-    } else {
-      alert("Escribe un título y graba una emoción.");
-    }
+    const imgEl = document.querySelector('#imagenPreview img');
+    const imagen = imgEl ? imgEl.src : '';
+    const recs = Array.from(document.querySelectorAll('#audioContainer audio')).map((audio, i) => ({ audio: audio.src, text: document.querySelectorAll('.transcript')[i].textContent }));
+    if (titulo && recs.length) {
+      emociones.unshift({ titulo, tipo, color, imagen, recordings: recs, fecha: new Date().toLocaleString() });
+      guardarLocal(); mostrarEmociones(); resetForm();
+    } else alert('Agrega título y al menos una grabación.');
+  });
+
+  function resetForm() {
+    document.getElementById('titulo').value = '';
+    document.getElementById('audioContainer').innerHTML = '';
+    document.getElementById('imagenPreview').innerHTML = '';
   }
 
   function mostrarEmociones() {
-    const carrusel = document.getElementById('carruselEmociones');
-    carrusel.innerHTML = '';
-    emociones.forEach((emo, i) => {
-      const div = document.createElement('div');
-      div.className = 'emocion-card';
-      div.style.borderLeft = '10px solid ' + emo.color;
-      div.innerHTML = `
-        <strong>${emo.fecha}</strong><br>
-        <h3>${emo.titulo}</h3>
-        <p>Tipo: ${emo.tipo}</p>
-        <audio controls src="${emo.audio}"></audio>
-      `;
-      carrusel.appendChild(div);
+    const carr = document.getElementById('carruselEmociones'); carr.innerHTML = '';
+    emociones.forEach((e, i) => {
+      const c = document.createElement('div'); c.className = 'emocion-card'; c.style.borderLeftColor = e.color;
+      let html = `<strong>${e.fecha}</strong><h3>${e.titulo}</h3><p>Tipo: ${e.tipo}</p>`;
+      if (e.imagen) html += `<img src="${e.imagen}" alt=""/>`;
+      e.recordings.forEach(r => {
+        html += `<audio controls src="${r.audio}"></audio><div class='transcript'>${r.text}</div>`;
+      });
+      html += `<button class='deleteBtn' data-index='${i}'>Eliminar</button>`;
+      c.innerHTML = html; carr.appendChild(c);
+    });
+    // delete handler
+    document.getElementById('carruselEmociones').addEventListener('click', e => {
+      if (e.target.classList.contains('deleteBtn')) {
+        const idx = e.target.dataset.index;
+        emociones.splice(idx, 1);
+        guardarLocal(); mostrarEmociones();
+      }
     });
     graficar();
   }
 
   function graficar() {
     const ctx = document.getElementById('grafico').getContext('2d');
-    const data = { positiva: 0, negativa: 0, neutral: 0 };
-    const semana = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
-    emociones.forEach(e => {
-      const t = new Date(e.fecha).getTime();
-      if (t >= semana) data[e.tipo]++;
-    });
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Positivas', 'Negativas', 'Neutrales'],
-        datasets: [{
-          label: 'Emociones esta semana',
-          data: [data.positiva, data.negativa, data.neutral],
-          backgroundColor: ['#4caf50', '#f44336', '#ffc107']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
-    });
+    const counts = { positiva: 0, negativa: 0, neutral: 0 };
+    const week = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    emociones.forEach(e => { if (new Date(e.fecha).getTime() >= week) counts[e.tipo]++; });
+    new Chart(ctx, { type: 'bar', data: { labels: ['Positivas', 'Negativas', 'Neutrales'], datasets: [{ label: '', data: [counts.positiva, counts.negativa, counts.neutral] }] } });
   }
 
   mostrarEmociones();
-</script>
-<script>
-  // Cuando elige un theme, lo guarda y lo aplica
-  document.getElementById('themeSelector').addEventListener('change', e => {
-    const tema = e.target.value;
-    localStorage.setItem('vieroTheme', tema);
-    // applyTheme viene de theme.js
-    applyTheme(tema);
-  });
 </script>
 </body>
 </html>
