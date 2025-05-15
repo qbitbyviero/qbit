@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>📁 Módulo Gestoría</title>
+  <script src="theme.js"></script>
   <style>
     /* Fondo animado */
     body {
@@ -230,5 +231,14 @@
       });
     }
   </script>
+  <script>
+  // Cuando elige un theme, lo guarda y lo aplica
+  document.getElementById('themeSelector').addEventListener('change', e => {
+    const tema = e.target.value;
+    localStorage.setItem('vieroTheme', tema);
+    // applyTheme viene de theme.js
+    applyTheme(tema);
+  });
+</script>
 </body>
 </html>

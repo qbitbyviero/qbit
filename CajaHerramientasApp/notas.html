@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Notas Rápidas</title>
+  <script src="theme.js"></script>
   <style>
     :root {
       --bg-gradient-start: #0f2027;
@@ -28,6 +29,8 @@
       letter-spacing: 2px;
       background: linear-gradient(90deg, var(--accent), var(--accent-shine));
       -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       -webkit-text-fill-color: transparent;
       animation: glow 2s ease-in-out infinite alternate;
     }
@@ -181,6 +184,14 @@
 
   renderizarNotas();
 </script>
-
+<script>
+  // Cuando elige un theme, lo guarda y lo aplica
+  document.getElementById('themeSelector').addEventListener('change', e => {
+    const tema = e.target.value;
+    localStorage.setItem('vieroTheme', tema);
+    // applyTheme viene de theme.js
+    applyTheme(tema);
+  });
+</script>
 </body>
 </html>

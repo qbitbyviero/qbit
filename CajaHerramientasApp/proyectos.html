@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gestión de Proyectos</title>
+  <script src="theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
   * { margin:0; padding:0; box-sizing: border-box; }
@@ -31,6 +32,8 @@
     letter-spacing: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent-shine));
     -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
     animation: glow 2s ease-in-out infinite alternate;
   }
@@ -284,6 +287,14 @@
 
   mostrarProyectos();
 </script>
-
+<script>
+  // Cuando elige un theme, lo guarda y lo aplica
+  document.getElementById('themeSelector').addEventListener('change', e => {
+    const tema = e.target.value;
+    localStorage.setItem('vieroTheme', tema);
+    // applyTheme viene de theme.js
+    applyTheme(tema);
+  });
+</script>
 </body>
 </html>

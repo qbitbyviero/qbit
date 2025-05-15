@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>🛒 Lista de Compras</title>
+  <script src="theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <style>
     body {
@@ -39,12 +40,13 @@
       z-index: 999;
     }
     section {
-      margin-bottom: 30px;
-      padding: 20px;
-      background: rgba(30,30,30,0.9);
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-    }
+  margin-bottom: 30px;
+  padding: 20px;
+  /* Fondo semi-transparente para dejar ver el tema */
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
     label, input, select, button {
       display: block;
       width: 100%;
@@ -226,5 +228,14 @@
 
     actualizarUI();
   </script>
+  <script>
+  // Cuando elige un theme, lo guarda y lo aplica
+  document.getElementById('themeSelector').addEventListener('change', e => {
+    const tema = e.target.value;
+    localStorage.setItem('vieroTheme', tema);
+    // applyTheme viene de theme.js
+    applyTheme(tema);
+  });
+</script>
 </body>
 </html>

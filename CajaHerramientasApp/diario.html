@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Diario Emocional V2</title>
+  <script src="theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -26,6 +27,8 @@
       font-weight: bold;
       background: linear-gradient(90deg, var(--accent), var(--accent-light));
       -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       -webkit-text-fill-color: transparent;
     }
     section {
@@ -129,7 +132,7 @@
   <h2>Resumen Semanal</h2>
   <canvas id="grafico"></canvas>
 </section>
-
+<a href="cajadeherramientas.html">⬅️ Volver al menú</a>
 <script>
   let emociones = JSON.parse(localStorage.getItem('emocionesV2')) || [];
 
@@ -231,6 +234,14 @@
 
   mostrarEmociones();
 </script>
-
+<script>
+  // Cuando elige un theme, lo guarda y lo aplica
+  document.getElementById('themeSelector').addEventListener('change', e => {
+    const tema = e.target.value;
+    localStorage.setItem('vieroTheme', tema);
+    // applyTheme viene de theme.js
+    applyTheme(tema);
+  });
+</script>
 </body>
 </html>

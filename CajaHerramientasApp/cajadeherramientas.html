@@ -1,148 +1,160 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Viero's World - Herramientas</title>
   <style>
     :root {
-      --bg-color: #121212;
+      --bg-gradient: linear-gradient(to bottom, #121212, #121212);
       --text-color: #f1f1f1;
       --accent-color: #4fc3f7;
-      --button-bg: #1e1e1e;
-      --button-border: #4fc3f7;
-      --button-hover-bg: #4fc3f7;
-      --button-hover-text: #000000;
     }
-
-    body {
+    /* Base */
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-color);
       color: var(--text-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      transition: all 0.3s ease;
-      background-image: var(--bg-image);
-      background-size: cover;
-      background-attachment: fixed;
-      background-position: center;
       overflow-x: hidden;
     }
-
+    body {
+      background: var(--bg-gradient);
+      background-size: cover;
+      background-position: center;
+      transition: background 0.5s ease;
+    }
     h1 {
-      margin-bottom: 30px;
       text-align: center;
       color: var(--accent-color);
+      margin: 1rem 0 0.5rem;
+      position: relative;
+      z-index: 5;
     }
-
+    /* Logo */
+    .logo-container {
+      width: 80px;
+      margin: 10px auto;
+      position: relative;
+      z-index: 5;
+    }
     .logo {
-      width: 100px;
-      animation: spin 5s infinite linear;
+      width: 100%;
+      transform: rotateY(20deg) scale(0.8);
+      /* sombra eliminada */
+      transition: none;
+      cursor: pointer;
     }
-
-    @keyframes spin {
-      0% { transform: rotateY(0deg); }
-      100% { transform: rotateY(360deg); }
+    /* Selector */
+    select {
+      display: block;
+      margin: 0 auto 20px;
+      padding: 10px;
+      font-size: 14px;
+      position: relative;
+      z-index: 5;
+      color: var(--text-color);
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--accent-color);
     }
-
+    /* Buttons */
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
-      width: 100%;
       max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 5;
+      background-color: transparent;
     }
-
     .tool-button {
-      background: var(--button-bg);
-      border: 2px solid var(--button-border);
+      background: rgba(0,0,0,0.5);
+      border: 2px solid var(--accent-color);
       color: var(--text-color);
       padding: 20px;
       text-align: center;
       font-size: 16px;
       border-radius: 12px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s, color 0.3s;
+      transition: all 0.3s ease;
     }
-
     .tool-button:hover {
-      background: var(--button-hover-bg);
-      color: var(--button-hover-text);
+      background: var(--accent-color);
+      color: #000;
       transform: scale(1.05);
     }
-
-    footer {
-      margin-top: 40px;
-      font-size: 12px;
-      opacity: 0.6;
-      text-align: center;
-    }
-
-    select {
-      margin-bottom: 20px;
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    .background-effect {
+    /* City layer behind content */
+    #ciudadEdificios {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .stars::before { background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); }
-    .ocean::before { background-image: url('https://www.transparenttextures.com/patterns/wavecut.png'); }
-    .desert::before { background-image: url('https://www.transparenttextures.com/patterns/sandpaper.png'); }
-    .neon::before  { background-image: url('https://www.transparenttextures.com/patterns/shine.png'); }
-    .selva::before { background-image: url('https://www.transparenttextures.com/patterns/leaves.png'); }
-    .lluvia::before { background-image: url('https://www.transparenttextures.com/patterns/rain.png'); }
-    .rosita::before { background-image: url('https://www.transparenttextures.com/patterns/flowers.png'); }
-    .tecnologico::before { background-image: url('https://www.transparenttextures.com/patterns/circuits.png'); }
-    .cristal::before { background-image: url('https://www.transparenttextures.com/patterns/glass.png'); }
-
-    .background-effect::before {
-      content: "";
-      position: absolute;
       width: 100%;
       height: 100%;
-      top: 0;
-      left: 0;
-      background-repeat: repeat;
-      opacity: 0.3;
-      animation: move 25s linear infinite;
+      display: none;
+      justify-content: space-evenly;
+      align-items: flex-end;
+      perspective: 800px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
     }
-
-    @keyframes move {
-      from { background-position: 0 0; }
-      to { background-position: 100% 100%; }
+    .edificio {
+      background: linear-gradient(to bottom, #555, #111);
+      width: 120px;
+      height: 80vh;
+      transform: rotateY(15deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px;
+      box-shadow: inset 0 0 10px #000, 0 15px 30px rgba(0,0,0,0.5);
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    .ventana {
+      width: 14px;
+      height: 14px;
+      background: yellow;
+      opacity: 0;
+      border-radius: 2px;
+      box-shadow: 0 0 6px yellow;
+      animation: luzParpadeo 1.5s infinite alternate;
+    }
+    @keyframes luzParpadeo { 0%{opacity:0;}100%{opacity:1;} }
+    /* Footer */
+    footer {
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.5;
+      margin: 30px 0;
+      position: relative;
+      z-index: 5;
     }
   </style>
 </head>
 <body>
-
-  <img src="logo.png" alt="Logo Viero" class="logo">
+  <div class="logo-container">
+    <a href="https://qbitbyviero.github.io/qbit/Index.html">
+      <img src="logo.png" alt="Logo Viero" class="logo">
+    </a>
+  </div>
   <h1>🌍 Viero's World presenta las herramientas del Sitio</h1>
-
-  <select onchange="changeTheme(this.value)">
-    <option value="default">🌑 Ciudad de Noche</option>
-    <option value="selva">🌿 Selva</option>
+  <select id="themeSelector">
+    <option value="noche">🌑 Ciudad de Noche</option>
+    <option value="selva">🍃 Selva</option>
     <option value="lluvia">🌧️ Lluvia</option>
-    <option value="rosita">🌸 Rosita</option>
+    <option value="pinki">🌸 Pinki</option>
     <option value="tecnologico">🧠 Tecnológico</option>
     <option value="cristal">💎 Cristal</option>
     <option value="desierto">🏜️ Desierto</option>
     <option value="neon">🌈 Neón</option>
     <option value="espacio">🚀 Espacio</option>
-    <option value="oceano">🌊 Océano</option>
+    <option value="aqua">🌊 Aqua</option>
   </select>
-
   <div class="container">
     <div class="tool-button" onclick="location.href='gestoria.html'">📁 Gestoría</div>
     <div class="tool-button" onclick="location.href='finanzas.html'">💰 Finanzas</div>
@@ -151,52 +163,39 @@
     <div class="tool-button" onclick="location.href='proyectos.html'">📊 Proyectos</div>
     <div class="tool-button" onclick="location.href='notas.html'">📌 Notas Rápidas</div>
   </div>
-
-  <footer>
-    Proyecto local de Viero's World 😎 | HTML local sin conexión
-  </footer>
-
-  <div id="themeEffect" class="background-effect"></div>
-
+  <div id="ciudadEdificios">
+    <div class="edificio sombra"><div class="ventana"></div><div class="ventana"></div><div class="ventana"></div></div>
+    <div class="edificio sombra"><div class="ventana"></div><div class="ventana"></div><div class="ventana"></div></div>
+    <div class="edificio sombra"><div class="ventana"></div><div class="ventana"></div><div class="ventana"></div></div>
+    <div class="edificio sombra"><div class="ventana"></div><div class="ventana"></div><div class="ventana"></div></div>
+    <div class="edificio sombra"><div class="ventana"></div><div class="ventana"></div><div class="ventana"></div></div>
+  </div>
+  <footer>Proyecto local de Viero's World 😎 | HTML local sin conexión</footer>
   <script>
     const themes = {
-      "default":      { bg: "#0b0c1a", text: "#e0e0e0", accent: "#4fc3f7", image: "", effect: "stars" },
-      "selva":        { bg: "#2e4628", text: "#e1ffe1", accent: "#8bc34a", image: "", effect: "selva" },
-      "lluvia":       { bg: "#263238", text: "#cfd8dc", accent: "#4dd0e1", image: "", effect: "lluvia" },
-      "rosita":       { bg: "#fce4ec", text: "#880e4f", accent: "#f06292", image: "", effect: "rosita" },
-      "tecnologico":  { bg: "#0d1b2a", text: "#e0e1dd", accent: "#00bcd4", image: "", effect: "tecnologico" },
-      "cristal":      { bg: "#ffffffcc", text: "#000", accent: "#81d4fa", image: "", effect: "cristal" },
-      "desierto":     { bg: "#f4e2d8", text: "#4e342e", accent: "#ff9800", image: "", effect: "desert" },
-      "neon":         { bg: "#1a1a2e", text: "#fff", accent: "#e91e63", image: "", effect: "neon" },
-      "espacio":      { bg: "#000", text: "#cfcfcf", accent: "#7e57c2", image: "", effect: "stars" },
-      "oceano":       { bg: "#01579b", text: "#e0f7fa", accent: "#4dd0e1", image: "", effect: "ocean" }
+      noche:     { bgGradient: 'linear-gradient(to bottom, #333, #000)',    color:'#e0e0e0', accent:'#4fc3f7' },
+      selva:     { bgGradient: 'linear-gradient(to bottom, #2e4628, #1b2f1a)', color:'#e1ffe1', accent:'#8bc34a' },
+      lluvia:    { bgGradient: 'linear-gradient(to bottom, #263238, #1b2a32)', color:'#cfd8dc', accent:'#4dd0e1' },
+      pinki:     { bgGradient: 'linear-gradient(to bottom, #fce4ec, #f8bbd0)', color:'#880e4f', accent:'#f06292' },
+      tecnologico:{bgGradient:'linear-gradient(to bottom, #0d1b2a, #07101a)', color:'#e0e1dd', accent:'#00bcd4'},
+      cristal:   { bgGradient: 'linear-gradient(to bottom, #ffffffcc, #e0f7facc)', color:'#000',    accent:'#81d4fa'},
+      desierto:  { bgGradient: 'linear-gradient(to bottom, #f4e2d8, #dcc3b2)', color:'#4e342e', accent:'#ff9800'},
+      neon:      { bgGradient: 'linear-gradient(to bottom, #1a1a2e, #0f0f1a)', color:'#fff',    accent:'#e91e63'},
+      espacio:   { bgGradient: 'linear-gradient(to bottom, #000000, #0a0a0a)', color:'#cfcfcf', accent:'#7e57c2'},
+      aqua:      { bgGradient: 'linear-gradient(to bottom, #01579b, #013f6e)', color:'#e0f7fa', accent:'#4dd0e1'}
     };
-
-    function applyTheme(themeName) {
-      const theme = themes[themeName] || themes["default"];
-      document.documentElement.style.setProperty('--bg-color', theme.bg);
-      document.documentElement.style.setProperty('--text-color', theme.text);
-      document.documentElement.style.setProperty('--accent-color', theme.accent);
-      document.documentElement.style.setProperty('--bg-image', theme.image);
-
-      const effectEl = document.getElementById("themeEffect");
-      effectEl.className = "background-effect";
-      if (theme.effect) {
-        effectEl.classList.add(theme.effect);
-      }
+    function applyTheme(name) {
+      const t = themes[name] || themes.noche;
+      document.documentElement.style.setProperty('--bg-gradient', t.bgGradient);
+      document.documentElement.style.setProperty('--text-color', t.color);
+      document.documentElement.style.setProperty('--accent-color', t.accent);
+      document.getElementById('ciudadEdificios').style.display = name==='noche' ? 'flex':'none';
+      document.querySelectorAll('.tool-button').forEach(btn=>{btn.style.borderColor = t.accent; btn.style.color = t.color;});
+      const sel = document.getElementById('themeSelector'); sel.style.borderColor = t.accent; sel.style.color = t.color;
+      localStorage.setItem('vieroTheme', name);
     }
-
-    function changeTheme(theme) {
-      localStorage.setItem('vieroTheme', theme);
-      applyTheme(theme);
-    }
-
-    window.onload = () => {
-      const savedTheme = localStorage.getItem('vieroTheme') || 'default';
-      document.querySelector('select').value = savedTheme;
-      applyTheme(savedTheme);
-    }
+    document.getElementById('themeSelector').addEventListener('change',e=>applyTheme(e.target.value));
+    window.onload=()=>{const v=localStorage.getItem('vieroTheme')||'noche';document.getElementById('themeSelector').value=v;applyTheme(v);};
   </script>
-
 </body>
 </html>
