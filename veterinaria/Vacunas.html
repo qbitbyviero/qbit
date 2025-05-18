@@ -1,207 +1,212 @@
 <!-- Vacunas.html -->
-<div id="modalVacunas" class="modal">
+<div id="modalVacunas" class="modal" style="display:none;justify-content:center;align-items:flex-start;">
   <div class="modal-content">
     <div class="modal-header">
       <h2 class="modal-title">💉 Registro de Vacunas 2</h2>
       <span class="close" onclick="cerrarModal('modalVacunas')">&times;</span>
     </div>
 
-    <!-- 🐾 Datos de la Mascota -->
+    <!-- Selección Existente / Nuevo -->
+    <div class="button-row">
+      <div><a href="#" id="btnExistente" title="Cliente Existente"></a></div>
+      <div><a href="#" id="btnNuevo" title="Nuevo Cliente"></a></div>
+    </div>
+
+    <!-- Sección Cliente Existente -->
+    <div id="seccionExistente" style="display:none;">
+      <div class="form-group">
+        <label for="selectMascota">🐾 Seleccione Mascota:</label>
+        <select id="selectMascota"></select>
+      </div>
+      <button class="btn btn-primary" id="cargarDatosClienteBtn">💡 Cargar Datos</button>
+    </div>
+
+    <!-- Sección Nuevo Cliente -->
+    <div id="seccionNuevo" style="display:none;">
+      <div class="form-group">
+        <label>👤 Nombre Dueño:</label>
+        <input type="text" id="inputNuevoDueno" required/>
+      </div>
+      <div class="form-group">
+        <label>🏠 Dirección:</label>
+        <input type="text" id="inputDireccion" required/>
+      </div>
+      <div class="form-group">
+        <label>📞 Teléfono:</label>
+        <input type="tel" id="inputTelefono" required/>
+      </div>
+      <div class="form-group">
+        <label>✉️ Correo:</label>
+        <input type="email" id="inputCorreo" required/>
+      </div>
+    </div>
+
+    <!-- Datos de la Mascota -->
     <form id="formVacuna" class="modal-form" onsubmit="event.preventDefault(); guardarVacuna();">
-      <input type="hidden" id="idCliente" />
-      <input type="hidden" id="idMascota" />
+      <input type="hidden" id="idCliente"/>
+      <input type="hidden" id="idMascota"/>
 
-      <div class="form-group">
-        <label for="nombreMascota">🐶 Nombre de Mascota:</label>
-        <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." onblur="onNombreMascotaChange()" required />
+      <div id="datosMascota" style="display:none;">
+        <div class="form-group">
+          <label>🐶 Nombre Mascota:</label>
+          <input type="text" id="nombreMascota" required/>
+        </div>
+        <div class="form-group">
+          <label>🦴 Especie:</label>
+          <input type="text" id="especie" required/>
+        </div>
+        <div class="form-group">
+          <label>🥇 Raza:</label>
+          <input type="text" id="raza" required/>
+        </div>
+        <div class="form-group">
+          <label>🎂 Edad:</label>
+          <input type="text" id="edad" placeholder="3 años, 11 meses" required/>
+        </div>
+        <div class="form-group">
+          <label>⚧️ Sexo:</label>
+          <input type="text" id="sexo" required/>
+        </div>
+        <div class="form-group">
+          <label>⚖️ Peso:</label>
+          <input type="text" id="peso" placeholder="5 kg, 250 g" required/>
+        </div>
       </div>
 
+      <!-- Detalles de Vacunación -->
       <div class="form-group">
-        <label for="nombreDueno">👤 Dueño:</label>
-        <input type="text" id="nombreDueno" placeholder="Cargando dueño..." readonly />
-      </div>
-
-      <div class="form-group">
-        <label for="especieSelect">🦴 Especie:</label>
-        <select id="especieSelect" onchange="onEspecieChange()" required>
-          <option value="">Seleccione especie</option>
-          <option value="🐶 Perro">🐶 Perro</option>
-          <option value="🐱 Gato">🐱 Gato</option>
-          <option value="🐰 Conejo">🐰 Conejo</option>
-          <option value="🦜 Ave">🦜 Ave</option>
-          <option value="🐹 Hámster">🐹 Hámster</option>
-          <option value="🐢 Tortuga">🐢 Tortuga</option>
-          <option value="🦎 Reptil">🦎 Reptil</option>
-          <option value="🦡 Hurón">🦡 Hurón</option>
-          <option value="🐴 Caballo">🐴 Caballo</option>
-          <option value="🐹 Cuy">🐹 Cuy</option>
-          <option value="Otro">Otro</option>
-        </select>
-        <input type="text" id="especieOtro" placeholder="Especifique especie..." style="display:none;" />
-      </div>
-
-      <div class="form-group">
-        <label for="raza">🥇 Raza:</label>
-        <select id="raza" onchange="onRazaChange()" required>
-          <option value="">Seleccione especie primero</option>
-        </select>
-        <input type="text" id="razaOtro" placeholder="Especifique raza..." style="display:none;" />
-      </div>
-
-      <div class="form-group">
-        <label for="edad">🎂 Edad:</label>
-        <input type="number" id="edad" min="0" placeholder="Años" />
-      </div>
-
-      <div class="form-group">
-        <label for="sexo">⚧️ Sexo:</label>
-        <select id="sexo">
-          <option value="Macho">Macho</option>
-          <option value="Hembra">Hembra</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="peso">⚖️ Peso (kg):</label>
-        <input type="number" id="peso" min="0" step="0.1" placeholder="kg" />
-      </div>
-
-      <!-- 💉 Detalles de Vacunación -->
-      <div class="form-group">
-        <label for="nombreVacuna">🧪 Vacuna:</label>
+        <label>🧪 Vacuna:</label>
         <select id="nombreVacuna" required>
-          <option value="">Cargando vacunas...</option>
+          <option value="">Cargando...</option>
         </select>
       </div>
-
       <div class="form-group">
-        <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
-        <input type="date" id="fechaAplicacion" required />
+        <label>📅 Fecha de aplicación:</label>
+        <input type="date" id="fechaAplicacion" required/>
       </div>
-
       <div class="form-group">
-        <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
-        <input type="date" id="fechaRefuerzo" />
+        <label>🔁 Fecha de refuerzo:</label>
+        <input type="date" id="fechaRefuerzo"/>
       </div>
-
       <div class="form-group">
-        <label for="veterinario">👨‍⚕️ Aplicado por:</label>
-        <input type="text" id="veterinario" placeholder="Dr. Posh" />
+        <label>👨‍⚕️ Aplicado por:</label>
+        <input type="text" id="veterinario" placeholder="Dr. Posh"/>
       </div>
-
       <div class="form-group">
-        <label for="observaciones">📝 Observaciones:</label>
-        <textarea id="observaciones" rows="3" placeholder="Ninguna reacción..."></textarea>
+        <label>📝 Observaciones:</label>
+        <textarea id="observaciones" rows="3"></textarea>
       </div>
 
       <!-- Botones -->
       <div class="btn-container">
         <button type="submit" class="btn btn-primary">💾 Guardar Vacuna</button>
-        <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">❌ Cancelar</button>
       </div>
     </form>
 
-    <!-- 📋 Historial -->
-    <section>
-      <h3>📊 Historial de Vacunación</h3>
-      <table id="tablaVacunas">
-        <thead>
-          <tr>
-            <th>Vacuna</th><th>Aplicación</th><th>Refuerzo</th><th>Veterinario</th><th>Observaciones</th><th>🗑️</th>
-          </tr>
-        </thead>
-        <tbody><!-- dinámico --></tbody>
-      </table>
-    </section>
   </div>
 </div>
 
 <script>
-  const razasPorEspecie = {
-    '🐶 Perro': ['Labrador 🐶','Pug 😛','Chihuahua 💅','Pitbull 💪'],
-    '🐱 Gato': ['Persa 😽','Siames 😸','Sphynx 🐱','Maine Coon 🧶'],
-    '🐰 Conejo': ['Cabeza de león 🦁','Mini Lop 🐰','Angora ✨'],
-    '🦜 Ave': ['Periquito 🐦','Cacatúa 🎵','Loro 💚'],
-    '🐹 Hámster': ['Sirio 🧡','Ruso ❄️','Roborovski ⚡'],
-    '🐢 Tortuga': ['Orejas rojas 🐢','Rusa 🌿'],
-    '🦎 Reptil': ['Iguana 🦎','Gecko 🐊','Camaleón 🌈'],
-    '🦡 Hurón': ['Albino 🤍','Mestizo 🖤'],
-    '🐴 Caballo': ['Pura Sangre 🏇','Clydesdale 🐎'],
-    '🐹 Cuy': ['Peruano 🪶','Abyssinian 🏵️']
-  };
+  // Referencia al backend
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwI_7h0CUukKfjcGwp-KUwFSsrQcOBYp5Q27YK0bTMfv2jpubgPYIk27xjDr4d_o4lX/exec';
 
-  function abrirModalVacunas() {
-    document.getElementById('modalVacunas').style.display = 'flex';
-    cargarListaVacunas();
-    onEspecieChange();
-    cargarHistorial();
+  // Botones flip
+  document.getElementById('btnExistente').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('seccionExistente').style.display = 'block';
+    document.getElementById('seccionNuevo').style.display = 'none';
+    document.getElementById('datosMascota').style.display = 'none';
+    cargarListaMascotas();
+  });
+  document.getElementById('btnNuevo').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('seccionNuevo').style.display = 'block';
+    document.getElementById('seccionExistente').style.display = 'none';
+    document.getElementById('datosMascota').style.display = 'block';
+  });
+
+  // Carga lista de mascotas para clientes existentes
+  async function cargarListaMascotas() {
+    const resp = await fetch(`${WEBAPP_URL}?action=getClientesMascotas`);
+    const data = await resp.json();
+    const sel = document.getElementById('selectMascota');
+    sel.innerHTML = '<option value="">Seleccione mascota</option>';
+    data.mascotas.forEach(m => sel.add(new Option(m, m)));
   }
 
-  function cerrarModal(id) {
-    document.getElementById(id).style.display = 'none';
-    document.getElementById('formVacuna').reset();
-    document.getElementById('raza').innerHTML = '<option>Seleccione especie primero</option>';
-  }
+  // Al pulsar "Cargar Datos"
+  document.getElementById('cargarDatosClienteBtn').addEventListener('click', async () => {
+    const nombre = document.getElementById('selectMascota').value;
+    if (!nombre) return alert('Seleccione una mascota');
+    const resp = await fetch(`${WEBAPP_URL}?action=getDatosCliente&nombreMascota=${encodeURIComponent(nombre)}`);
+    const info = await resp.json();
+    // Mostrar sección con datos
+    document.getElementById('datosMascota').style.display = 'block';
+    // IDs ocultos
+    document.getElementById('idCliente').value = info.idCliente;
+    document.getElementById('idMascota').value = info.idMascota;
+    // Campos
+    document.getElementById('nombreMascota').value = info.nombreMascota;
+    document.getElementById('especie').value = info.especie;
+    document.getElementById('raza').value = info.raza;
+    // Formatea edad: 3.11 → "3 años, 11 meses"
+    const [a,m] = info.edad.split('.').map(n=>parseInt(n));
+    document.getElementById('edad').value = `${a} años, ${m} meses`;
+    // Formatea peso: 5.25 → "5 kg, 25 g"
+    const [kg,gr] = info.peso.split('.').map(n=>parseInt(n));
+    document.getElementById('peso').value = `${kg} kg, ${gr} g`;
+    document.getElementById('sexo').value = info.sexo;
+  });
 
-  function onNombreMascotaChange() {
-    const nombre = document.getElementById('nombreMascota').value.trim();
-    if (!nombre) return;
-    google.script.run.withSuccessHandler(info => {
-      if (info.encontrado) {
-        Object.assign(document.querySelector('#formVacuna'), {});
-        document.getElementById('idCliente').value   = info.idCliente;
-        document.getElementById('nombreDueno').value = info.nombreDueno;
-        document.getElementById('idMascota').value   = info.idMascota;
-        document.getElementById('edad').value        = info.edad;
-        document.getElementById('sexo').value        = info.sexo;
-        document.getElementById('peso').value        = info.peso;
-        document.getElementById('especieSelect').value = info.especie;
-        onEspecieChange();
-        document.getElementById('raza').value = info.raza;
-      } else {
-        document.getElementById('nombreDueno').value = '';
-      }
-    }).verificarMascota(nombre);
-  }
-
-  function onEspecieChange() {
-    const esp = document.getElementById('especieSelect').value;
-    document.getElementById('especieOtro').style.display = esp==='Otro'?'block':'none';
-    const sel = document.getElementById('raza');
-    sel.innerHTML = '<option>Seleccione raza</option>';
-    (razasPorEspecie[esp]||[]).forEach(r=> sel.add(new Option(r,r)));
-    sel.add(new Option('Otro','Otro'));
-    document.getElementById('razaOtro').style.display='none';
-  }
-
-  function onRazaChange() {
-    document.getElementById('razaOtro').style.display =
-      document.getElementById('raza').value==='Otro'?'block':'none';
-  }
-
-  function cargarListaVacunas() {
+  // Cargar vacunas al abrir el modal
+  async function cargarVacunasModal() {
     const sel = document.getElementById('nombreVacuna');
     sel.innerHTML = '<option>Cargando...</option>';
-    google.script.run.withSuccessHandler(vacs => {
-      sel.innerHTML = '<option>Seleccione vacuna</option>';
-      vacs.forEach(v => sel.add(new Option(v.nombre, v.nombre)));
-    }).getVacunas();
+    try {
+      const res = await fetch(`${WEBAPP_URL}?action=getVacunas`);
+      const js = await res.json();
+      sel.innerHTML = '<option value="">Seleccione vacuna</option>';
+      js.vacunas.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v.nombre; o.textContent = v.nombre;
+        sel.appendChild(o);
+      });
+    } catch {
+      sel.innerHTML = '<option>Error al cargar</option>';
+    }
   }
 
-  function cargarHistorial() {
-    // Implementa si tienes función que trae el historial
+  // Abrir modal desde tu script.js principal
+  function abrirModalVacunas() {
+    document.getElementById('modalVacunas').style.display = 'flex';
+    cargarVacunasModal();
   }
 
-  function guardarVacuna() {
-    const data = Object.fromEntries(new FormData(document.getElementById('formVacuna')).entries());
+  // Guardar vacuna
+  async function guardarVacuna() {
+    const form = document.getElementById('formVacuna');
+    const data = Object.fromEntries(new FormData(form).entries());
     data.action = 'guardarVacuna';
-    google.script.run.withSuccessHandler(resp => {
-      if (resp.status==='success') {
-        Toastify({ text: '✅ Guardado', gravity: 'top', backgroundColor: '#4caf50' }).showToast();
+    // Ajusta datos edad/peso para enviar número decimal
+    const [años,meses] = data.edad.match(/(\d+)/g).map(Number);
+    data.edad = parseFloat(`${años}.${meses}`);
+    const [kg,gr] = data.peso.match(/(\d+)/g).map(Number);
+    data.peso = parseFloat(`${kg}.${gr}`);
+    try {
+      const res = await fetch(WEBAPP_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (json.status==='success') {
+        Toastify({ text:'✅ Vacuna registrada', gravity:'top', backgroundColor:'#4CAF50' }).showToast();
         cerrarModal('modalVacunas');
-      } else {
-        Toastify({ text: '❌ '+resp.message, gravity: 'top', backgroundColor: '#e74c3c' }).showToast();
-      }
-    }).guardarVacuna(data);
+        form.reset();
+      } else throw new Error(json.message);
+    } catch(e) {
+      Toastify({ text:`❌ ${e.message}`, gravity:'top', backgroundColor:'#F44336' }).showToast();
+    }
   }
 </script>

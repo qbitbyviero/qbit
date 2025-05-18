@@ -276,3 +276,55 @@ button:hover {
     flex-direction: column;
   }
 }
+/* --- Botones 3D flip adaptados --- */
+.button-row {
+  display: inline-flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.button-row > div {
+  position: relative;
+  width: 160px;
+  height: 50px;
+  perspective: 1000px;
+}
+.button-row > div > a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: translateZ(-25px);
+  transition: transform 0.25s;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+}
+.button-row > div > a::before,
+.button-row > div > a::after {
+  content: attr(title);
+  position: absolute;
+  width: 160px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  border: 5px solid #2AC3FF;
+}
+.button-row > div > a::before {
+  background: #2AC3FF;
+  color: #fff;
+  transform: rotateY(0deg) translateZ(25px);
+}
+.button-row > div > a::after {
+  background: #f8f9fa;
+  color: #0d2c3b;
+  border-color: #2AC3FF;
+  transform: rotateX(90deg) translateZ(25px);
+}
+.button-row > div > a:hover {
+  transform: translateZ(-25px) rotateX(-90deg);
+}
