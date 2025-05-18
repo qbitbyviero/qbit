@@ -9,32 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
 
-  <!-- Tus estilos generales -->
+  <!-- Tus estilos unificados (incluye aquí el CSS 3D-flip) -->
   <link rel="stylesheet" href="estilos.css">
-  <!-- Menú 3D-flip -->
-  <link rel="stylesheet" href="menu3d.css">
-
-  <!-- Header pegajoso -->
-  <style>
-    .sticky-header {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .sticky-header h1 {
-      margin: 0 20px;
-      font-size: 1.2rem;
-      flex: 1;
-    }
-    .button-row {
-      margin-left: auto;
-    }
-  </style>
 </head>
 <body>
 
@@ -47,10 +23,11 @@
   <div id="daily-appointments">
     <h2 id="current-date">📅 Cargando fecha...</h2>
     <ul id="appointments-list"></ul>
-    <div class="appointment-buttons">
-      <button id="print-btn">🖨️ Imprimir</button>
-      <button id="show-btn">👁️ Mostrar</button>
-      <button id="start-btn">🚀 Comenzar</button>
+    <!-- Botones 3D-flip para las acciones -->
+    <div class="button-row">
+      <div><a href="#" id="print-btn" title="🖨️ Imprimir"></a></div>
+      <div><a href="#" id="show-btn" title="👁️ Mostrar"></a></div>
+      <div><a href="#" id="start-btn" title="🚀 Comenzar"></a></div>
     </div>
   </div>
 
@@ -60,18 +37,14 @@
       <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
       <h1>Agenda Veterinaria – Posh Posh</h1>
 
-      <div class="main">
-        <div class="button-row">
-          <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;" title="🐾 Nuevo Cliente"></a></div>
-          <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;" title="🔎 Cliente Existente"></a></div>
-          <div><a href="#" onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;" title="📖 Historial"></a></div>
-          <div><a href="#" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;" title="💉 Registro Vacunas"></a></div>
-          <div><a href="#" onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;" title="🛍️ Tienda"></a></div>
-          <div><a href="#" onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;" title="✂️ Estética"></a></div>
-          <div><a href="#" onclick="window.print();return false;" title="🖨️ Imprimir"></a></div>
-          <div><a href="#" onclick="mostrarCitasBonitas();return false;" title="👁️ Mostrar"></a></div>
-          <div><a href="#" onclick="comenzar();return false;" title="🚀 Comenzar"></a></div>
-        </div>
+      <!-- Menú 3D-flip principal -->
+      <div class="button-row">
+        <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;" title="🐾 Nuevo Cliente"></a></div>
+        <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;" title="🔎 Cliente Existente"></a></div>
+        <div><a href="#" onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;" title="📖 Historial"></a></div>
+        <div><a href="#" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;" title="💉 Registro Vacunas"></a></div>
+        <div><a href="#" onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;" title="🛍️ Tienda"></a></div>
+        <div><a href="#" onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;" title="✂️ Estética"></a></div>
       </div>
     </header>
 
