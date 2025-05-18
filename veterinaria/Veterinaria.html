@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agenda Posh Posh</title>
+
+  <!-- FullCalendar & Toastify -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
-  <!-- Tus estilos habituales -->
+
+  <!-- Tus estilos generales -->
   <link rel="stylesheet" href="estilos.css">
-  <!-- Nuevo menú 3D -->
+  <!-- Menú 3D-flip -->
   <link rel="stylesheet" href="menu3d.css">
+
+  <!-- Header pegajoso -->
+  <style>
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .sticky-header h1 {
+      margin: 0 20px;
+      font-size: 1.2rem;
+      flex: 1;
+    }
+    .button-row {
+      margin-left: auto;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- [SECCIÓN] SPLASH SCREEN -->
+  <!-- SPLASH SCREEN -->
   <div id="splash">
     <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
   </div>
   
-  <!-- [SECCIÓN] CITAS DEL DÍA -->
+  <!-- CITAS DEL DÍA -->
   <div id="daily-appointments">
     <h2 id="current-date">📅 Cargando fecha...</h2>
     <ul id="appointments-list"></ul>
@@ -29,80 +54,63 @@
     </div>
   </div>
 
-  <!-- [SECCIÓN] CALENDARIO -->
+  <!-- CALENDARIO -->
   <div id="calendar-container">
-    <header>
+    <header class="sticky-header">
       <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
-      <h1>Agenda Veterinaria - Posh Posh</h1>
+      <h1>Agenda Veterinaria – Posh Posh</h1>
 
-      <!-- ► Menú 3D-Flip -->
       <div class="main">
         <div class="button-row">
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;"
-               title="🐾 Nuevo Cliente"></a>
-          </div>
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;"
-               title="🔎 Cliente Existente"></a>
-          </div>
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;"
-               title="📖 Historial"></a>
-          </div>
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;"
-               title="💉 Registro Vacunas"></a>
-          </div>
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;"
-               title="🛍️ Tienda"></a>
-          </div>
-          <div>
-            <a href="#" 
-               onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;"
-               title="✂️ Estética"></a>
-          </div>
+          <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;" title="🐾 Nuevo Cliente"></a></div>
+          <div><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;" title="🔎 Cliente Existente"></a></div>
+          <div><a href="#" onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;" title="📖 Historial"></a></div>
+          <div><a href="#" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;" title="💉 Registro Vacunas"></a></div>
+          <div><a href="#" onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;" title="🛍️ Tienda"></a></div>
+          <div><a href="#" onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;" title="✂️ Estética"></a></div>
+          <div><a href="#" onclick="window.print();return false;" title="🖨️ Imprimir"></a></div>
+          <div><a href="#" onclick="mostrarCitasBonitas();return false;" title="👁️ Mostrar"></a></div>
+          <div><a href="#" onclick="comenzar();return false;" title="🚀 Comenzar"></a></div>
         </div>
       </div>
-      <!-- ◄ Fin menú -->
-
     </header>
+
     <div id="calendar"></div>
   </div>
 
   <div id="modales-container"></div>
 
-  <!-- [MODAL] Nueva Cita -->
+  <!-- MODAL: Nueva Cita -->
   <div id="modalNuevaCita" class="modal">
     <div class="modal-content">
       <h3>📅 Agendar nueva cita</h3>
+
       <div class="form-group">
         <label>🐶 Mascota:</label>
         <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
       </div>
+
       <div id="preguntaDueno" style="display:none;" class="form-group">
         <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
         <button onclick="usarDuenoSugerido()">✅ Sí</button>
         <button onclick="pedirNuevoDueno()">❌ No</button>
       </div>
+
       <div id="campoNuevoDueno" style="display:none;" class="form-group">
         <label>👤 Dueño:</label>
         <input type="text" id="duenoInput" />
       </div>
+
       <div class="form-group">
         <label>📋 Motivo:</label>
         <input type="text" id="motivoInput" />
       </div>
+
       <div class="form-group">
         <label>🕐 Hora:</label>
         <input type="time" id="horaInput" />
       </div>
+
       <div class="form-group">
         <label>📌 Estatus:</label>
         <select id="estatusInput">
@@ -110,14 +118,17 @@
           <option value="Cancelada">Cancelada</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>📝 Notas:</label>
         <textarea id="notasInput"></textarea>
       </div>
+
       <div class="form-group">
         <label>💲 Costo:</label>
         <input type="number" id="costoInput" />
       </div>
+
       <div class="form-group buttons">
         <button onclick="guardarNuevaCita()">💾 Guardar</button>
         <button onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
@@ -125,6 +136,7 @@
     </div>
   </div>
 
+  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="script.js"></script>
