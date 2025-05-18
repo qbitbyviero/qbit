@@ -10,7 +10,6 @@ const razasPorEspecie = {
     '🐢 Tortuga': ['Tortuga de orejas rojas 🐢', 'Tortuga rusa 🌿'],
     '🦎 Reptil': ['Iguana 🦎', 'Gecko 🐊', 'Camaleón 🌈']
 };
-
 // ========== FUNCIONES PRINCIPALES ==========
 function cargarModal(nombreArchivo) {
     fetch(nombreArchivo)
@@ -19,18 +18,12 @@ function cargarModal(nombreArchivo) {
         document.getElementById("modales-container").innerHTML = html;
       })
       .catch(err => console.error("Error al cargar el modal:", err));
-}
-      
-async function initApp() {
-    const barkSound = document.getElementById('barkSound');
+}async function initApp() {
+    // después de 3 segundos oculto splash y muestro citas
     setTimeout(async () => {
         document.getElementById('splash').style.display = 'none';
         document.getElementById('daily-appointments').style.display = 'block';
         
-        document.body.addEventListener('click', function playSoundOnce() {
-            barkSound.play().catch(e => console.log('Sonido omitido'));
-            document.body.removeEventListener('click', playSoundOnce);
-        });
         configurarSelectores();
         await cargarCitasDelDia();
         setupMenuNavigation();
@@ -1127,14 +1120,12 @@ async function cargarHistorialVacunas(idCliente, idMascota) {
 }
 
 // Asegúrate que solo tengas un evento DOMContentLoaded al final:
-document.addEventListener('DOMContentLoaded', () => {
-    initApp();
-    
-    // Manejo de cierre de modales
-    window.addEventListener('click', (event) => {
-        if (event.target.className === 'modal') {
-            event.target.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
+document.addEventListener('DOMContentLoaded', initApp);
+
+// click fuera de modal para cerrarlo
+window.addEventListener('click', (event) => {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 });
