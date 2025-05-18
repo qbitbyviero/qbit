@@ -1,87 +1,238 @@
 <!-- MODAL VACUNAS -->
-<div id="modalVacunas" class="modal">
-    <div class="modal-content">
-      <h2>💉 Registro de Vacunas</h2>
+<div id="modalVacunas" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>💉 Registro de Vacunas</h2>
+    
+    <!-- 🐾 Datos de la Mascota -->
+    <section>
+      <h3>🐾 Información de la Mascota</h3>
       
-      <!-- 🐾 Datos de la Mascota -->
-      <section>
-        <h3>🐾 Información de la Mascota</h3>
-        <label for="nombreMascota">🐶 Nombre:</label>
-        <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." />
-  
-        <label for="especieSelect">🦴 Especie:</label>
-        <select id="especieSelect" onchange="actualizarRazas()">
-          <option value="">Seleccione especie</option>
-          <option value="Perro">Perro</option>
-          <option value="Gato">Gato</option>
-          <option value="Conejo">Conejo</option>
-          <option value="Ave">Ave</option>
-          <option value="Hámster">Hámster</option>
-          <option value="Tortuga">Tortuga</option>
-          <option value="Reptil">Reptil</option>
-        </select>
-  
-        <label for="raza">🐕 Raza:</label>
-        <select id="raza">
-          <option value="">Seleccione especie primero</option>
-        </select>
-  
-        <label for="edad">🎂 Edad:</label>
-        <input type="number" id="edad" min="0" placeholder="Años" />
-  
-        <label for="genero">⚧️ Sexo:</label>
-        <select id="genero">
-          <option value="Macho">Macho</option>
-          <option value="Hembra">Hembra</option>
-        </select>
-      </section>
-  
-      <!-- 💉 Información de Vacunación -->
-      <section>
-        <h3>🧬 Detalles de Vacunación</h3>
-        <label for="nombreVacuna">🧪 Vacuna:</label>
-        <select id="nombreVacuna">
-            <option value="">Cargando vacunas...</option>
-          </select>
-  
-        <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
-        <input type="date" id="fechaAplicacion" />
-  
-        <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
-        <input type="date" id="fechaRefuerzo" />
-  
-        <label for="veterinario">👨‍⚕️ Aplicado por:</label>
-        <input type="text" id="veterinario" placeholder="Dr. Posh" />
-  
-        <label for="observaciones">📝 Observaciones:</label>
-        <textarea id="observaciones" rows="3" placeholder="Ninguna reacción, necesita seguimiento..."></textarea>
-      </section>
-  
-      <!-- 📋 Tabla de Vacunas -->
-      <section>
-        <h3>📊 Historial de Vacunación</h3>
-        <table border="1" id="tablaVacunas">
-          <thead>
-            <tr>
-              <th>💉 Vacuna</th>
-              <th>📅 Aplicación</th>
-              <th>🔁 Refuerzo</th>
-              <th>👨‍⚕️ Veterinario</th>
-              <th>📝 Observaciones</th>
-              <th>🗑️</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí se agregan las filas con JS -->
-          </tbody>
-        </table>
-      </section>
-  
-      <!-- ✅ Acciones -->
-      <div class="acciones">
-        <button onclick="guardarVacuna()">💾 Guardar Vacuna</button>
-        <button onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
-      </div>
+      <!-- Campo Dueño -->
+      <label for="nombreDueno">👤 Dueño:</label>
+      <input type="text" id="nombreDueno" placeholder="Cargando dueño..." readonly />
+
+      <label for="nombreMascota">🐶 Nombre de Mascota:</label>
+      <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." />
+
+      <label for="especieSelect">🦴 Especie:</label>
+      <select id="especieSelect" onchange="onEspecieChange()">
+        <option value="">Seleccione especie</option>
+        <option value="Perro 🐕">Perro 🐕</option>
+        <option value="Gato 🐈">Gato 🐈</option>
+        <option value="Conejo 🐇">Conejo 🐇</option>
+        <option value="Ave 🐦">Ave 🐦</option>
+        <option value="Hámster 🐹">Hámster 🐹</option>
+        <option value="Tortuga 🐢">Tortuga 🐢</option>
+        <option value="Reptil 🦎">Reptil 🦎</option>
+        <option value="Hurón 🦡">Hurón 🦡</option>
+        <option value="Caballo 🐴">Caballo 🐴</option>
+        <option value="Cuy 🐹">Cuy 🐹</option>
+        <option value="Otro">Otro</option>
+      </select>
+      <input type="text" id="especieOtro" placeholder="Especifique especie..." style="display:none; margin-top:5px;" />
+
+      <label for="raza">🥇 Raza:</label>
+      <select id="raza" onchange="onRazaChange()">
+        <option value="">Seleccione especie primero</option>
+      </select>
+      <input type="text" id="razaOtro" placeholder="Especifique raza..." style="display:none; margin-top:5px;" />
+
+      <label for="edad">🎂 Edad:</label>
+      <input type="number" id="edad" min="0" placeholder="Años" />
+
+      <label for="sexo">⚧️ Sexo:</label>
+      <select id="sexo">
+        <option value="Macho">Macho</option>
+        <option value="Hembra">Hembra</option>
+      </select>
+
+      <label for="peso">⚖️ Peso (kg):</label>
+      <input type="number" id="peso" min="0" step="0.1" placeholder="kg" />
+    </section>
+
+    <!-- 💉 Información de Vacunación -->
+    <section>
+      <h3>🧬 Detalles de Vacunación</h3>
+      <label for="nombreVacuna">🧪 Vacuna:</label>
+      <select id="nombreVacuna">
+        <option value="">Cargando vacunas...</option>
+      </select>
+
+      <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
+      <input type="date" id="fechaAplicacion" />
+
+      <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
+      <input type="date" id="fechaRefuerzo" />
+
+      <label for="veterinario">👨‍⚕️ Aplicado por:</label>
+      <input type="text" id="veterinario" placeholder="Dr. Posh" />
+
+      <label for="observaciones">📝 Observaciones:</label>
+      <textarea id="observaciones" rows="3" placeholder="Ninguna reacción, necesita seguimiento..."></textarea>
+    </section>
+
+    <!-- 📋 Tabla de Vacunas -->
+    <section>
+      <h3>📊 Historial de Vacunación</h3>
+      <table border="1" id="tablaVacunas">
+        <thead>
+          <tr>
+            <th>ID Cliente</th>
+            <th>Dueño</th>
+            <th>ID Mascota</th>
+            <th>Nombre Mascota</th>
+            <th>Edad</th>
+            <th>Sexo</th>
+            <th>Peso</th>
+            <th>Especie</th>
+            <th>Raza</th>
+            <th>Vacuna</th>
+            <th>Aplicación</th>
+            <th>Refuerzo</th>
+            <th>Veterinario</th>
+            <th>Observaciones</th>
+            <th>🗑️</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se agregan las filas con JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ✅ Acciones -->
+    <div class="acciones">
+      <button onclick="guardarVacuna()">💾 Guardar Vacuna</button>
+      <button onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
     </div>
   </div>
-  
+</div>
+
+<script>
+  const razasPorEspecie = {
+    'Perro 🐕': ['Labrador 🦮', 'Beagle 🐶', 'Bulldog Francés 🐕‍🦺', 'Poodle 🐩', 'Chihuahua 🐕', 'Husky 🐺'],
+    'Gato 🐈': ['Siames 😺', 'Persa 🐱', 'Maine Coon 🦁', 'Bengala 🐯', 'Sphynx 🐈‍⬛', 'Ragdoll 💤'],
+    'Conejo 🐇': ['Enano 🐰', 'Angora 🧶', 'Rex 🦎', 'Mini Lop 🎈'],
+    'Ave 🐦': ['Canario 🎶', 'Perico 🦜', 'Cacatúa 🦤', 'Loro 🦜'],
+    'Hámster 🐹': ['Siberiano ❄️', 'Ruso 🌾', 'Campbell 🏞️'],
+    'Tortuga 🐢': ['Sulcata 🌍', 'Rusa ❄️', 'Caja 🎁'],
+    'Reptil 🦎': ['Iguana 🌿', 'Camaleón 🌈', 'Gecko 🦎'],
+    'Hurón 🦡': ['Albino 🤍', 'Mestizo 🖤'],
+    'Caballo 🐴': ['Pura Sangre 🏇', 'Clydesdale 🐎'],
+    'Cuy 🐹': ['Peruano 🪶', 'Abyssinian 🏵️']
+  };
+
+  function onEspecieChange() {
+    const selEsp = document.getElementById('especieSelect');
+    const txtEspOtro = document.getElementById('especieOtro');
+    const selRaza = document.getElementById('raza');
+
+    // Mostrar/Ocultar campo Otro especie
+    txtEspOtro.style.display = selEsp.value === 'Otro' ? 'block' : 'none';
+
+    // Poblar razas
+    const lista = razasPorEspecie[selEsp.value] || [];
+    selRaza.innerHTML = '<option value="">Seleccione raza</option>';
+    lista.forEach(r => {
+      const opt = document.createElement('option'); opt.value = r; opt.textContent = r;
+      selRaza.appendChild(opt);
+    });
+    // opción Otro para raza
+    const optOtro = document.createElement('option'); optOtro.value = 'Otro'; optOtro.textContent = 'Otro';
+    selRaza.appendChild(optOtro);
+    document.getElementById('razaOtro').style.display = 'none';
+  }
+
+  function onRazaChange() {
+    const selR = document.getElementById('raza');
+    document.getElementById('razaOtro').style.display = selR.value === 'Otro' ? 'block' : 'none';
+  }
+
+  function abrirModalVacunas() {
+    document.getElementById('modalVacunas').style.display = 'block';
+    // cargar dueño
+    google.script.run.withSuccessHandler(nombre => {
+      document.getElementById('nombreDueno').value = nombre;
+    }).obtenerNombreDueno();
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  function guardarVacuna() {
+    const data = {};
+    data.nombreMascota = document.getElementById('nombreMascota').value;
+    data.especie = document.getElementById('especieSelect').value === 'Otro' ? document.getElementById('especieOtro').value : document.getElementById('especieSelect').value;
+    data.raza = document.getElementById('raza').value === 'Otro' ? document.getElementById('razaOtro').value : document.getElementById('raza').value;
+    data.edad = document.getElementById('edad').value;
+    data.sexo = document.getElementById('sexo').value;
+    data.peso = document.getElementById('peso').value;
+    data.vacuna = document.getElementById('nombreVacuna').value;
+    data.fechaAplicacion = document.getElementById('fechaAplicacion').value;
+    data.fechaRefuerzo = document.getElementById('fechaRefuerzo').value;
+    data.veterinario = document.getElementById('veterinario').value;
+    data.observaciones = document.getElementById('observaciones').value;
+
+    // Llamar Apps Script para procesar y guardar en hoja "Vacunación"
+    google.script.run.withSuccessHandler(res => {
+      if(res.success) {
+        alert('Vacuna registrada correctamente');
+        cerrarModal('modalVacunas');
+        // refrescar tabla o recargar página
+      } else {
+        alert('Error: ' + res.error);
+      }
+    }).registrarVacuna(data);
+  }
+</script>
+
+<!-- SERVER-SIDE APPS SCRIPT -->
+<script>
+  /**
+   * Registrar vacuna en la hoja "Vacunación".
+   * data: objeto con campos definidos.
+   */
+  function registrarVacuna(data) {
+    try {
+      const ss = SpreadsheetApp.openByUrl('https://docs.google.com/spreadsheets/d/1yhLJEUygzZVHP_1tIMJti0OLywLTfmvl0kt1ARVY7Bc/edit?gid=634746177#gid=634746177');
+      const sheetCli = ss.getSheetByName('Clientes');
+      const sheetVac = ss.getSheetByName('Vacunación');
+      const clientes = sheetCli.getRange('A2:G' + sheetCli.getLastRow()).getValues();
+      let idCliente = '';
+      let nombreDueno = '';
+      let idMascota = '';
+      
+      // Buscar cliente por nombreMascota en col G
+      clientes.forEach(row => {
+        if(row[6] === data.nombreMascota) {
+          idCliente = row[0];       // Col A
+          nombreDueno = row[1];     // Col B
+          idMascota = row[5];       // Col F
+        }
+      });
+      
+      // Si no existe, idCliente y idMascota quedarán vacíos y se usan datos nuevos
+      const nuevaFila = [
+        idCliente,
+        nombreDueno,
+        idMascota,
+        data.nombreMascota,
+        data.edad || '',
+        data.sexo || '',
+        data.peso || '',
+        data.especie,
+        data.raza,
+        data.vacuna,
+        data.fechaAplicacion,
+        data.fechaRefuerzo,
+        data.veterinario,
+        data.observaciones
+      ];
+      sheetVac.appendRow(nuevaFila);
+      return { success: true };
+    } catch(e) {
+      return { success: false, error: e.message };
+    }
+  }
+</script>
