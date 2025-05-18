@@ -1,114 +1,145 @@
-<!-- MODAL VACUNAS -->
+<!-- Vacunas.html -->
 <div id="modalVacunas" class="modal" style="display:none;">
   <div class="modal-content">
     <h2>💉 Registro de Vacunas</h2>
     
     <!-- 🐾 Datos de la Mascota -->
-    <section>
-      <h3>🐾 Información de la Mascota</h3>
-
-      <!-- ID Cliente e ID Mascota ocultos -->
+    <section class="modal-form">
+      <!-- IDs ocultos -->
       <input type="hidden" id="idCliente" />
       <input type="hidden" id="idMascota" />
 
-      <label for="nombreMascota">🐶 Nombre de Mascota:</label>
-      <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." onblur="onNombreMascotaChange()" />
+      <div class="form-group">
+        <label for="nombreMascota">🐶 Nombre de Mascota:</label>
+        <input type="text" id="nombreMascota" placeholder="Firulais, Michi..." onblur="onNombreMascotaChange()" />
+      </div>
 
-      <label for="nombreDueno">👤 Dueño:</label>
-      <input type="text" id="nombreDueno" placeholder="Cargando dueño..." readonly />
+      <div class="form-group">
+        <label for="nombreDueno">👤 Dueño:</label>
+        <input type="text" id="nombreDueno" placeholder="Cargando dueño..." readonly />
+      </div>
 
-      <label for="especieSelect">🦴 Especie:</label>
-      <select id="especieSelect" onchange="onEspecieChange()">
-        <option value="">Seleccione especie</option>
-        <option value="Perro 🐕">Perro 🐕</option>
-        <option value="Gato 🐈">Gato 🐈</option>
-        <option value="Conejo 🐇">Conejo 🐇</option>
-        <option value="Ave 🐦">Ave 🐦</option>
-        <option value="Hámster 🐹">Hámster 🐹</option>
-        <option value="Tortuga 🐢">Tortuga 🐢</option>
-        <option value="Reptil 🦎">Reptil 🦎</option>
-        <option value="Hurón 🦡">Hurón 🦡</option>
-        <option value="Caballo 🐴">Caballo 🐴</option>
-        <option value="Cuy 🐹">Cuy 🐹</option>
-        <option value="Otro">Otro</option>
-      </select>
-      <input type="text" id="especieOtro" placeholder="Especifique especie..." style="display:none; margin-top:5px;" />
+      <div class="form-group">
+        <label for="especieSelect">🦴 Especie:</label>
+        <select id="especieSelect" onchange="onEspecieChange()">
+          <option value="">Seleccione especie</option>
+          <option value="🐶 Perro">🐶 Perro</option>
+          <option value="🐱 Gato">🐱 Gato</option>
+          <option value="🐰 Conejo">🐰 Conejo</option>
+          <option value="🦜 Ave">🦜 Ave</option>
+          <option value="🐹 Hámster">🐹 Hámster</option>
+          <option value="🐢 Tortuga">🐢 Tortuga</option>
+          <option value="🦎 Reptil">🦎 Reptil</option>
+          <option value="🦡 Hurón">🦡 Hurón</option>
+          <option value="🐴 Caballo">🐴 Caballo</option>
+          <option value="🐹 Cuy">🐹 Cuy</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input type="text" id="especieOtro" placeholder="Especifique especie..." style="display:none;" />
+      </div>
 
-      <label for="raza">🥇 Raza:</label>
-      <select id="raza" onchange="onRazaChange()">
-        <option value="">Seleccione especie primero</option>
-      </select>
-      <input type="text" id="razaOtro" placeholder="Especifique raza..." style="display:none; margin-top:5px;" />
+      <div class="form-group">
+        <label for="raza">🥇 Raza:</label>
+        <select id="raza" onchange="onRazaChange()">
+          <option value="">Seleccione especie primero</option>
+        </select>
+        <input type="text" id="razaOtro" placeholder="Especifique raza..." style="display:none;" />
+      </div>
 
-      <label for="edad">🎂 Edad:</label>
-      <input type="number" id="edad" min="0" placeholder="Años" />
+      <div class="form-group">
+        <label for="edad">🎂 Edad:</label>
+        <input type="number" id="edad" min="0" placeholder="Años" />
+      </div>
 
-      <label for="sexo">⚧️ Sexo:</label>
-      <select id="sexo">
-        <option value="Macho">Macho</option>
-        <option value="Hembra">Hembra</option>
-      </select>
+      <div class="form-group">
+        <label for="sexo">⚧️ Sexo:</label>
+        <select id="sexo">
+          <option value="Macho">Macho</option>
+          <option value="Hembra">Hembra</option>
+        </select>
+      </div>
 
-      <label for="peso">⚖️ Peso (kg):</label>
-      <input type="number" id="peso" min="0" step="0.1" placeholder="kg" />
+      <div class="form-group">
+        <label for="peso">⚖️ Peso (kg):</label>
+        <input type="number" id="peso" min="0" step="0.1" placeholder="kg" />
+      </div>
     </section>
 
-    <!-- 💉 Información de Vacunación -->
-    <section>
-      <h3>🧬 Detalles de Vacunación</h3>
-      <label for="nombreVacuna">🧪 Vacuna:</label>
-      <select id="nombreVacuna">
-        <option value="">Cargando vacunas...</option>
-      </select>
-
-      <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
-      <input type="date" id="fechaAplicacion" />
-
-      <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
-      <input type="date" id="fechaRefuerzo" />
-
-      <label for="veterinario">👨‍⚕️ Aplicado por:</label>
-      <input type="text" id="veterinario" placeholder="Dr. Posh" />
-
-      <label for="observaciones">📝 Observaciones:</label>
-      <textarea id="observaciones" rows="3" placeholder="Ninguna reacción, necesita seguimiento..."></textarea>
+    <!-- 💉 Detalles de Vacunación -->
+    <section class="modal-form">
+      <div class="form-group">
+        <label for="nombreVacuna">🧪 Vacuna:</label>
+        <select id="nombreVacuna">
+          <option value="">Cargando vacunas...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="fechaAplicacion">📅 Fecha de aplicación:</label>
+        <input type="date" id="fechaAplicacion" />
+      </div>
+      <div class="form-group">
+        <label for="fechaRefuerzo">🔁 Fecha de refuerzo:</label>
+        <input type="date" id="fechaRefuerzo" />
+      </div>
+      <div class="form-group">
+        <label for="veterinario">👨‍⚕️ Aplicado por:</label>
+        <input type="text" id="veterinario" placeholder="Dr. Posh" />
+      </div>
+      <div class="form-group">
+        <label for="observaciones">📝 Observaciones:</label>
+        <textarea id="observaciones" rows="3" placeholder="Ninguna reacción..."></textarea>
+      </div>
     </section>
 
-    <!-- 📋 Tabla de Vacunas -->
+    <!-- 📋 Historial -->
     <section>
       <h3>📊 Historial de Vacunación</h3>
       <table border="1" id="tablaVacunas">
         <thead>
           <tr>
-            <!-- columnas definidas -->
+            <th>Vacuna</th><th>Aplicación</th><th>Refuerzo</th><th>Veterinario</th><th>Observaciones</th><th>🗑️</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- filas dinámicas -->
-        </tbody>
+        <tbody><!-- dinámico --></tbody>
       </table>
     </section>
 
-    <!-- ✅ Acciones -->
-    <div class="acciones">
-      <button onclick="guardarVacuna()">💾 Guardar Vacuna</button>
-      <button onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
+    <!-- Botones -->
+    <div class="btn-container">
+      <button class="btn btn-primary" onclick="guardarVacuna()">💾 Guardar Vacuna</button>
+      <button class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">❌ Cerrar</button>
     </div>
   </div>
 </div>
 
 <script>
-  // Mapa de especies y razas omitido para brevedad (igual al anterior)
+  // Mapa de razas por especie (coincide con tu script.js)
+  const razasPorEspecie = {
+    '🐶 Perro': ['Labrador 🐶','Pug 😛','Chihuahua 💅','Pitbull 💪'],
+    '🐱 Gato': ['Persa 😽','Siames 😸','Sphynx 🐱','Maine Coon 🧶'],
+    '🐰 Conejo': ['Cabeza de león 🦁','Mini Lop 🐰','Angora ✨'],
+    '🦜 Ave': ['Periquito 🐦','Cacatúa 🎵','Loro 💚'],
+    '🐹 Hámster': ['Sirio 🧡','Ruso ❄️','Roborovski ⚡'],
+    '🐢 Tortuga': ['Orejas rojas 🐢','Rusa 🌿'],
+    '🦎 Reptil': ['Iguana 🦎','Gecko 🐊','Camaleón 🌈'],
+    '🦡 Hurón': ['Albino 🤍','Mestizo 🖤'],
+    '🐴 Caballo': ['Pura Sangre 🏇','Clydesdale 🐎'],
+    '🐹 Cuy': ['Peruano 🪶','Abyssinian 🏵️']
+  };
 
-  function onNombreMascotaChange() {
-    const nombre = document.getElementById('nombreMascota').value;
+  // 1. Al salir del nombre de mascota, obtenemos datos de cliente
+  async function onNombreMascotaChange() {
+    const nombre = document.getElementById('nombreMascota').value.trim();
     if (!nombre) return;
-    // Llamar a servidor para obtener datos de cliente
-    google.script.run.withSuccessHandler(data => {
+    const res = await fetch(`${WEBAPP_URL}?action=verificarMascota&nombreMascota=${encodeURIComponent(nombre)}`);
+    const info = await res.json();
+    if (info.encontrado) {
+      // Si existe mascota, pedimos datos completos
+      const full = await fetch(`${WEBAPP_URL}?action=getDatosCliente&nombreMascota=${encodeURIComponent(nombre)}`);
+      const data = await full.json();
       document.getElementById('idCliente').value = data.idCliente;
       document.getElementById('nombreDueno').value = data.nombreDueno;
       document.getElementById('idMascota').value = data.idMascota;
-      // Si data incluye edad, sexo, peso, especie, raza, poblar campos
       if (data.edad) document.getElementById('edad').value = data.edad;
       if (data.sexo) document.getElementById('sexo').value = data.sexo;
       if (data.peso) document.getElementById('peso').value = data.peso;
@@ -117,33 +148,120 @@
         onEspecieChange();
         document.getElementById('raza').value = data.raza;
       }
-    }).obtenerDatosCliente(nombre);
+    } else {
+      // Nuevo registro: limpiamos propietarios previos
+      document.getElementById('idCliente').value = '';
+      document.getElementById('nombreDueno').value = '';
+      document.getElementById('idMascota').value = '';
+    }
   }
 
-  function guardarVacuna() {
-    const payload = {
+  // 2. Selección de especie → llenar razas + “Otro”
+  function onEspecieChange() {
+    const esp = document.getElementById('especieSelect').value;
+    document.getElementById('especieOtro').style.display = esp==='Otro'?'block':'none';
+
+    const razaSel = document.getElementById('raza');
+    razaSel.innerHTML = '<option value="">Seleccione raza</option>';
+    (razasPorEspecie[esp]||[]).forEach(r=>{
+      const o=document.createElement('option'); o.value=r; o.textContent=r;
+      razaSel.appendChild(o);
+    });
+    const oOtro = document.createElement('option');
+    oOtro.value='Otro'; oOtro.textContent='Otro';
+    razaSel.appendChild(oOtro);
+    document.getElementById('razaOtro').style.display='none';
+  }
+
+  // 3. Si eligen “Otro” raza, mostrar campo manual
+  function onRazaChange() {
+    const val = document.getElementById('raza').value;
+    document.getElementById('razaOtro').style.display = val==='Otro'?'block':'none';
+  }
+
+  // 4. Cargar lista de vacunas
+  async function cargarListaVacunas() {
+    const sel = document.getElementById('nombreVacuna');
+    sel.innerHTML = '<option value="">Cargando...</option>';
+    try {
+      const resp = await fetch(`${WEBAPP_URL}?action=getVacunas`);
+      const js = await resp.json();
+      sel.innerHTML = '<option value="">Seleccione vacuna</option>';
+      js.vacunas.forEach(v=>{
+        const o=document.createElement('option');
+        o.value=v.nombre; o.textContent=v.nombre;
+        sel.appendChild(o);
+      });
+    } catch {
+      sel.innerHTML = '<option value="">Error al cargar</option>';
+    }
+  }
+
+  // 5. Guardar vacuna
+  async function guardarVacuna() {
+    const btn = document.querySelector('#modalVacunas button.btn-primary');
+    btn.disabled = true; btn.textContent = '⏳ Guardando...';
+
+    // Preparamos datos
+    const data = {
+      action: 'guardarVacuna',
       idCliente: document.getElementById('idCliente').value,
       idMascota: document.getElementById('idMascota').value,
-      nombreMascota: document.getElementById('nombreMascota').value,
-      nombreDueno: document.getElementById('nombreDueno').value,
-      especie: /* igual lógica Otro */ '',
-      raza: '',
+      nombreMascota: document.getElementById('nombreMascota').value.trim(),
+      nombreDueno: document.getElementById('nombreDueno').value.trim(),
+      especie: document.getElementById('especieSelect').value==='Otro'
+        ? document.getElementById('especieOtro').value.trim()
+        : document.getElementById('especieSelect').value,
+      raza: document.getElementById('raza').value==='Otro'
+        ? document.getElementById('razaOtro').value.trim()
+        : document.getElementById('raza').value,
       edad: document.getElementById('edad').value,
       sexo: document.getElementById('sexo').value,
       peso: document.getElementById('peso').value,
       vacuna: document.getElementById('nombreVacuna').value,
       fechaAplicacion: document.getElementById('fechaAplicacion').value,
       fechaRefuerzo: document.getElementById('fechaRefuerzo').value,
-      veterinario: document.getElementById('veterinario').value,
-      observaciones: document.getElementById('observaciones').value
+      veterinario: document.getElementById('veterinario').value.trim(),
+      observaciones: document.getElementById('observaciones').value.trim()
     };
-    google.script.run.withSuccessHandler(res => {
-      if (res.success) {
-        alert('Vacuna guardada correctamente');
+
+    try {
+      const resp = await fetch(WEBAPP_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      const res = await resp.json();
+      if (res.status==='success') {
+        mostrarAlerta('✅ Vacuna registrada', 'success');
+        document.getElementById('formVacuna')?.reset();
         cerrarModal('modalVacunas');
       } else {
-        alert('Error: ' + res.error);
+        throw new Error(res.message||'Error servidor');
       }
-    }).registrarVacuna(payload);
+    } catch (e) {
+      mostrarAlerta(`❌ ${e.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💾 Guardar Vacuna';
+    }
   }
+
+  // 6. Al abrir modal, inicializamos
+  function abrirModalVacunas() {
+    cargarListaVacunas();
+    onEspecieChange();
+  }
+
+  // Llamada inicial de funciones al cargar HTML 
+  document.addEventListener('DOMContentLoaded', () => {
+    // sobreescribimos la apertura si es dinámico:
+    document.querySelectorAll('a[href$="Vacunas.html"]').forEach(link => {
+      link.addEventListener('click', e => {
+        abrirModal('modalVacunas');
+        abrirModalVacunas();
+        e.preventDefault();
+      });
+    });
+  });
 </script>
