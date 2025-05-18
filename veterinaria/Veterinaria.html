@@ -33,17 +33,50 @@
       <h1>Agenda Veterinaria - Posh Posh</h1>
       <nav>
         <ul class="menu-nav">
-          <li class="dropdown">
-            <a href="#">Cliente ⬇</a>
-            <ul class="submenu">
-              <li><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;">🐾 Nuevo</a></li>
-              <li><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;">🔎 Existente</a></li>
-            </ul>
+          <!-- Cliente -->
+          <li class="blob-item" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente')">
+            <div class="blob-button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 852 880">
+                <defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 25 -20"/></filter></defs>
+                <g filter="url(#goo)">
+                  <rect class="blob-bg" x="284" y="301" width="284" height="284"></rect>
+                  <!-- path lines -->
+                  <path class="blob-line" d="M350,509 L350,628.509414"/>
+                  <path class="blob-line" d="M510,512 L644.5,512"/>
+                  <!-- más líneas... -->
+                </g>
+              </svg>
+              <span class="blob-label">Cliente</span>
+            </div>
           </li>
-          <li><a href="#" onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;">📖 Historial</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;">💉 Vacuna</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;">🛍️ Tienda</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;">✂️ Estética</a></li>
+          <!-- Historial -->
+          <li class="blob-item" onclick="cargarYMostrarModal('Historial.html','modalHistorial')">
+            <div class="blob-button">
+              <!-- mismo SVG -->
+              <span class="blob-label">Historial</span>
+            </div>
+          </li>
+          <!-- Vacuna -->
+          <li class="blob-item" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas')">
+            <div class="blob-button">
+              <!-- mismo SVG -->
+              <span class="blob-label">Vacuna</span>
+            </div>
+          </li>
+          <!-- Tienda -->
+          <li class="blob-item" onclick="cargarYMostrarModal('Tienda.html','modalTienda')">
+            <div class="blob-button">
+              <!-- mismo SVG -->
+              <span class="blob-label">Tienda</span>
+            </div>
+          </li>
+          <!-- Estética -->
+          <li class="blob-item" onclick="cargarYMostrarModal('Estetica.html','modalEstetica')">
+            <div class="blob-button">
+              <!-- mismo SVG -->
+              <span class="blob-label">Estética</span>
+            </div>
+          </li>
         </ul>
       </nav>
     </header>
@@ -55,61 +88,40 @@
   <!-- MODAL NUEVA CITA -->
   <div id="modalNuevaCita" class="modal">
     <div class="modal-content">
-      <h3>📅 Agendar nueva cita</h3>
-
-      <div class="form-group">
-        <label>🐶 Mascota:</label>
-        <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
+      <div class="modal-header">
+        <h3 class="modal-title">📅 Agendar nueva cita</h3>
+        <span class="close" onclick="cerrarModal('modalNuevaCita')">&times;</span>
       </div>
-
-      <div id="preguntaDueno" style="display:none;" class="form-group">
-        <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
-        <button onclick="usarDuenoSugerido()">✅ Sí</button>
-        <button onclick="pedirNuevoDueno()">❌ No</button>
-      </div>
-
-      <div id="campoNuevoDueno" style="display:none;" class="form-group">
-        <label>👤 Dueño:</label>
-        <input type="text" id="duenoInput" />
-      </div>
-
-      <div class="form-group">
-        <label>📋 Motivo:</label>
-        <input type="text" id="motivoInput" />
-      </div>
-
-      <div class="form-group">
-        <label>🕐 Hora:</label>
-        <input type="time" id="horaInput" />
-      </div>
-
-      <div class="form-group">
-        <label>📌 Estatus:</label>
-        <select id="estatusInput">
-          <option value="Activa">Activa</option>
-          <option value="Cancelada">Cancelada</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>📝 Notas:</label>
-        <textarea id="notasInput"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>💲 Costo:</label>
-        <input type="number" id="costoInput" />
-      </div>
-
-      <div class="form-group buttons">
-        <button onclick="guardarNuevaCita()">💾 Guardar</button>
-        <button onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
+      <div class="modal-form">
+        <div class="form-group">
+          <label>🐶 Mascota:</label>
+          <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
+        </div>
+        <div id="preguntaDueno" class="form-group" style="display:none;">
+          <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
+          <button onclick="usarDuenoSugerido()">✅ Sí</button>
+          <button onclick="pedirNuevoDueno()">❌ No</button>
+        </div>
+        <div id="campoNuevoDueno" class="form-group" style="display:none;">
+          <label>👤 Dueño:</label>
+          <input type="text" id="duenoInput" />
+        </div>
+        <div class="form-group"><label>📋 Motivo:</label><input type="text" id="motivoInput" /></div>
+        <div class="form-group"><label>🕐 Hora:</label><input type="time" id="horaInput" /></div>
+        <div class="form-group"><label>📌 Estatus:</label><select id="estatusInput"><option>Activa</option><option>Cancelada</option></select></div>
+        <div class="form-group"><label>📝 Notas:</label><textarea id="notasInput"></textarea></div>
+        <div class="form-group"><label>💲 Costo:</label><input type="number" id="costoInput" /></div>
+        <div class="btn-container">
+          <button class="btn btn-primary" onclick="guardarNuevaCita()">💾 Guardar</button>
+          <button class="btn btn-secondary" onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <script src="script.js"></script>
+  <!-- Inclusión del JS de modales y blob buttons -->
+  <?!= include('script'); ?>
 </body>
 </html>

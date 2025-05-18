@@ -1,4 +1,4 @@
-/* estilos.css - estilos unificados para todos los modales y componentes */
+/* estilos.css - estilos unificados para modales, formularios, y blob menu */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -34,7 +34,38 @@ body {
 #daily-appointments { display: none; }
 #calendar-container { display: none; }
 
-/* CABECERA Y NAVEGACIÓN */
+/* BLOBBY MENU NAV */
+.menu-nav { display: flex; gap: 20px; justify-content: center; align-items: center; list-style: none; }
+.blob-item { list-style: none; }
+.blob-button {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+.blob-bg {
+  fill: #2AC3FF;
+  transition: fill 0.3s;
+}
+.blob-button:hover .blob-bg {
+  fill: #1EA6C5;
+}
+.blob-line {
+  stroke: #005f6b;
+  stroke-width: 60px;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.blob-label {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #0d2c3b;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+/* CABECERA */
 header {
   background: #fff;
   padding: 10px 20px;
@@ -46,54 +77,8 @@ header {
 }
 header img { height: 40px; }
 header h1 { font-size: 20px; color: #333; margin: 0 15px; flex: 1; }
-nav { text-align: center; margin: 20px 0; }
-.menu-nav { list-style: none; display: inline-flex; gap: 10px; }
-.menu-nav > li { position: relative; }
-.menu-nav li a {
-  background: linear-gradient(135deg, #2AC3FF, #5af2ff);
-  color: #0d2c3b;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
-  font-size: 14px;
-}
-.menu-nav li a:hover { transform: translateY(-2px) scale(1.03); }
-.submenu {
-  display: none;
-  position: absolute; top: 100%; left: 0;
-  background: white;
-  list-style: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 8px;
-  padding: 0;
-}
-.dropdown:hover .submenu { display: block; }
-.submenu li a {
-  display: block;
-  padding: 10px;
-  font-weight: 500;
-}
-.submenu li a:hover { background: #e6f7ff; }
 
-/* BOTONES GENERALES */
-.btn {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.3s;
-  text-align: center;
-  min-width: 120px;
-}
-.btn-primary { background-color: #3498db; color: white; }
-.btn-primary:hover { transform: translateY(-2px); }
-.btn-secondary { background-color: #95a5a6; color: white; }
-.btn-secondary:hover { transform: translateY(-2px); }
-
-/* FORMULARIOS COMUNES */
+/* FORMULARIOS */
 .modal-form { display: flex; flex-direction: column; gap: 15px; }
 .form-group { display: flex; flex-direction: column; }
 .form-group label { font-weight: 500; margin-bottom: 5px; color: #34495e; }
@@ -110,13 +95,13 @@ nav { text-align: center; margin: 20px 0; }
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+  border-color: #2AC3FF;
+  box-shadow: 0 0 0 3px rgba(42,195,255,0.2);
   background: white;
   outline: none;
 }
 
-/* MODALES UNIFICADOS */
+/* MODALES */
 .modal {
   display: none;
   position: fixed;
@@ -126,9 +111,8 @@ nav { text-align: center; margin: 20px 0; }
   backdrop-filter: blur(3px);
   z-index: 1000;
   overflow-y: auto;
+  display: flex; justify-content: center; align-items: center;
   animation: fadeIn 0.3s ease-out;
-  justify-content: center;
-  align-items: center;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .modal-content {
@@ -142,9 +126,25 @@ nav { text-align: center; margin: 20px 0; }
   overflow-y: auto;
   position: relative;
 }
-.btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
 
-/* TABLAS E HISTORIAL */
+/* BOTONES */
+.btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s;
+  text-align: center;
+  min-width: 120px;
+}
+.btn-primary { background-color: #2AC3FF; color: white; }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background-color: #95a5a6; color: white; }
+.btn-secondary:hover { transform: translateY(-2px); }
+
+/* TABLAS */
 #tablaVacunas, #appointments-list { width: 100%; }
 #tablaVacunas th, #tablaVacunas td { padding: 8px; text-align: left; border-bottom: 1px solid #eaeaea; }
 
