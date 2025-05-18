@@ -10,13 +10,12 @@
 </head>
 <body>
 
-  <!-- [SECCIÓN] SPLASH SCREEN CON SONIDO -->
+  <!-- SPLASH SCREEN -->
   <div id="splash">
     <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo Posh Posh">
-    <audio id="barkSound" src="https://www.soundjay.com/mechanical/sounds/bark-01.mp3" preload="auto"></audio>
   </div>
   
-  <!-- [SECCIÓN] CITAS DEL DÍA -->
+  <!-- CITAS DEL DÍA -->
   <div id="daily-appointments">
     <h2 id="current-date">📅 Cargando fecha...</h2>
     <ul id="appointments-list"></ul>
@@ -24,11 +23,10 @@
       <button id="print-btn" onclick="window.print()">🖨️ Imprimir</button>
       <button id="show-btn" onclick="mostrarCitasBonitas()">👁️ Mostrar</button>
       <button id="start-btn" onclick="comenzar()">🚀 Comenzar</button>
-
     </div>
   </div>
 
-  <!-- [SECCIÓN] CALENDARIO -->
+  <!-- CALENDARIO -->
   <div id="calendar-container">
     <header>
       <img src="https://i.ibb.co/dF6tyVF/poshposh.jpg" alt="Logo">
@@ -38,69 +36,80 @@
           <li class="dropdown">
             <a href="#">Cliente ⬇</a>
             <ul class="submenu">
-              <li><a href="#" onclick="cargarYMostrarModal('Clientes.html', 'modalNuevoCliente'); return false;">🐾 Nuevo</a></li>
-              <li><a href="#" onclick="abrirModal('modalExistente'); return false;">🔎 Existente</a></li>
+              <li><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalNuevoCliente');return false;">🐾 Nuevo</a></li>
+              <li><a href="#" onclick="cargarYMostrarModal('Clientes.html','modalExistente');return false;">🔎 Existente</a></li>
             </ul>
           </li>
-          <li><a href="#" onclick="cargarYMostrarModal('Historial.html', 'modalHistorial'); return false;">📖 Historial</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Vacunas.html', 'modalVacunas'); return false;">💉 Vacuna</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Tienda.html', 'modalTienda'); return false;">🛍️ Tienda</a></li>
-          <li><a href="#" onclick="cargarYMostrarModal('Estetica.html', 'modalEstetica'); return false;">✂️ Estética</a></li>
-          </ul>
+          <li><a href="#" onclick="cargarYMostrarModal('Historial.html','modalHistorial');return false;">📖 Historial</a></li>
+          <li><a href="#" onclick="cargarYMostrarModal('Vacunas.html','modalVacunas');return false;">💉 Vacuna</a></li>
+          <li><a href="#" onclick="cargarYMostrarModal('Tienda.html','modalTienda');return false;">🛍️ Tienda</a></li>
+          <li><a href="#" onclick="cargarYMostrarModal('Estetica.html','modalEstetica');return false;">✂️ Estética</a></li>
+        </ul>
       </nav>
     </header>
     <div id="calendar"></div>
   </div>
+
   <div id="modales-container"></div>
-  <!-- [SECCIÓN] SECCIONES PARA EL MENÚ -->
-    <!-- MODAL NUEVA CITA -->
-<div id="modalNuevaCita" class="modal">
-  <div class="modal-content">
-    <h3>📅 Agendar nueva cita</h3>
 
-    <label>🐶 Nombre de la mascota:</label>
-    <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
+  <!-- MODAL NUEVA CITA -->
+  <div id="modalNuevaCita" class="modal">
+    <div class="modal-content">
+      <h3>📅 Agendar nueva cita</h3>
 
-    <div id="preguntaDueno" style="display:none; margin-top: 8px;">
-      <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
-      <button onclick="usarDuenoSugerido()">✅ Sí</button>
-      <button onclick="pedirNuevoDueno()">❌ No</button>
-    </div>
+      <div class="form-group">
+        <label>🐶 Mascota:</label>
+        <input type="text" id="mascotaInput" onblur="verificarMascotaExistente()" />
+      </div>
 
-    <div id="campoNuevoDueno" style="display:none; margin-top: 10px;">
-      <label>👤 Dueño:</label>
-      <input type="text" id="duenoInput" />
-    </div>
+      <div id="preguntaDueno" style="display:none;" class="form-group">
+        <p>¿El dueño es <strong><span id="duenoSugerido"></span></strong>?</p>
+        <button onclick="usarDuenoSugerido()">✅ Sí</button>
+        <button onclick="pedirNuevoDueno()">❌ No</button>
+      </div>
 
-    <label>📋 Motivo:</label>
-    <input type="text" id="motivoInput" />
+      <div id="campoNuevoDueno" style="display:none;" class="form-group">
+        <label>👤 Dueño:</label>
+        <input type="text" id="duenoInput" />
+      </div>
 
-    <label>🕐 Hora:</label>
-    <input type="time" id="horaInput" />
+      <div class="form-group">
+        <label>📋 Motivo:</label>
+        <input type="text" id="motivoInput" />
+      </div>
 
-    <label>📌 Estatus:</label>
-    <select id="estatusInput">
-      <option value="Activa">Activa</option>
-      <option value="Cancelada">Cancelada</option>
-    </select>
+      <div class="form-group">
+        <label>🕐 Hora:</label>
+        <input type="time" id="horaInput" />
+      </div>
 
-    <label>📝 Notas:</label>
-    <textarea id="notasInput"></textarea>
+      <div class="form-group">
+        <label>📌 Estatus:</label>
+        <select id="estatusInput">
+          <option value="Activa">Activa</option>
+          <option value="Cancelada">Cancelada</option>
+        </select>
+      </div>
 
-    <label>📷 Foto:</label>
-    <input type="file" id="fotoInput" accept="image/*" capture="environment" />
+      <div class="form-group">
+        <label>📝 Notas:</label>
+        <textarea id="notasInput"></textarea>
+      </div>
 
-    <label>💲 Costo:</label>
-    <input type="number" id="costoInput" />
+      <div class="form-group">
+        <label>💲 Costo:</label>
+        <input type="number" id="costoInput" />
+      </div>
 
-    <div style="margin-top: 10px;">
-      <button onclick="guardarNuevaCita()">💾 Guardar</button>
-      <button onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
+      <div class="form-group buttons">
+        <button onclick="guardarNuevaCita()">💾 Guardar</button>
+        <button onclick="cerrarModal('modalNuevaCita')">❌ Cancelar</button>
+      </div>
     </div>
   </div>
-</div>
+
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
