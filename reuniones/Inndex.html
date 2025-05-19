@@ -125,6 +125,8 @@
   <script>
     let mediaRecorder;
     let audioChunks = [];
+    let allChunks = [];
+    let chunkInterval;
     const startBtn = document.getElementById("startBtn");
     const stopBtn = document.getElementById("stopBtn");
     const status = document.getElementById("status");
@@ -134,16 +136,34 @@
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      allChunks = [];
+
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) {
+          audioChunks.push(e.data);
+        }
+      };
+
       mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const url = URL.createObjectURL(blob);
+        clearInterval(chunkInterval);
+        allChunks = allChunks.concat(audioChunks);
+        const fullBlob = new Blob(allChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(fullBlob);
         audioPlayer.src = url;
       };
+
       mediaRecorder.start();
       status.textContent = "Grabando...";
       startBtn.disabled = true;
       stopBtn.disabled = false;
+
+      chunkInterval = setInterval(() => {
+        if (mediaRecorder.state === "recording") {
+          mediaRecorder.requestData();
+          allChunks = allChunks.concat(audioChunks);
+          audioChunks = [];
+        }
+      }, 600000); // cada 10 minutos
     };
 
     stopBtn.onclick = () => {
