@@ -2,7 +2,7 @@
 <div id="modalVacunas" class="modal" style="display:none;justify-content:center;align-items:flex-start;">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 class="modal-title">💉 Registro de Vacunas 6</h2>
+      <h2 class="modal-title">💉 Registro de Vacunas 7</h2>
       <span class="close" onclick="cerrarModal('modalVacunas')">&times;</span>
     </div>
 
@@ -106,107 +106,3 @@
 
   </div>
 </div>
-
-<script>
-  // Referencia al backend
-  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbygeTmeEpPvYaOh3e2loYib8NGrFr9jMIqPPvCEuT3jjh2O62rXRnqfokf8Svso7mgR/exec';
-
-  // Botones flip
-  document.getElementById('btnExistente').addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('seccionExistente').style.display = 'block';
-    document.getElementById('seccionNuevo').style.display = 'none';
-    document.getElementById('datosMascota').style.display = 'none';
-    cargarListaMascotas();
-  });
-  document.getElementById('btnNuevo').addEventListener('click', e => {
-    e.preventDefault();
-    document.getElementById('seccionNuevo').style.display = 'block';
-    document.getElementById('seccionExistente').style.display = 'none';
-    document.getElementById('datosMascota').style.display = 'block';
-  });
-
-  // Carga lista de mascotas para clientes existentes
-  async function cargarListaMascotas() {
-    const resp = await fetch(`${WEBAPP_URL}?action=getClientesMascotas`);
-    const data = await resp.json();
-    const sel = document.getElementById('selectMascota');
-    sel.innerHTML = '<option value="">Seleccione mascota</option>';
-    data.mascotas.forEach(m => sel.add(new Option(m, m)));
-  }
-
-  // Al pulsar "Cargar Datos"
-  document.getElementById('cargarDatosClienteBtn').addEventListener('click', async () => {
-    const nombre = document.getElementById('selectMascota').value;
-    if (!nombre) return alert('Seleccione una mascota');
-    const resp = await fetch(`${WEBAPP_URL}?action=getDatosCliente&nombreMascota=${encodeURIComponent(nombre)}`);
-    const info = await resp.json();
-    // Mostrar sección con datos
-    document.getElementById('datosMascota').style.display = 'block';
-    // IDs ocultos
-    document.getElementById('idCliente').value = info.idCliente;
-    document.getElementById('idMascota').value = info.idMascota;
-    // Campos
-    document.getElementById('nombreMascota').value = info.nombreMascota;
-    document.getElementById('especie').value = info.especie;
-    document.getElementById('raza').value = info.raza;
-    // Formatea edad: 3.11 → "3 años, 11 meses"
-    const [a,m] = info.edad.split('.').map(n=>parseInt(n));
-    document.getElementById('edad').value = `${a} años, ${m} meses`;
-    // Formatea peso: 5.25 → "5 kg, 25 g"
-    const [kg,gr] = info.peso.split('.').map(n=>parseInt(n));
-    document.getElementById('peso').value = `${kg} kg, ${gr} g`;
-    document.getElementById('sexo').value = info.sexo;
-  });
-
-  // Cargar vacunas al abrir el modal
-  async function cargarVacunasModal() {
-    const sel = document.getElementById('nombreVacuna');
-    sel.innerHTML = '<option>Cargando...</option>';
-    try {
-      const res = await fetch(`${WEBAPP_URL}?action=getVacunas`);
-      const js = await res.json();
-      sel.innerHTML = '<option value="">Seleccione vacuna</option>';
-      js.vacunas.forEach(v => {
-        const o = document.createElement('option');
-        o.value = v.nombre; o.textContent = v.nombre;
-        sel.appendChild(o);
-      });
-    } catch {
-      sel.innerHTML = '<option>Error al cargar</option>';
-    }
-  }
-
-  // Abrir modal desde tu script.js principal
-  function abrirModalVacunas() {
-    document.getElementById('modalVacunas').style.display = 'flex';
-    cargarVacunasModal();
-  }
-
-  // Guardar vacuna
-  async function guardarVacuna() {
-    const form = document.getElementById('formVacuna');
-    const data = Object.fromEntries(new FormData(form).entries());
-    data.action = 'guardarVacuna';
-    // Ajusta datos edad/peso para enviar número decimal
-    const [años,meses] = data.edad.match(/(\d+)/g).map(Number);
-    data.edad = parseFloat(`${años}.${meses}`);
-    const [kg,gr] = data.peso.match(/(\d+)/g).map(Number);
-    data.peso = parseFloat(`${kg}.${gr}`);
-    try {
-      const res = await fetch(WEBAPP_URL, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if (json.status==='success') {
-        Toastify({ text:'✅ Vacuna registrada', gravity:'top', backgroundColor:'#4CAF50' }).showToast();
-        cerrarModal('modalVacunas');
-        form.reset();
-      } else throw new Error(json.message);
-    } catch(e) {
-      Toastify({ text:`❌ ${e.message}`, gravity:'top', backgroundColor:'#F44336' }).showToast();
-    }
-  }
-</script>
