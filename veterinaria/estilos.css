@@ -209,3 +209,31 @@ header h1 {
   .button-row { flex-wrap: wrap; justify-content: center; }
   .modal-content { width: 95%; }
 }
+/* estilos.css – Añadidos al final de tu archivo existente :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} */
+
+/* MENÚ PRINCIPAL: más compacto, centrado y con wrap */
+header .button-row {
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Botones 3D-flip: tamaño ajustado */
+.button-row > div {
+  width: 120px;
+  height: 35px;
+  perspective: 1000px;
+}
+
+.button-row > div > a {
+  font-size: 13px;
+  line-height: 35px;
+}
+
+/* Ajuste de gap entre botones en móviles */
+@media (max-width: 768px) {
+  .button-row {
+    gap: 8px;
+  }
+}
