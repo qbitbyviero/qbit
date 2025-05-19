@@ -1,4 +1,4 @@
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwI_7h0CUukKfjcGwp-KUwFSsrQcOBYp5Q27YK0bTMfv2jpubgPYIk27xjDr4d_o4lX/exec';
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbygeTmeEpPvYaOh3e2loYib8NGrFr9jMIqPPvCEuT3jjh2O62rXRnqfokf8Svso7mgR/exec';
 let calendar;
 let citasPendientes = [];
 const razasPorEspecie = {
@@ -18,17 +18,16 @@ function cargarModal(nombreArchivo) {
         document.getElementById("modales-container").innerHTML = html;
       })
       .catch(err => console.error("Error al cargar el modal:", err));
-}async function initApp() {
-    // después de 3 segundos oculto splash y muestro citas
-    setTimeout(async () => {
-        document.getElementById('splash').style.display = 'none';
-        document.getElementById('daily-appointments').style.display = 'block';
-        
-        configurarSelectores();
-        await cargarCitasDelDia();
-        setupMenuNavigation();
-        actualizarRazas();
-    }, 3000);
+}
+async function initApp() {
+  setTimeout(async () => {
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('daily-appointments').style.display = 'block';
+    configurarSelectores();
+    await cargarCitasDelDia();
+    setupMenuNavigation();
+    actualizarRazas();
+  }, 3000);
 }
 
 async function cargarCitasDelDia() {
