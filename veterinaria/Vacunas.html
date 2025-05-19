@@ -1,12 +1,14 @@
 <!-- Vacunas.html -->
+<div id="modales-container"></div>
+
 <div id="modalVacunas" class="modal" style="display:none;justify-content:center;align-items:flex-start;">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 class="modal-title">💉 Registro de Vacunas 8</h2>
+      <h2>💉 Registro de Vacunas</h2>
       <span class="close" onclick="cerrarModal('modalVacunas')">&times;</span>
     </div>
 
-    <!-- Selección Existente / Nuevo -->
+    <!-- Selección Cliente Existente / Nuevo -->
     <div class="button-row">
       <div><a href="#" id="btnExistente" title="Cliente Existente"></a></div>
       <div><a href="#" id="btnNuevo" title="Nuevo Cliente"></a></div>
@@ -15,94 +17,93 @@
     <!-- Sección Cliente Existente -->
     <div id="seccionExistente" style="display:none;">
       <div class="form-group">
-        <label for="selectMascota">🐾 Seleccione Mascota:</label>
+        <label for="selectMascota">🐾 Mascota Existente:</label>
         <select id="selectMascota"></select>
       </div>
-      <button class="btn btn-primary" id="cargarDatosClienteBtn">💡 Cargar Datos</button>
+      <button id="cargarDatosClienteBtn" class="btn btn-primary">💡 Cargar Datos</button>
     </div>
 
     <!-- Sección Nuevo Cliente -->
     <div id="seccionNuevo" style="display:none;">
       <div class="form-group">
-        <label>👤 Nombre Dueño:</label>
-        <input type="text" id="inputNuevoDueno" required/>
+        <label for="inputNuevoDueno">👤 Nombre Dueño:</label>
+        <input type="text" id="inputNuevoDueno" required>
       </div>
       <div class="form-group">
-        <label>🏠 Dirección:</label>
-        <input type="text" id="inputDireccion" required/>
+        <label for="inputDireccion">🏠 Dirección:</label>
+        <input type="text" id="inputDireccion" required>
       </div>
       <div class="form-group">
-        <label>📞 Teléfono:</label>
-        <input type="tel" id="inputTelefono" required/>
+        <label for="inputTelefono">📞 Teléfono:</label>
+        <input type="tel" id="inputTelefono" required>
       </div>
       <div class="form-group">
-        <label>✉️ Correo:</label>
-        <input type="email" id="inputCorreo" required/>
+        <label for="inputCorreo">✉️ Correo:</label>
+        <input type="email" id="inputCorreo" required>
       </div>
     </div>
 
-    <!-- Datos de la Mascota -->
-    <form id="formVacuna" class="modal-form" onsubmit="event.preventDefault(); guardarVacuna();">
-      <input type="hidden" id="idCliente"/>
-      <input type="hidden" id="idMascota"/>
+    <!-- Formulario Vacunación -->
+    <form id="formVacuna" class="modal-form">
+      <input type="hidden" id="idCliente">
+      <input type="hidden" id="idMascota">
 
       <div id="datosMascota" style="display:none;">
         <div class="form-group">
-          <label>🐶 Nombre Mascota:</label>
-          <input type="text" id="nombreMascota" required/>
+          <label for="nombreMascota">🐶 Nombre Mascota:</label>
+          <input type="text" id="nombreMascota" required>
         </div>
         <div class="form-group">
-          <label>🦴 Especie:</label>
-          <input type="text" id="especie" required/>
+          <label for="especieSelect">🦴 Especie:</label>
+          <select id="especieSelect" required></select>
+          <input type="text" id="inputEspecieOtro" placeholder="Especie" style="display:none;margin-top:5px;">
         </div>
         <div class="form-group">
-          <label>🥇 Raza:</label>
-          <input type="text" id="raza" required/>
+          <label for="razaSelect">🥇 Raza:</label>
+          <select id="razaSelect" required></select>
+          <input type="text" id="inputRazaOtro" placeholder="Raza" style="display:none;margin-top:5px;">
         </div>
         <div class="form-group">
-          <label>🎂 Edad:</label>
-          <input type="text" id="edad" placeholder="3 años, 11 meses" required/>
+          <label for="edad">🎂 Edad:</label>
+          <input type="text" id="edad" placeholder="años.meses" required>
         </div>
         <div class="form-group">
-          <label>⚧️ Sexo:</label>
-          <input type="text" id="sexo" required/>
+          <label for="peso">⚖️ Peso:</label>
+          <input type="text" id="peso" placeholder="kg.g" required>
         </div>
         <div class="form-group">
-          <label>⚖️ Peso:</label>
-          <input type="text" id="peso" placeholder="5 kg, 250 g" required/>
+          <label for="sexo">⚧️ Sexo:</label>
+          <select id="sexo" required>
+            <option value="">Seleccione sexo</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <input type="text" id="inputSexoOtro" placeholder="Sexo" style="display:none;margin-top:5px;">
         </div>
       </div>
 
-      <!-- Detalles de Vacunación -->
+      <!-- Vacuna -->
       <div class="form-group">
-        <label>🧪 Vacuna:</label>
+        <label for="nombreVacuna">🧪 Vacuna:</label>
         <select id="nombreVacuna" required>
           <option value="">Cargando...</option>
         </select>
       </div>
       <div class="form-group">
-        <label>📅 Fecha de aplicación:</label>
-        <input type="date" id="fechaAplicacion" required/>
+        <label for="fechaAplicacion">📅 Fecha:</label>
+        <input type="date" id="fechaAplicacion" required>
       </div>
       <div class="form-group">
-        <label>🔁 Fecha de refuerzo:</label>
-        <input type="date" id="fechaRefuerzo"/>
-      </div>
-      <div class="form-group">
-        <label>👨‍⚕️ Aplicado por:</label>
-        <input type="text" id="veterinario" placeholder="Dr. Posh"/>
-      </div>
-      <div class="form-group">
-        <label>📝 Observaciones:</label>
-        <textarea id="observaciones" rows="3"></textarea>
+        <label for="fechaRefuerzo">🔁 Refuerzo:</label>
+        <input type="date" id="fechaRefuerzo">
       </div>
 
       <!-- Botones -->
       <div class="btn-container">
-        <button type="submit" class="btn btn-primary">💾 Guardar Vacuna</button>
+        <button type="submit" class="btn btn-primary">💾 Guardar</button>
         <button type="button" class="btn btn-secondary" onclick="cerrarModal('modalVacunas')">❌ Cancelar</button>
       </div>
     </form>
-
   </div>
 </div>
