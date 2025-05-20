@@ -29,14 +29,28 @@
     select {
       padding: 10px;
       font-size: 16px;
-      border: none;
+      border: 2px solid #ccc;
       border-radius: 5px;
       width: 100%;
       max-width: 300px;
       text-align: center;
       margin-bottom: 10px;
+      background: #f9f9f9;
+      color: #333;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
     }
-    #welcome { margin-top: 20px; font-size: 18px; display: none; }
+    /* Efecto en focus para inputs y textarea */
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #f1c40f;
+      box-shadow: 0 0 8px rgba(241,196,15,0.7);
+    }
+    #welcome {
+      margin-top: 20px;
+      font-size: 18px;
+      display: none;
+      color: #f1c40f;
+    }
     #sistemaCompleto {
       display: none;
       padding: 20px;
@@ -44,8 +58,11 @@
       color: #333;
       width: 100%;
       max-width: 900px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      text-align: left;
     }
-    .section { margin-bottom: 20px; text-align: left; }
+    .section { margin-bottom: 20px; }
     label { display: block; margin: 10px 0 5px; font-weight: bold; color: #002147; }
     button {
       background: #002147;
@@ -62,8 +79,10 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-    .asistente-row input, .asistente-row select {
+    .asistente-row input,
+    .asistente-row select {
       flex: 1;
+      max-width: none;
     }
     /* Botón animado estilo #25 */
     .button-25 {
@@ -118,7 +137,7 @@
       <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
       <button onclick="pausarGrabacion()">Pausar</button>
       <button onclick="detenerGrabacion()">Detener</button>
-      <audio id="audioPlayer" controls style="margin-top:10px;"></audio>
+      <audio id="audioPlayer" controls style="margin-top:10px; width:100%; max-width:500px;"></audio>
       <button onclick="transcribirAudio()">Transcribir</button>
     </div>
 
@@ -144,7 +163,7 @@
 
       <label>Hora de Cierre</label>
       <input type="time" id="horaFin">
-
+      
       <label>Lugar o Medio</label>
       <input type="text" id="lugar" placeholder="Sala, Zoom, etc.">
 
@@ -220,7 +239,7 @@
       contenedor.appendChild(fila);
     }
 
-    // Agregar un asistente por defecto
+    // Asistente inicial
     agregarAsistente();
 
     function confirmarYGenerarPDF() {
