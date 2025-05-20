@@ -3,229 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Reuniones - FES Acatlán 3</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <title>Sistema de Reuniones - FES Acatlán</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
   <style>
-    * { box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #002147;
+      background-color: #002529;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100%;
       margin: 0;
       padding: 0;
       color: white;
-    }
-    .login-container {
-      text-align: center;
-      padding-top: 100px;
-    }
-    input[type="text"] {
-      padding: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      width: 300px;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 20px;
-      background: white;
-      color: #002147;
-      border: none;
-      border-radius: 5px;
+
+    .arrow-middle-null, .arrow-left-null, .arrow-right-null {
+      position: absolute;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
       cursor: pointer;
     }
+
+    .outline {
+      opacity: 0;
+    }
+
+    .outline-bg {
+      opacity: 0.02;
+    }
+
     #welcome {
-      margin-top: 40px;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 20px;
       display: none;
     }
-    #slideToOpen {
-      position: relative;
-      margin: 100px auto 0;
-      width: 300px;
-      height: 70px;
-      background: white;
-      border-radius: 35px;
-      overflow: hidden;
-      cursor: pointer;
+
+    #sistemaCompleto {
       display: none;
-    }
-    #slideToOpen .handle {
-      width: 70px;
-      height: 70px;
-      background: #f1c40f;
-      border-radius: 50%;
       position: absolute;
       top: 0;
       left: 0;
-      transition: left 0.3s ease;
-    }
-    #dot {
-      display: block;
-      height: 1px;
-      background-image: linear-gradient(to right, white 10%, rgba(255,255,255,0) 0%);
-      background-position: bottom;
-      background-size: 10px 1px;
-      background-repeat: repeat-x;
-      position: absolute;
-      top: 50%;
-      margin-top: -5px;
-      left: 35px;
-      right: 15px;
-      animation: dotGoRight 0.5s infinite linear;
-    }
-    @keyframes dotGoRight {
-      from { margin-left: 0; }
-      to { margin-left: 20px; }
-    }
-    #cache {
-      position: fixed;
-      top: 75%;
-      width: 16px;
-      height: 16px;
-      margin-top: -8px;
-      margin-left: -8px;
-      border: 1px solid white;
-      z-index: 88;
-      border-radius: 100%;
-      transition: 1s;
-    }
-    #cache:after {
-      content: '';
-      position: absolute;
-      display: block;
-      top: 6px;
-      left: 6px;
-      right: 6px;
-      bottom: 6px;
-      background: white;
-      border-radius: 100%;
-    }
-    #close {
-      position: fixed;
-      top: 0;
-      right: -100px;
-      height: 100px;
-      width: 100px;
-      display: block;
-      z-index: 99;
-      background: black;
-      transition: 0.5s;
-    }
-    #close:after, #close:before {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 2px;
-      margin-top: -1px;
-      margin-left: -5px;
-      background: white;
-      content: '';
-      display: block;
-    }
-    #close:after { transform: rotate(45deg); }
-    #close:before { transform: rotate(-45deg); }
-    #slideToOpen.open #cache {
-      background: white;
-      width: 12000px;
-      height: 12000px;
-      margin-top: -6000px;
-      margin-left: -6000px;
-      border-radius: 0;
-    }
-    #slideToOpen.open .handle:before { opacity: 0; }
-    #slideToOpen.open #close {
-      right: 0;
-      transition-delay: 1s;
-    }
-    #sistemaCompleto {
-      display: none;
-      padding: 20px;
+      width: 100%;
+      height: 100%;
       background: #f9f9f9;
       color: #333;
+      padding: 20px;
+      box-sizing: border-box;
     }
   </style>
 </head>
 <body>
-<div class="login-container">
-  <h1>Acceso al Sistema Profesional 5</h1>
-  <input type="text" id="usuario" placeholder="Ingresa tu usuario">
-  <br>
-  <button onclick="validarUsuario()">Validar Usuario</button>
   <div id="welcome"></div>
-</div>
 
-<div id="slideToOpen">
-  <div class="handle" id="handle"></div>
-  <div id="dot"></div>
-  <div id="cache"></div>
-  <a href="#" id="close"></a>
-</div>
+  <svg class="loader-svg" version="1.1" viewBox="0 0 180 180">
+    <defs>
+      <filter id="glow" y="-50%" height="180%">
+        <feGaussianBlur stdDeviation="2 2" result="coloredBlur" />
+        <feMerge>
+          <feMergeNode in="coloredBlur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+    <g class="all-lines">
+      <path class="outline" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <path class="outline-bg" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <polyline class="arrow-head" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="122.5,103 90,135.5 57.5,103" />
+      <line class="arrow-line" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="90" y1="52" x2="90" y2="135" />
+    </g>
+  </svg>
 
-<div id="sistemaCompleto">
-  <header>
-    <h1>Grabación y Registro de Reuniones</h1>
-    <p>FES Acatlán - Sistema Institucional</p>
-  </header>
-  <div class="section">
-    <p>Aquí irá el contenido del sistema avanzado (formulario, grabación, PDF, etc).</p>
+  <div class="arrow-left-null"></div>
+  <div class="arrow-middle-null"></div>
+  <div class="arrow-right-null"></div>
+
+  <div id="sistemaCompleto">
+    <header>
+      <h1>Grabación y Registro de Reuniones</h1>
+      <p>FES Acatlán - Sistema Institucional</p>
+    </header>
+    <div class="section">
+      <p>Aquí irá el contenido del sistema avanzado (formulario, grabación, PDF, etc).</p>
+    </div>
+    <footer>
+      Desarrollado por Francisco Javier Martínez Gutiérrez. Derechos reservados.
+    </footer>
   </div>
-  <footer>
-    Desarrollado por Francisco Javier Martínez Gutiérrez. Derechos reservados.
-  </footer>
-</div>
 
-<script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzBJHu9Sot9nx0N-itAW4HSXVCIGqDGWrRLyRRCyKgOc9yVLfWqdOQxsNRjGvzYO1mO/exec";
+  <script>
+    const usuariosPermitidos = {
+      viero: "Francisco Javier Martínez Gutiérrez",
+      usuario: "Usuario estandard"
+    };
 
-  function validarUsuario() {
-    const usuario = document.getElementById("usuario").value.trim().toLowerCase();
-    if (!usuario) return alert("Ingresa un usuario");
+    const loaderSVG = document.querySelector('.loader-svg');
+    const arrowMiddleNull = document.querySelector('.arrow-middle-null');
+    const arrowRightNull = document.querySelector('.arrow-right-null');
+    const arrowLeftNull = document.querySelector('.arrow-left-null');
+    const arrowHead = document.querySelector('.arrow-head');
+    const arrowLine = document.querySelector('.arrow-line');
+    const outline = document.querySelector('.outline');
+    const outlineBg = document.querySelector('.outline-bg');
+    const allLines = document.querySelector('.all-lines');
 
-    fetch(`${scriptURL}?usuario=${encodeURIComponent(usuario)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.nombre) {
-          document.getElementById("welcome").textContent = `Bienvenido(a), ${data.nombre}`;
-          document.getElementById("welcome").style.display = 'block';
-          document.getElementById("slideToOpen").style.display = 'block';
-        } else {
-          alert("Usuario no autorizado");
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error al validar usuario");
+    const usuario = prompt("Por favor, ingresa tu usuario").trim().toLowerCase();
+    const nombre = usuariosPermitidos[usuario];
+    if (!nombre) {
+      alert("Usuario no autorizado");
+    } else {
+      document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
+      document.getElementById("welcome").style.display = 'block';
+    }
+
+    gsap.set(allLines, { filter: 'url(#glow)' });
+    gsap.set(arrowLeftNull, { x: 57.5, y: 103 });
+    gsap.set(arrowMiddleNull, { x: 90, y: 135.5 });
+    gsap.set(arrowRightNull, { x: 122.5, y: 103 });
+
+    const tl = gsap.timeline({ paused: true, onUpdate: updateSVG });
+
+    tl.set(outline, { opacity: 0 })
+      .set(outline, { drawSVG: '49.8% 49.9%' })
+      .to(arrowLine, { duration: 0.6, drawSVG: '59% 60%', ease: 'power3.inOut' })
+      .to(arrowMiddleNull, { duration: 0.6, y: 103, ease: 'elastic.out' })
+      .to(arrowLine, { duration: 0.5, y: '-=95', ease: 'power1.out' }, '-=0.55')
+      .to(arrowLine, { duration: 0.2, y: '+=17', ease: 'power1.in' })
+      .set(arrowLine, { opacity: 0 })
+      .set(outline, { opacity: 1 })
+      .to(outline, { duration: 3, drawSVG: '0% 100%', ease: 'linear' })
+      .to(arrowLeftNull, { duration: 3, x: '+=32.5', ease: 'linear' }, '-=3')
+      .to(arrowRightNull, { duration: 3, x: '-=32.5', ease: 'linear' }, '-=3')
+      .to(arrowLeftNull, { duration: 0.6, x: '-=30', y: '-=5', delay: 0.4, ease: 'back.out' })
+      .to(arrowMiddleNull, { duration: 0.6, y: '+=15', ease: 'back.out' }, '-=0.6')
+      .to(arrowRightNull, { duration: 0.6, x: '+=32.5', y: '-=35', ease: 'back.out' }, '-=0.6')
+      .to(arrowHead, { duration: 0.6, stroke: '#2EC26A' }, '-=0.6')
+      .to(outline, { duration: 0.5, drawSVG: '49.8% 49.9%', delay: 1 })
+      .set(outline, { opacity: 0 })
+      .set(arrowLine, { opacity: 1 })
+      .to(arrowLine, { duration: 0.3, y: '+=95', ease: 'power1.in' })
+      .to(arrowLine, { duration: 0.6, y: '-=18', drawSVG: '0% 100%', ease: 'power2.inOut' })
+      .to(arrowHead, { duration: 0.6, stroke: '#ededed' }, '-=0.6')
+      .to(arrowLeftNull, { duration: 0.6, x: 57.5, y: 103, ease: 'power3.out' }, '-=0.6')
+      .to(arrowMiddleNull, { duration: 0.6, x: 90, y: 135.5, ease: 'power3.out' }, '-=0.6')
+      .to(arrowRightNull, { duration: 0.6, x: 122.5, y: 103, ease: 'power3.out' }, '-=0.6')
+      .add(() => {
+        document.getElementById("sistemaCompleto").style.display = 'block';
       });
-  }
 
-  $(document).ready(function() {
-    $('#cache').css('left', parseInt($('#slideToOpen').css('width')) + parseInt($('#slideToOpen').css('left')) + 'px');
+    function updateSVG() {
+      const leftX = arrowLeftNull._gsap.x;
+      const leftY = arrowLeftNull._gsap.y;
+      const middleX = arrowMiddleNull._gsap.x;
+      const middleY = arrowMiddleNull._gsap.y;
+      const rightX = arrowRightNull._gsap.x;
+      const rightY = arrowRightNull._gsap.y;
 
-    $(window).mousemove(function() {
-      if (parseInt($('#handle').css('left')) >= parseInt($('#slideToOpen').css('width')) - 80) {
-        $('#slideToOpen').addClass('open');
-        $('#sistemaCompleto').show();
-        $('.login-container').hide();
-      } else {
-        $('#dot').css('left', parseInt($('#handle').css('left')) + 35);
+      const pointStr = `${leftX},${leftY} ${middleX},${middleY} ${rightX},${rightY}`;
+      gsap.set(arrowHead, { attr: { points: pointStr } });
+    }
+
+    loaderSVG.onclick = () => {
+      if (nombre) {
+        tl.restart();
       }
-    });
-
-    $(window).resize(function() {
-      var wi = parseInt($('#slideToOpen').css('width'));
-      var le = parseInt($('#slideToOpen').css('left'));
-      $('#cache').css('left', wi + le + 'px');
-    });
-
-    $('#close').click(function() {
-      $('#handle').css('left', '0');
-      $('#slideToOpen').removeClass('open');
-    });
-  });
-</script>
+    }
+  </script>
 </body>
 </html>
