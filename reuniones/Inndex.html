@@ -17,16 +17,14 @@
       font-family: 'Segoe UI', sans-serif;
       background: var(--primary-color);
       margin: 0;
-      padding: 0;
+      padding: 20px 0;
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
       text-align: center;
     }
-    h1 { margin-bottom: 30px; }
+    h1 { margin-bottom: 20px; color: var(--accent-color); }
 
     /* Tarjetas para secciones */
     .card {
@@ -34,14 +32,13 @@
       color: var(--text-color);
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 20px;
-      width: 100%;
+      margin: 10px 0;
+      width: 90%;
       max-width: 900px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       text-align: left;
     }
-
-    /* Estilos animados para inputs basados en CodePen YWwXpa */
+    /* Inputs animados */
     input[type="text"],
     input[type="date"],
     input[type="time"],
@@ -52,40 +49,19 @@
       background: var(--bg-light);
       border: none;
       border-bottom: 2px solid var(--border-light);
-      padding: 10px 0;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 300px;
+      padding: 8px 0;
+      margin-bottom: 15px;
+      width: calc(100% - 4px);
+      max-width: 100%;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    input::placeholder,
-    textarea::placeholder { color: #999; transition: color 0.3s ease; }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
+    input::placeholder, textarea::placeholder { color: #999; transition: color 0.3s ease; }
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-bottom-color: var(--accent-color);
       box-shadow: 0 2px 8px rgba(241,196,15,0.7);
     }
-    input:focus::placeholder,
-    textarea:focus::placeholder { color: transparent; }
-
-    /* Ajuste para asistentes: inputs y select flexibles iguales */
-    .asistente-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .asistente-row input,
-    .asistente-row select {
-      flex: 1;
-      max-width: none;
-      width: auto;
-      background: var(--bg-light);
-      border-bottom: 2px solid var(--border-light);
-      padding: 10px;
-    }
+    input:focus::placeholder, textarea:focus::placeholder { color: transparent; }
 
     label { display: block; margin: 5px 0 5px; font-weight: bold; color: var(--primary-color); }
     button {
@@ -100,49 +76,42 @@
       margin-top: 10px;
     }
     button:hover { background: #001731; }
-
-    /* Botón animado estilo #25 */
-    .button-25 {
-      position: relative;
-      background-color: transparent;
-      color: white;
-      border: 2px solid var(--accent-color);
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      overflow: hidden;
-      transition: color 0.4s;
-      margin-top: 20px;
+    .button-25 { position: relative; background-color: transparent; color: white;
+      border: 2px solid var(--accent-color); padding: 14px 28px; font-size: 16px;
+      font-weight: bold; border-radius: 50px; cursor: pointer; overflow: hidden;
+      transition: color 0.4s; margin-top: 20px;
     }
     .button-25:before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300%;
-      height: 300%;
-      background-color: var(--accent-color);
-      transition: all 0.6s ease;
-      border-radius: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      z-index: 0;
+      content: ""; position: absolute; top: 50%; left: 50%; width: 300%; height: 300%;
+      background-color: var(--accent-color); transition: all 0.6s ease;
+      border-radius: 50%; transform: translate(-50%, -50%) scale(0); z-index: 0;
     }
     .button-25:hover:before { transform: translate(-50%, -50%) scale(1); }
     .button-25 span { position: relative; z-index: 1; color: var(--accent-color); }
     .button-25:hover span { color: var(--primary-color); }
+
+    .asistente-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .asistente-row input, .asistente-row select {
+      flex: 1; padding: 8px;
+      background: var(--bg-light);
+      border-bottom: 2px solid var(--border-light);
+    }
   </style>
 </head>
 <body>
   <h1>Sistema de Juntas de la FES Acatlán</h1>
-  <div class="card">
+
+  <!-- Login y bienvenida -->
+  <div class="card" id="loginCard">
     <input type="text" id="usuario" placeholder="Ingresa tu usuario">
     <button class="button-25" onclick="validarAcceso()"><span>Acceder</span></button>
     <div id="welcome"></div>
   </div>
 
-  <div id="sistemaCompleto">
+  <!-- Contenido del sistema -->
+  <div id="sistemaCompleto" style="display:none; width:100%; align-items:center;">
+
+    <!-- Sección 1: Grabación -->
     <div class="card">
       <h2>1. Grabación de Audio</h2>
       <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
@@ -152,39 +121,37 @@
       <button onclick="transcribirAudio()">Transcribir</button>
     </div>
 
+    <!-- Sección 2: Transcripción -->
     <div class="card">
       <h2>2. Transcripción</h2>
       <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
     </div>
 
+    <!-- Sección 3: Información -->
     <div class="card">
       <h2>3. Información de la Reunión</h2>
       <label for="tema">Tema de la Reunión</label>
       <input type="text" id="tema" placeholder="Escribe el tema...">
-
       <label for="folio">Folio de la Minuta y / o Junta</label>
       <input type="text" id="folio" placeholder="Ej. FES-AC-2025-001A">
-
       <label for="fecha">Fecha</label>
       <input type="date" id="fecha">
-
       <label for="horaInicio">Hora de Inicio</label>
       <input type="time" id="horaInicio">
-
       <label for="horaFin">Hora de Cierre</label>
       <input type="time" id="horaFin">
-
       <label for="lugar">Lugar o Medio</label>
       <input type="text" id="lugar" placeholder="Sala, Zoom, etc.">
-
       <label>Asistentes</label>
       <div id="asistentes"></div>
       <button onclick="agregarAsistente()">Agregar Asistente</button>
     </div>
 
+    <!-- Botón PDF -->
     <div class="card" style="text-align:center;">
       <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
     </div>
+
   </div>
 
   <script>
@@ -206,9 +173,8 @@
       }
       document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
       document.getElementById("welcome").style.display = 'block';
-      document.getElementById("sistemaCompleto").style.display = 'block';
-      document.querySelector(".card input#usuario").style.display = 'none';
-      document.querySelector(".card .button-25").style.display = 'none';
+      document.getElementById("sistemaCompleto").style.display = 'flex';
+      document.getElementById("loginCard").style.display = 'none';
     }
 
     function agregarAsistente() {
@@ -248,22 +214,18 @@
       `;
       contenedor.appendChild(fila);
     }
-
-    // Asistente inicial
     agregarAsistente();
 
     function confirmarYGenerarPDF() {
-      const confirmado = confirm("¿Este archivo ha sido revisado y está listo para ser descargado?");
-      if (!confirmado) { alert("Por favor revisa la transcripción antes de continuar."); return; }
+      if (!confirm("¿Este archivo ha sido revisado y está listo para ser descargado?")) {
+        alert("Por favor revisa la transcripción antes de continuar."); return;
+      }
       alert("(PDF generado y descargado localmente)");
     }
-
     function iniciarGrabacion() { alert("Iniciando grabación..."); }
     function pausarGrabacion() { alert("Grabación en pausa."); }
     function detenerGrabacion() { alert("Grabación detenida."); }
-    function transcribirAudio() {
-      document.getElementById("transcripcion").value = "Ejemplo de transcripción generada automáticamente...";
-    }
+    function transcribirAudio() { document.getElementById("transcripcion").value = "Ejemplo de transcripción generada automáticamente..."; }
   </script>
 </body>
 </html>
