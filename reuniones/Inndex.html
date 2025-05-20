@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Reuniones - FES Acatlán</title>
+  <title>Sistema de Reuniones - FES Acatlán 1</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -83,24 +82,6 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    label { display: block; margin-top: 10px; }
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .asistente {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .asistente input, .asistente select {
-      flex: 1;
-    }
-    .controls { text-align: center; margin-top: 10px; }
-    audio { display: block; margin: 10px auto; }
     footer {
       text-align: center;
       margin-top: 40px;
@@ -110,6 +91,7 @@
   </style>
 </head>
 <body>
+
 <div class="login-container">
   <h1>Acceso al Sistema Profesional</h1>
   <input type="text" id="usuario" placeholder="Ingresa tu usuario">
@@ -129,49 +111,16 @@
   </header>
 
   <div class="section">
-    <h2>1. Grabación de Audio</h2>
-    <div class="controls">
-      <button id="startBtn">Iniciar Grabación</button>
-      <button id="stopBtn" disabled>Detener Grabación</button>
-      <button id="transcribeBtn">Transcribir</button>
-      <p id="status"></p>
-      <audio id="audioPlayer" controls></audio>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>2. Información de la Reunión</h2>
-    <label>Tema:</label>
-    <input id="tema" type="text">
-    <label>Fecha:</label>
-    <input id="fecha" type="date">
-    <label>Hora:</label>
-    <input id="hora" type="time">
-    <label>Lugar:</label>
-    <input id="lugar" type="text">
-    <label>Observaciones:</label>
-    <textarea id="observaciones"></textarea>
-  </div>
-
-  <div class="section asistentes">
-    <h2>3. Asistentes</h2>
-    <div id="listaAsistentes"></div>
-    <button onclick="agregarAsistente()">Agregar Asistente</button>
-  </div>
-
-  <div class="section">
-    <h2>4. Transcripción</h2>
-    <textarea id="transcripcion" rows="10" placeholder="Aquí aparecerá la transcripción o puedes editarla antes de exportar"></textarea>
-    <button onclick="generarPDF()">Guardar y Generar PDF</button>
+    <p>Aquí irá el contenido del sistema avanzado (formulario, grabación, PDF, etc).</p>
   </div>
 
   <footer>
-    Desarrollado por Francisco Javier Martínez Gutiérrez. Uso personal e institucional. Derechos de autor en trámite.
+    Desarrollado por Francisco Javier Martínez Gutiérrez. Derechos reservados.
   </footer>
 </div>
 
 <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxRxmUbF1jwb8I2xP8WHpZ0Qn-l-XXX/exec"; // coloca tu URL real
+  const scriptURL = "https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec"; // Reemplaza esto con tu ID real
 
   function validarUsuario() {
     const usuario = document.getElementById("usuario").value.trim().toLowerCase();
@@ -196,129 +145,29 @@
 
   const handle = document.getElementById("handle");
   const slide = document.getElementById("slideToOpen");
-  let dragging = false;
+  let isDragging = false;
 
-  handle.addEventListener("mousedown", () => dragging = true);
-  document.addEventListener("mouseup", () => dragging = false);
-  document.addEventListener("mousemove", e => {
-    if (!dragging) return;
-    let offset = e.clientX - slide.offsetLeft;
-    offset = Math.max(0, Math.min(offset, slide.offsetWidth - handle.offsetWidth));
-    handle.style.left = offset + "px";
-    if (offset >= slide.offsetWidth - handle.offsetWidth) {
-      document.getElementById("sistemaCompleto").style.display = 'block';
-      document.querySelector(".login-container").style.display = 'none';
-      slide.style.display = 'none';
+  handle.addEventListener("mousedown", () => isDragging = true);
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      if (parseInt(handle.style.left) >= slide.offsetWidth - handle.offsetWidth - 10) {
+        document.getElementById("sistemaCompleto").style.display = 'block';
+        document.querySelector(".login-container").style.display = 'none';
+        slide.style.display = 'none';
+      } else {
+        handle.style.left = '0px';
+      }
     }
   });
 
-  let mediaRecorder;
-  let audioChunks = [];
-  let allChunks = [];
-  let chunkInterval;
-  let fullAudioBlob;
-
-  const startBtn = document.getElementById("startBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const status = document.getElementById("status");
-  const audioPlayer = document.getElementById("audioPlayer");
-
-  startBtn.onclick = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
-    allChunks = [];
-
-    mediaRecorder.ondataavailable = e => {
-      if (e.data.size > 0) {
-        audioChunks.push(e.data);
-      }
-    };
-
-    mediaRecorder.onstop = () => {
-      clearInterval(chunkInterval);
-      allChunks = allChunks.concat(audioChunks);
-      fullAudioBlob = new Blob(allChunks, { type: 'audio/webm' });
-      const url = URL.createObjectURL(fullAudioBlob);
-      audioPlayer.src = url;
-    };
-
-    mediaRecorder.start();
-    status.textContent = "Grabando...";
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-
-    chunkInterval = setInterval(() => {
-      if (mediaRecorder.state === "recording") {
-        mediaRecorder.requestData();
-        allChunks = allChunks.concat(audioChunks);
-        audioChunks = [];
-      }
-    }, 600000);
-  };
-
-  stopBtn.onclick = () => {
-    mediaRecorder.stop();
-    status.textContent = "Grabación detenida.";
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-  };
-
-  document.getElementById("transcribeBtn").onclick = transcribirConWhisperAPI;
-
-  function agregarAsistente() {
-    const contenedor = document.getElementById("listaAsistentes");
-    const fila = document.createElement("div");
-    fila.className = "asistente";
-    fila.innerHTML = `
-      <select>
-        <option value="">Prefijo</option>
-        <option value="Mtro.">Mtro.</option>
-        <option value="Dra.">Dra.</option>
-        <option value="Dr.">Dr.</option>
-        <option value="Lic.">Lic.</option>
-      </select>
-      <input type="text" placeholder="Nombre completo">
-      <input type="email" placeholder="Correo electrónico">
-    `;
-    contenedor.appendChild(fila);
-  }
-
-  for (let i = 0; i < 6; i++) agregarAsistente();
-
-  async function transcribirConWhisperAPI() {
-    if (!fullAudioBlob) {
-      alert("Primero graba algo antes de transcribir.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", fullAudioBlob, "grabacion.webm");
-    formData.append("model", "whisper-1");
-
-    try {
-      const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer tu_clave_api_aqui"
-        },
-        body: formData
-      });
-
-      const result = await response.json();
-
-      if (result.text) {
-        document.getElementById("transcripcion").value = result.text;
-        alert("Transcripción completada con éxito.");
-      } else {
-        alert("No se pudo obtener la transcripción.");
-        console.error(result);
-      }
-    } catch (error) {
-      console.error("Error al transcribir:", error);
-      alert("Ocurrió un error al conectar con Whisper API.");
-    }
-  }
+  document.addEventListener("mousemove", e => {
+    if (!isDragging) return;
+    let offset = e.clientX - slide.offsetLeft;
+    offset = Math.max(0, Math.min(offset, slide.offsetWidth - handle.offsetWidth));
+    handle.style.left = offset + "px";
+  });
 </script>
+
 </body>
 </html>
