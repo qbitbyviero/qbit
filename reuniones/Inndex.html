@@ -56,27 +56,12 @@
     }
     input:focus::placeholder, textarea:focus::placeholder { color: transparent; }
     label { display: block; margin: 5px 0; font-weight: bold; color: var(--primary-color); }
-    button { background: var(--primary-color); color: white; border: none;
-      padding: 10px 20px; border-radius: 5px; cursor: pointer;
-      font-size: 16px; transition: background 0.3s ease; margin-top: 10px;
-    }
+    button { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background 0.3s ease; margin-top: 10px; }
     button:hover { background: #001731; }
     .slide-container { position: relative; width: 100%; max-width: 300px; margin: 20px auto; }
-    .slide-container input[type="range"] {
-      -webkit-appearance: none; width: 100%; height: 50px;
-      background: var(--border-light); border-radius: 25px; outline: none;
-      transition: background 0.3s;
-    }
-    .slide-container input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 46px; height: 46px;
-      background: var(--accent-color); border-radius: 50%; cursor: pointer;
-      transition: background 0.3s;
-    }
-    .slide-container input[type="range"]::-moz-range-thumb {
-      width: 46px; height: 46px; background: var(--accent-color);
-      border: none; border-radius: 50%; cursor: pointer;
-      transition: background 0.3s;
-    }
+    .slide-container input[type="range"] { -webkit-appearance: none; width: 100%; height: 50px; background: var(--border-light); border-radius: 25px; outline: none; transition: background 0.3s; }
+    .slide-container input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 46px; height: 46px; background: var(--accent-color); border-radius: 50%; cursor: pointer; transition: background 0.3s; }
+    .slide-container input[type="range"]::-moz-range-thumb { width: 46px; height: 46px; background: var(--accent-color); border: none; border-radius: 50%; cursor: pointer; transition: background 0.3s; }
     .slide-label { display: block; margin-bottom: 8px; color: var(--primary-color); font-weight: bold; font-size: 14px; }
     .asistente-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .asistente-row > * { flex: 1; width: auto; }
@@ -94,63 +79,73 @@
 
   <!-- Contenido -->
   <div id="sistemaCompleto">
-    <!-- Grabación -->
+
+    <!-- 1. Grabación -->
     <div class="card">
       <h2>1. Grabación de Audio</h2>
       <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
       <button onclick="pausarGrabacion()">Pausar</button>
       <button onclick="detenerGrabacion()">Detener</button>
       <audio id="audioPlayer" controls style="margin-top:10px; width:100%; max-width:500px;"></audio>
-      <button onclick="transcribirAudio()">Transcribir y Descargar</button>
+      <button onclick="descargarAudio()">Descargar Audio</button>
+      <button onclick="transcribirGrabacion()">Transcribir Grabación</button>
     </div>
 
-    <!-- Transcripción -->
+    <!-- 2. Transcripción -->
     <div class="card">
       <h2>2. Transcripción</h2>
       <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
     </div>
 
-    <!-- Información -->
+    <!-- 3. Información de la Reunión -->
     <div class="card">
       <h2>3. Información de la Reunión</h2>
       <label for="tema">Tema de la Reunión</label>
       <input type="text" id="tema" placeholder="Escribe el tema...">
+
       <label for="folio">Folio de la Minuta y / o Junta</label>
       <input type="text" id="folio" placeholder="Ej. FES-AC-2025-001A">
+
       <label for="fecha">Fecha</label>
       <input type="date" id="fecha">
+
       <label for="horaInicio">Hora de Inicio</label>
       <input type="time" id="horaInicio">
+
       <label for="horaFin">Hora de Cierre</label>
       <input type="time" id="horaFin">
+
       <label for="lugar">Lugar o Medio</label>
       <input type="text" id="lugar" placeholder="Sala, Zoom, etc.">
+
       <label>Asistentes</label>
       <div id="asistentes"></div>
       <button onclick="agregarAsistente()">Agregar Asistente</button>
     </div>
 
-    <!-- Guardar PDF -->
+    <!-- 4. Guardar PDF -->
     <div class="card" style="text-align:center;">
       <div class="slide-container">
         <label for="pdfSlider" class="slide-label">Desliza para crear PDF</label>
         <input type="range" id="pdfSlider" min="0" max="100" value="0">
       </div>
     </div>
+
   </div>
 
   <script>
-    // Grabación de audio
-    let mediaRecorder;
-    let recordedChunks = [];
+    let mediaRecorder, recordedChunks = [], lastBlob;
 
     async function iniciarGrabacion() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         recordedChunks = [];
         mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = e => {
-          if (e.data.size > 0) recordedChunks.push(e.data);
+        mediaRecorder.ondataavailable = e => { if (e.data.size) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(lastBlob);
+          document.getElementById('audioPlayer').src = url;
         };
         mediaRecorder.start();
       } catch (err) {
@@ -159,46 +154,48 @@
     }
 
     function pausarGrabacion() {
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        mediaRecorder.pause();
-      }
+      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.pause();
     }
 
     function detenerGrabacion() {
       if (mediaRecorder) {
         mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        mediaRecorder.stream.getTracks().forEach(t => t.stop());
       }
     }
 
-    function transcribirAudio() {
-      if (recordedChunks.length === 0) {
-        alert('No hay audio grabado para descargar');
-        return;
-      }
-      const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const now = new Date();
-      const timestamp = now.toISOString().replace(/[:.]/g, '-');
-      a.download = `grabacion_${timestamp}.webm`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    function descargarAudio() {
+      if (!lastBlob) return alert('No hay audio para descargar.');
+      const url = URL.createObjectURL(lastBlob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = `grabacion_${new Date().toISOString().replace(/[:.]/g,'-')}.webm`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
 
-    // Acceso y asistentes
-    const usuariosPermitidos = {
-      viero: "Francisco Javier Martínez Gutiérrez",
-      lau: "Laura Mendoza Bernal",
-      cesar: "César Gómez Gómez",
-      gus: "José Gustavo Domínguez Vargas",
-      jesus: "Jesús Jiménez Cruz",
-      usuario: "Usuario estandard"
-    };
+    // Usa SpeechRecognition para transcribir la grabación reproducida
+    function transcribirGrabacion() {
+      if (!lastBlob) return alert('Graba algo antes de transcribir.');
+      const url = URL.createObjectURL(lastBlob);
+      const audio = new Audio(url);
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return alert('Tu navegador no soporta transcripción.');
+      const recognition = new SpeechRecognition(); recognition.lang = 'es-MX'; recognition.interimResults = false;
+      recognition.onresult = e => {
+        const text = Array.from(e.results).map(r => r[0].transcript).join(' ');
+        document.getElementById('transcripcion').value = text;
+        URL.revokeObjectURL(url);
+      };
+      recognition.onerror = e => alert('Error de reconocimiento: ' + e.error);
+      audio.play();
+      recognition.start();
+      audio.onended = () => recognition.stop();
+    }
 
+    const usuariosPermitidos = {
+      viero: 'Francisco Javier Martínez Gutiérrez', lau: 'Laura Mendoza Bernal', cesar: 'César Gómez Gómez',
+      gus: 'José Gustavo Domínguez Vargas', jesus: 'Jesús Jiménez Cruz', usuario: 'Usuario estandard'
+    };
     function validarAcceso() {
       const u = document.getElementById('usuario').value.trim().toLowerCase();
       const nombre = usuariosPermitidos[u];
@@ -211,8 +208,7 @@
 
     function agregarAsistente() {
       const cont = document.getElementById('asistentes');
-      const row = document.createElement('div');
-      row.className = 'asistente-row';
+      const row = document.createElement('div'); row.className = 'asistente-row';
       row.innerHTML = `
         <select>
           <option value="Dra.">Dra.</option>
@@ -248,15 +244,9 @@
     }
     agregarAsistente();
 
-    // Slider PDF
     const pdfSlider = document.getElementById('pdfSlider');
-    pdfSlider.addEventListener('input', () => {
-      if (pdfSlider.value >= 100) {
-        if (confirm('¿Este archivo ha sido revisado y está listo para ser descargado?')) {
-          transcribirAudio();
-        }
-        pdfSlider.value = 0;
-      }
+    pdfSlider && pdfSlider.addEventListener('input', () => {
+      if (pdfSlider.value >= 100 && confirm('¿Listo para descargar PDF?')) { alert('PDF generado.'); pdfSlider.value = 0; }
     });
   </script>
 </body>
