@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Juntas de la FES Acatlán</title>
   <style>
+    :root {
+      --primary-color: #002147;
+      --accent-color: #f1c40f;
+      --text-color: #333;
+      --bg-light: #f9f9f9;
+      --border-light: #ccc;
+    }
     * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #002147;
+      background: var(--primary-color);
       margin: 0;
       padding: 0;
       color: white;
@@ -22,40 +29,51 @@
     h1 {
       margin-bottom: 30px;
     }
+    /* Estilos animados para inputs basados en CodePen YWwXpa */
     input[type="text"],
     input[type="date"],
     input[type="time"],
     textarea,
     select {
-      padding: 10px;
-      font-size: 16px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
       width: 100%;
       max-width: 300px;
-      text-align: center;
-      margin-bottom: 10px;
-      background: #f9f9f9;
-      color: #333;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      font-size: 16px;
+      color: var(--text-color);
+      background: var(--bg-light);
+      border: none;
+      border-bottom: 2px solid var(--border-light);
+      padding: 10px 0;
+      margin-bottom: 20px;
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    /* Efecto en focus para inputs y textarea */
-    input:focus, textarea:focus, select:focus {
+    input:focus,
+    textarea:focus,
+    select:focus {
       outline: none;
-      border-color: #f1c40f;
-      box-shadow: 0 0 8px rgba(241,196,15,0.7);
+      border-bottom-color: var(--accent-color);
+      box-shadow: 0 2px 8px rgba(241,196,15,0.7);
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #999;
+      transition: color 0.3s ease;
+    }
+    input:focus::placeholder,
+    textarea:focus::placeholder {
+      color: transparent;
     }
     #welcome {
       margin-top: 20px;
       font-size: 18px;
       display: none;
-      color: #f1c40f;
+      color: var(--accent-color);
     }
     #sistemaCompleto {
       display: none;
       padding: 20px;
-      background: #f9f9f9;
-      color: #333;
+      background: var(--bg-light);
+      color: var(--text-color);
       width: 100%;
       max-width: 900px;
       border-radius: 8px;
@@ -63,9 +81,9 @@
       text-align: left;
     }
     .section { margin-bottom: 20px; }
-    label { display: block; margin: 10px 0 5px; font-weight: bold; color: #002147; }
+    label { display: block; margin: 5px 0 5px; font-weight: bold; color: var(--primary-color); }
     button {
-      background: #002147;
+      background: var(--primary-color);
       color: white;
       border: none;
       padding: 10px 20px;
@@ -73,6 +91,10 @@
       cursor: pointer;
       font-size: 16px;
       margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #001731;
     }
     .asistente-row {
       display: flex;
@@ -83,13 +105,19 @@
     .asistente-row select {
       flex: 1;
       max-width: none;
+      background: var(--bg-light);
+      border-bottom: 2px solid var(--border-light);
+    }
+    .asistente-row input:focus,
+    .asistente-row select:focus {
+      border-bottom-color: var(--accent-color);
     }
     /* Botón animado estilo #25 */
     .button-25 {
       position: relative;
       background-color: transparent;
       color: white;
-      border: 2px solid #f1c40f;
+      border: 2px solid var(--accent-color);
       padding: 14px 28px;
       font-size: 16px;
       font-weight: bold;
@@ -106,7 +134,7 @@
       left: 50%;
       width: 300%;
       height: 300%;
-      background-color: #f1c40f;
+      background-color: var(--accent-color);
       transition: all 0.6s ease;
       border-radius: 50%;
       transform: translate(-50%, -50%) scale(0);
@@ -118,10 +146,10 @@
     .button-25 span {
       position: relative;
       z-index: 1;
-      color: #f1c40f;
+      color: var(--accent-color);
     }
     .button-25:hover span {
-      color: #002147;
+      color: var(--primary-color);
     }
   </style>
 </head>
@@ -149,22 +177,22 @@
     <div class="section">
       <h2>3. Información de la Reunión</h2>
 
-      <label>Tema de la Reunión</label>
+      <label for="tema">Tema de la Reunión</label>
       <input type="text" id="tema" placeholder="Escribe el tema...">
 
-      <label>Folio de la Minuta y / o Junta</label>
+      <label for="folio">Folio de la Minuta y / o Junta</label>
       <input type="text" id="folio" placeholder="Ej. FES-AC-2025-001A">
 
-      <label>Fecha</label>
+      <label for="fecha">Fecha</label>
       <input type="date" id="fecha">
 
-      <label>Hora de Inicio</label>
+      <label for="horaInicio">Hora de Inicio</label>
       <input type="time" id="horaInicio">
 
-      <label>Hora de Cierre</label>
+      <label for="horaFin">Hora de Cierre</label>
       <input type="time" id="horaFin">
       
-      <label>Lugar o Medio</label>
+      <label for="lugar">Lugar o Medio</label>
       <input type="text" id="lugar" placeholder="Sala, Zoom, etc.">
 
       <label>Asistentes</label>
