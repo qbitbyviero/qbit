@@ -20,11 +20,9 @@
       height: 100vh;
       text-align: center;
     }
-
     h1 {
       margin-bottom: 30px;
     }
-
     input[type="text"] {
       padding: 10px;
       font-size: 16px;
@@ -33,23 +31,18 @@
       width: 300px;
       text-align: center;
     }
-
     .arrow-middle-null, .arrow-left-null, .arrow-right-null {
       position: absolute;
     }
-
     svg {
       width: 120px;
       height: 120px;
       margin-top: 20px;
       cursor: pointer;
     }
-
     .outline { opacity: 0; }
     .outline-bg { opacity: 0.02; }
-
     #welcome { margin-top: 20px; font-size: 18px; display: none; }
-
     #sistemaCompleto {
       display: none;
       padding: 20px;
@@ -58,7 +51,6 @@
       width: 100%;
       max-width: 900px;
     }
-
     .section { margin-bottom: 20px; }
     label { display: block; margin: 10px 0 5px; font-weight: bold; }
     input, textarea, select {
@@ -101,14 +93,13 @@
       </filter>
     </defs>
     <g class="all-lines">
-      <path class="outline" fill="none" stroke="#f1c40f" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
-      <path class="outline-bg" fill="none" stroke="#f1c40f" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <path class="outline" fill="none" stroke="#002147" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <path class="outline-bg" fill="none" stroke="#002147" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
       <polyline class="arrow-head" fill="none" stroke="#f1c40f" stroke-width="10" points="122.5,103 90,135.5 57.5,103" />
       <line class="arrow-line" fill="none" stroke="#f1c40f" stroke-width="10" x1="90" y1="52" x2="90" y2="135" />
     </g>
   </svg>
   <div id="welcome"></div>
-
   <div id="sistemaCompleto">
     <div class="section">
       <h2>1. Grabación de Audio</h2>
@@ -118,12 +109,10 @@
       <audio id="audioPlayer" controls style="margin-top:10px;"></audio>
       <button onclick="transcribirAudio()">Transcribir</button>
     </div>
-
     <div class="section">
       <h2>2. Transcripción</h2>
       <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
     </div>
-
     <div class="section">
       <h2>3. Información de la Reunión</h2>
       <label>Tema de la Reunión</label>
@@ -136,32 +125,38 @@
       <div id="asistentes"></div>
       <button onclick="agregarAsistente()">Agregar Asistente</button>
     </div>
-
     <div class="section">
       <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
     </div>
   </div>
-
   <script>
     const usuariosPermitidos = {
       viero: "Francisco Javier Martínez Gutiérrez",
       usuario: "Usuario estandard"
     };
 
-    const usuario = prompt("Ingresa tu usuario").trim().toLowerCase();
-    const nombre = usuariosPermitidos[usuario];
-    if (!nombre) {
-      alert("Usuario no autorizado");
-    } else {
-      document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
-      document.getElementById("welcome").style.display = 'block';
-    }
+    const loaderSVG = document.querySelector('.loader-svg');
+    const usuarioInput = document.getElementById("usuario");
 
-    document.querySelector('.loader-svg').onclick = () => {
-      if (nombre) {
-        document.getElementById("sistemaCompleto").style.display = 'block';
-        document.querySelector('svg').style.display = 'none';
+    loaderSVG.onclick = function () {
+      const usuarioIngresado = usuarioInput.value.trim().toLowerCase();
+      const nombre = usuariosPermitidos[usuarioIngresado];
+
+      if (!nombre) {
+        alert("Usuario no autorizado");
+        return;
       }
+
+      gsap.to(".all-lines", {
+        duration: 1.5,
+        onComplete: () => {
+          document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
+          document.getElementById("welcome").style.display = 'block';
+          document.getElementById("sistemaCompleto").style.display = 'block';
+          document.querySelector('svg').style.display = 'none';
+          document.getElementById("usuario").style.display = 'none';
+        }
+      });
     };
 
     function agregarAsistente() {
@@ -189,11 +184,9 @@
         alert("Por favor revisa la transcripción antes de continuar.");
         return;
       }
-      // Aquí iría la lógica para generar el PDF
       alert("(PDF generado y descargado localmente)");
     }
 
-    // Funciones de grabación/transcripción simuladas
     function iniciarGrabacion() { alert("Iniciando grabación..."); }
     function pausarGrabacion() { alert("Grabación en pausa."); }
     function detenerGrabacion() { alert("Grabación detenida."); }
