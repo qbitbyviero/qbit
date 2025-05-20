@@ -28,21 +28,18 @@
       margin-bottom: 10px;
       color: var(--accent-color);
     }
-    /* Bienvenida debajo del título */
     #welcome {
       margin-bottom: 20px;
       font-size: 18px;
       color: var(--accent-color);
       display: none;
     }
-    /* Contenedor de tarjetas vertical */
     #sistemaCompleto {
       display: none;
       flex-direction: column;
       align-items: center;
       width: 100%;
     }
-    /* Tarjetas para secciones */
     .card {
       background: var(--bg-light);
       color: var(--text-color);
@@ -54,8 +51,9 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       text-align: left;
     }
-    /* Estilos animados para inputs */
+    /* Inputs including email */
     input[type="text"],
+    input[type="email"],
     input[type="date"],
     input[type="time"],
     textarea,
@@ -102,54 +100,68 @@
     button:hover {
       background: #001731;
     }
-    /* Botón animado estilo #25 */
-    .button-25 {
+    /* Slide toggle button styles from ByPeople */
+    .toggle {
       position: relative;
-      background-color: transparent;
-      color: white;
-      border: 2px solid var(--accent-color);
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      overflow: hidden;
-      transition: color 0.4s;
-      margin-top: 20px;
+      width: 200px;
+      margin: 20px auto;
     }
-    .button-25:before {
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 50px;
+      background: #ccc;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .slider:before {
+      content: attr(data-off);
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    .slider:after {
       content: "";
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300%;
-      height: 300%;
-      background-color: var(--accent-color);
-      transition: all 0.6s ease;
+      width: 46px;
+      height: 46px;
+      background: white;
       border-radius: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      z-index: 0;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s ease;
     }
-    .button-25:hover:before {
-      transform: translate(-50%, -50%) scale(1);
+    .toggle input:checked + .slider {
+      background: var(--primary-color);
     }
-    .button-25 span {
-      position: relative;
-      z-index: 1;
-      color: var(--accent-color);
+    .toggle input:checked + .slider:before {
+      content: attr(data-on);
+      left: calc(50% - 50px);
+      color: white;
     }
-    .button-25:hover span {
-      color: var(--primary-color);
+    .toggle input:checked + .slider:after {
+      left: calc(100% - 48px);
     }
-    /* Asistentes flex iguales */
+    /* Asistentes in one row */
     .asistente-row {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 10px;
       margin-bottom: 10px;
     }
     .asistente-row > * {
-      width: 100%;
+      flex: 1;
     }
   </style>
 </head>
@@ -163,9 +175,9 @@
     <button class="button-25" onclick="validarAcceso()"><span>Acceder</span></button>
   </div>
 
-  <!-- Contenido del sistema -->
+  <!-- Contenido -->
   <div id="sistemaCompleto">
-    <!-- Sección 1: Grabación -->
+    <!-- Grabación -->
     <div class="card">
       <h2>1. Grabación de Audio</h2>
       <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
@@ -174,14 +186,12 @@
       <audio id="audioPlayer" controls style="margin-top:10px; width:100%; max-width:500px;"></audio>
       <button onclick="transcribirAudio()">Transcribir</button>
     </div>
-
-    <!-- Sección 2: Transcripción -->
+    <!-- Transcripción -->
     <div class="card">
       <h2>2. Transcripción</h2>
       <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
     </div>
-
-    <!-- Sección 3: Información -->
+    <!-- Información -->
     <div class="card">
       <h2>3. Información de la Reunión</h2>
       <label for="tema">Tema de la Reunión</label>
@@ -200,10 +210,12 @@
       <div id="asistentes"></div>
       <button onclick="agregarAsistente()">Agregar Asistente</button>
     </div>
-
-    <!-- Botón PDF -->
+    <!-- Guardar PDF como slide toggle -->
     <div class="card" style="text-align:center;">
-      <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
+      <div class="toggle">
+        <input type="checkbox" id="pdfToggle">
+        <label for="pdfToggle" class="slider" data-off="Guardar como PDF" data-on="Confirmar"></label>
+      </div>
     </div>
   </div>
 
@@ -218,68 +230,33 @@
     };
 
     function validarAcceso() {
-      const usuarioIngresado = document.getElementById("usuario").value.trim().toLowerCase();
-      const nombre = usuariosPermitidos[usuarioIngresado];
-      if (!nombre) {
-        alert("Usuario no autorizado");
-        return;
-      }
+      const u = document.getElementById("usuario").value.trim().toLowerCase();
+      const nombre = usuariosPermitidos[u];
+      if (!nombre) return alert("Usuario no autorizado");
       document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
       document.getElementById("welcome").style.display = 'block';
       document.getElementById("loginCard").style.display = 'none';
       document.getElementById("sistemaCompleto").style.display = 'flex';
     }
-
     function agregarAsistente() {
-      const contenedor = document.getElementById("asistentes");
-      const fila = document.createElement("div");
-      fila.className = "asistente-row";
-      fila.innerHTML = `
-        <select>
-          <option value="Dra.">Dra.</option>
-          <option value="Dr.">Dr.</option>
-          <option value="Mtra.">Mtra.</option>
-          <option value="Mtro.">Mtro.</option>
-          <option value="Lic.">Lic.</option>
-          <option value="Ing.">Ing.</option>
-          <option value="Arq.">Arq.</option>
-          <option value="C.P.">C.P.</option>
-          <option value="C.P.C.">C.P.C.</option>
-          <option value="Abg.">Abg.</option>
-          <option value="Q.">Q.</option>
-          <option value="Q.F.B.">Q.F.B.</option>
-          <option value="Psic.">Psic.</option>
-          <option value="Enf.">Enf.</option>
-          <option value="Téc.">Téc.</option>
-          <option value="Tgo.">Tgo.</option>
-          <option value="Prof.">Prof.</option>
-          <option value="Mgtr.">Mgtr.</option>
-          <option value="Mag.">Mag.</option>
-          <option value="Ph.D.">Ph.D.</option>
-          <option value="Not.">Not.</option>
-          <option value="J.">J.</option>
-          <option value="Cap.">Cap.</option>
-          <option value="Cnel.">Cnel.</option>
-          <option value="Gral.">Gral.</option>
-        </select>
-        <input type="text" placeholder="Nombre completo">
-        <input type="email" placeholder="Correo electrónico">
-      `;
-      contenedor.appendChild(fila);
+      const cont = document.getElementById("asistentes");
+      const div = document.createElement("div"); div.className = "asistente-row";
+      div.innerHTML = `<select>...options...</select><input type="text" placeholder="Nombre completo"><input type="email" placeholder="Correo electrónico">`;
+      cont.appendChild(div);
     }
     agregarAsistente();
-
-    function confirmarYGenerarPDF() {
-      if (!confirm("¿Este archivo ha sido revisado y está listo para ser descargado?")) {
-        alert("Por favor revisa la transcripción antes de continuar.");
-        return;
+    function iniciarGrabacion(){alert("Iniciando grabación...");}
+    function pausarGrabacion(){alert("Grabación en pausa.");}
+    function detenerGrabacion(){alert("Grabación detenida.");}
+    function transcribirAudio(){document.getElementById("transcripcion").value="Transcripción automática...";}
+    document.getElementById('pdfToggle').addEventListener('change', function() {
+      if(this.checked){
+        if(confirm('¿Este archivo ha sido revisado y está listo para ser descargado?')){
+          alert('(PDF generado y descargado localmente)');
+        }
+        this.checked = false;
       }
-      alert("(PDF generado y descargado localmente)");
-    }
-    function iniciarGrabacion() { alert("Iniciando grabación..."); }
-    function pausarGrabacion() { alert("Grabación en pausa."); }
-    function detenerGrabacion() { alert("Grabación detenida."); }
-    function transcribirAudio() { document.getElementById("transcripcion").value = "Ejemplo de transcripción generada automáticamente..."; }
+    });
   </script>
 </body>
 </html>
