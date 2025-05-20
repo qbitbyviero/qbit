@@ -133,6 +133,14 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+    .slide-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
     /* Assistentes row */
     .asistente-row {
       display: flex;
@@ -201,11 +209,12 @@
     </div>
 
     <!-- 4. Guardar PDF -->
-    <div class="card" style="text-align:center;">
-      <div class="slide-container">
-        <input type="range" id="pdfSlider" min="0" max="100" value="0">
-      </div>
-    </div>
+   <div class="card" style="text-align:center;">
+  <div class="slide-container">
+    <label for="pdfSlider" class="slide-label">Desliza para crear PDF</label>
+    <input type="range" id="pdfSlider" min="0" max="100" value="0">
+  </div>
+</div>
 
   </div>
 
