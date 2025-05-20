@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Reuniones - FES Acatlán 1</title>
+  <title>Sistema de Reuniones - FES Acatlán 3</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     * { box-sizing: border-box; }
@@ -62,36 +62,94 @@
       left: 0;
       transition: left 0.3s ease;
     }
+    #dot {
+      display: block;
+      height: 1px;
+      background-image: linear-gradient(to right, white 10%, rgba(255,255,255,0) 0%);
+      background-position: bottom;
+      background-size: 10px 1px;
+      background-repeat: repeat-x;
+      position: absolute;
+      top: 50%;
+      margin-top: -5px;
+      left: 35px;
+      right: 15px;
+      animation: dotGoRight 0.5s infinite linear;
+    }
+    @keyframes dotGoRight {
+      from { margin-left: 0; }
+      to { margin-left: 20px; }
+    }
+    #cache {
+      position: fixed;
+      top: 75%;
+      width: 16px;
+      height: 16px;
+      margin-top: -8px;
+      margin-left: -8px;
+      border: 1px solid white;
+      z-index: 88;
+      border-radius: 100%;
+      transition: 1s;
+    }
+    #cache:after {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      bottom: 6px;
+      background: white;
+      border-radius: 100%;
+    }
+    #close {
+      position: fixed;
+      top: 0;
+      right: -100px;
+      height: 100px;
+      width: 100px;
+      display: block;
+      z-index: 99;
+      background: black;
+      transition: 0.5s;
+    }
+    #close:after, #close:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 2px;
+      margin-top: -1px;
+      margin-left: -5px;
+      background: white;
+      content: '';
+      display: block;
+    }
+    #close:after { transform: rotate(45deg); }
+    #close:before { transform: rotate(-45deg); }
+    #slideToOpen.open #cache {
+      background: white;
+      width: 12000px;
+      height: 12000px;
+      margin-top: -6000px;
+      margin-left: -6000px;
+      border-radius: 0;
+    }
+    #slideToOpen.open .handle:before { opacity: 0; }
+    #slideToOpen.open #close {
+      right: 0;
+      transition-delay: 1s;
+    }
     #sistemaCompleto {
       display: none;
       padding: 20px;
       background: #f9f9f9;
       color: #333;
     }
-    header {
-      background-color: #002147;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    .section {
-      margin: 20px auto;
-      max-width: 800px;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 12px;
-      color: #aaa;
-    }
   </style>
 </head>
 <body>
-
 <div class="login-container">
   <h1>Acceso al Sistema Profesional</h1>
   <input type="text" id="usuario" placeholder="Ingresa tu usuario">
@@ -102,6 +160,9 @@
 
 <div id="slideToOpen">
   <div class="handle" id="handle"></div>
+  <div id="dot"></div>
+  <div id="cache"></div>
+  <a href="#" id="close"></a>
 </div>
 
 <div id="sistemaCompleto">
@@ -109,18 +170,16 @@
     <h1>Grabación y Registro de Reuniones</h1>
     <p>FES Acatlán - Sistema Institucional</p>
   </header>
-
   <div class="section">
     <p>Aquí irá el contenido del sistema avanzado (formulario, grabación, PDF, etc).</p>
   </div>
-
   <footer>
     Desarrollado por Francisco Javier Martínez Gutiérrez. Derechos reservados.
   </footer>
 </div>
 
 <script>
-  const scriptURL = "https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec"; // Reemplaza esto con tu ID real
+  const scriptURL = "https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec";
 
   function validarUsuario() {
     const usuario = document.getElementById("usuario").value.trim().toLowerCase();
@@ -143,31 +202,30 @@
       });
   }
 
-  const handle = document.getElementById("handle");
-  const slide = document.getElementById("slideToOpen");
-  let isDragging = false;
+  $(document).ready(function() {
+    $('#cache').css('left', parseInt($('#slideToOpen').css('width')) + parseInt($('#slideToOpen').css('left')) + 'px');
 
-  handle.addEventListener("mousedown", () => isDragging = true);
-  document.addEventListener("mouseup", () => {
-    if (isDragging) {
-      isDragging = false;
-      if (parseInt(handle.style.left) >= slide.offsetWidth - handle.offsetWidth - 10) {
-        document.getElementById("sistemaCompleto").style.display = 'block';
-        document.querySelector(".login-container").style.display = 'none';
-        slide.style.display = 'none';
+    $(window).mousemove(function() {
+      if (parseInt($('#handle').css('left')) >= parseInt($('#slideToOpen').css('width')) - 80) {
+        $('#slideToOpen').addClass('open');
+        $('#sistemaCompleto').show();
+        $('.login-container').hide();
       } else {
-        handle.style.left = '0px';
+        $('#dot').css('left', parseInt($('#handle').css('left')) + 35);
       }
-    }
-  });
+    });
 
-  document.addEventListener("mousemove", e => {
-    if (!isDragging) return;
-    let offset = e.clientX - slide.offsetLeft;
-    offset = Math.max(0, Math.min(offset, slide.offsetWidth - handle.offsetWidth));
-    handle.style.left = offset + "px";
+    $(window).resize(function() {
+      var wi = parseInt($('#slideToOpen').css('width'));
+      var le = parseInt($('#slideToOpen').css('left'));
+      $('#cache').css('left', wi + le + 'px');
+    });
+
+    $('#close').click(function() {
+      $('#handle').css('left', '0');
+      $('#slideToOpen').removeClass('open');
+    });
   });
 </script>
-
 </body>
 </html>
