@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Juntas de la FES Acatlán</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -31,17 +30,6 @@
       width: 300px;
       text-align: center;
     }
-    .arrow-middle-null, .arrow-left-null, .arrow-right-null {
-      position: absolute;
-    }
-    svg {
-      width: 120px;
-      height: 120px;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-    .outline { opacity: 0; }
-    .outline-bg { opacity: 0.02; }
     #welcome { margin-top: 20px; font-size: 18px; display: none; }
     #sistemaCompleto {
       display: none;
@@ -77,28 +65,51 @@
     .asistente-row input, .asistente-row select {
       flex: 1;
     }
+    /* Botón animado estilo #25 */
+    .button-25 {
+      position: relative;
+      background-color: transparent;
+      color: white;
+      border: 2px solid #f1c40f;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: color 0.4s;
+      margin-top: 20px;
+    }
+    .button-25:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background-color: #f1c40f;
+      transition: all 0.6s ease;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      z-index: 0;
+    }
+    .button-25:hover:before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .button-25 span {
+      position: relative;
+      z-index: 1;
+      color: #f1c40f;
+    }
+    .button-25:hover span {
+      color: #002147;
+    }
   </style>
 </head>
 <body>
   <h1>Sistema de Juntas de la FES Acatlán</h1>
   <input type="text" id="usuario" placeholder="Ingresa tu usuario">
-  <svg class="loader-svg" version="1.1" viewBox="0 0 180 180">
-    <defs>
-      <filter id="glow" y="-50%" height="180%">
-        <feGaussianBlur stdDeviation="2 2" result="coloredBlur" />
-        <feMerge>
-          <feMergeNode in="coloredBlur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-    <g class="all-lines">
-      <path class="outline" fill="none" stroke="#002147" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
-      <path class="outline-bg" fill="none" stroke="#002147" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
-      <polyline class="arrow-head" fill="none" stroke="#f1c40f" stroke-width="10" points="122.5,103 90,135.5 57.5,103" />
-      <line class="arrow-line" fill="none" stroke="#f1c40f" stroke-width="10" x1="90" y1="52" x2="90" y2="135" />
-    </g>
-  </svg>
+  <button class="button-25" onclick="validarAcceso()"><span>Acceder</span></button>
   <div id="welcome"></div>
   <div id="sistemaCompleto">
     <div class="section">
@@ -129,17 +140,15 @@
       <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
     </div>
   </div>
+
   <script>
     const usuariosPermitidos = {
       viero: "Francisco Javier Martínez Gutiérrez",
       usuario: "Usuario estandard"
     };
 
-    const loaderSVG = document.querySelector('.loader-svg');
-    const usuarioInput = document.getElementById("usuario");
-
-    loaderSVG.onclick = function () {
-      const usuarioIngresado = usuarioInput.value.trim().toLowerCase();
+    function validarAcceso() {
+      const usuarioIngresado = document.getElementById("usuario").value.trim().toLowerCase();
       const nombre = usuariosPermitidos[usuarioIngresado];
 
       if (!nombre) {
@@ -147,17 +156,12 @@
         return;
       }
 
-      gsap.to(".all-lines", {
-        duration: 1.5,
-        onComplete: () => {
-          document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
-          document.getElementById("welcome").style.display = 'block';
-          document.getElementById("sistemaCompleto").style.display = 'block';
-          document.querySelector('svg').style.display = 'none';
-          document.getElementById("usuario").style.display = 'none';
-        }
-      });
-    };
+      document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
+      document.getElementById("welcome").style.display = 'block';
+      document.getElementById("sistemaCompleto").style.display = 'block';
+      document.querySelector(".button-25").style.display = 'none';
+      document.getElementById("usuario").style.display = 'none';
+    }
 
     function agregarAsistente() {
       const contenedor = document.getElementById("asistentes");
