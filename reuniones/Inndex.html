@@ -22,13 +22,19 @@
     h1 {
       margin-bottom: 30px;
     }
-    input[type="text"] {
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    textarea,
+    select {
       padding: 10px;
       font-size: 16px;
       border: none;
       border-radius: 5px;
-      width: 300px;
+      width: 100%;
+      max-width: 300px;
       text-align: center;
+      margin-bottom: 10px;
     }
     #welcome { margin-top: 20px; font-size: 18px; display: none; }
     #sistemaCompleto {
@@ -39,15 +45,8 @@
       width: 100%;
       max-width: 900px;
     }
-    .section { margin-bottom: 20px; }
-    label { display: block; margin: 10px 0 5px; font-weight: bold; }
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-    }
+    .section { margin-bottom: 20px; text-align: left; }
+    label { display: block; margin: 10px 0 5px; font-weight: bold; color: #002147; }
     button {
       background: #002147;
       color: white;
@@ -56,6 +55,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 10px;
     }
     .asistente-row {
       display: flex;
@@ -111,6 +111,7 @@
   <input type="text" id="usuario" placeholder="Ingresa tu usuario">
   <button class="button-25" onclick="validarAcceso()"><span>Acceder</span></button>
   <div id="welcome"></div>
+
   <div id="sistemaCompleto">
     <div class="section">
       <h2>1. Grabación de Audio</h2>
@@ -120,22 +121,38 @@
       <audio id="audioPlayer" controls style="margin-top:10px;"></audio>
       <button onclick="transcribirAudio()">Transcribir</button>
     </div>
+
     <div class="section">
       <h2>2. Transcripción</h2>
       <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
     </div>
+
     <div class="section">
       <h2>3. Información de la Reunión</h2>
+
       <label>Tema de la Reunión</label>
-      <input type="text" id="tema">
+      <input type="text" id="tema" placeholder="Escribe el tema...">
+
+      <label>Folio de la Minuta y / o Junta</label>
+      <input type="text" id="folio" placeholder="Ej. FES-AC-2025-001A">
+
       <label>Fecha</label>
       <input type="date" id="fecha">
+
+      <label>Hora de Inicio</label>
+      <input type="time" id="horaInicio">
+
+      <label>Hora de Cierre</label>
+      <input type="time" id="horaFin">
+
       <label>Lugar o Medio</label>
-      <input type="text" id="lugar">
+      <input type="text" id="lugar" placeholder="Sala, Zoom, etc.">
+
       <label>Asistentes</label>
       <div id="asistentes"></div>
       <button onclick="agregarAsistente()">Agregar Asistente</button>
     </div>
+
     <div class="section">
       <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
     </div>
@@ -147,19 +164,17 @@
       lau: "Laura Mendoza Bernal",
       cesar: "César Gómez Gómez",
       gus: "José Gustavo Domínguez Vargas",
-      Jesus: "Jesús Jiménez Cruz"
+      jesus: "Jesús Jiménez Cruz",
       usuario: "Usuario estandard"
     };
 
     function validarAcceso() {
       const usuarioIngresado = document.getElementById("usuario").value.trim().toLowerCase();
       const nombre = usuariosPermitidos[usuarioIngresado];
-
       if (!nombre) {
         alert("Usuario no autorizado");
         return;
       }
-
       document.getElementById("welcome").textContent = `Bienvenido(a), ${nombre}`;
       document.getElementById("welcome").style.display = 'block';
       document.getElementById("sistemaCompleto").style.display = 'block';
@@ -205,7 +220,8 @@
       contenedor.appendChild(fila);
     }
 
-    for (let i = 0; i < 1; i++) agregarAsistente();
+    // Agregar un asistente por defecto
+    agregarAsistente();
 
     function confirmarYGenerarPDF() {
       const confirmado = confirm("¿Este archivo ha sido revisado y está listo para ser descargado?");
