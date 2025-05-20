@@ -3,22 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Reuniones - FES Acatlán</title>
+  <title>Sistema de Juntas de la FES Acatlán</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
   <style>
+    * { box-sizing: border-box; }
     body {
-      background-color: #002529;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      width: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: #002147;
       margin: 0;
       padding: 0;
       color: white;
-      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      width: 300px;
       text-align: center;
     }
 
@@ -27,45 +39,57 @@
     }
 
     svg {
-      width: 50%;
-      height: 50%;
+      width: 120px;
+      height: 120px;
+      margin-top: 20px;
       cursor: pointer;
     }
 
-    .outline {
-      opacity: 0;
-    }
+    .outline { opacity: 0; }
+    .outline-bg { opacity: 0.02; }
 
-    .outline-bg {
-      opacity: 0.02;
-    }
-
-    #welcome {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 20px;
-      display: none;
-    }
+    #welcome { margin-top: 20px; font-size: 18px; display: none; }
 
     #sistemaCompleto {
       display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      padding: 20px;
       background: #f9f9f9;
       color: #333;
-      padding: 20px;
-      box-sizing: border-box;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .section { margin-bottom: 20px; }
+    label { display: block; margin: 10px 0 5px; font-weight: bold; }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #002147;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .asistente-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .asistente-row input, .asistente-row select {
+      flex: 1;
     }
   </style>
 </head>
 <body>
-  <div id="welcome"></div>
-
+  <h1>Sistema de Juntas de la FES Acatlán</h1>
+  <input type="text" id="usuario" placeholder="Ingresa tu usuario">
   <svg class="loader-svg" version="1.1" viewBox="0 0 180 180">
     <defs>
       <filter id="glow" y="-50%" height="180%">
@@ -77,28 +101,45 @@
       </filter>
     </defs>
     <g class="all-lines">
-      <path class="outline" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
-      <path class="outline-bg" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
-      <polyline class="arrow-head" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="122.5,103 90,135.5 57.5,103" />
-      <line class="arrow-line" fill="none" stroke="#ededed" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="90" y1="52" x2="90" y2="135" />
+      <path class="outline" fill="none" stroke="#f1c40f" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <path class="outline-bg" fill="none" stroke="#f1c40f" stroke-width="10" d="M90.5,161C51.6,161,20,129.4,20,90.5S51.6,20,90.5,20S161,51.6,161,90.5S129.4,161,90.5,161" />
+      <polyline class="arrow-head" fill="none" stroke="#f1c40f" stroke-width="10" points="122.5,103 90,135.5 57.5,103" />
+      <line class="arrow-line" fill="none" stroke="#f1c40f" stroke-width="10" x1="90" y1="52" x2="90" y2="135" />
     </g>
   </svg>
-
-  <div class="arrow-left-null"></div>
-  <div class="arrow-middle-null"></div>
-  <div class="arrow-right-null"></div>
+  <div id="welcome"></div>
 
   <div id="sistemaCompleto">
-    <header>
-      <h1>Grabación y Registro de Reuniones</h1>
-      <p>FES Acatlán - Sistema Institucional</p>
-    </header>
     <div class="section">
-      <p>Aquí irá el contenido del sistema avanzado (formulario, grabación, PDF, etc).</p>
+      <h2>1. Grabación de Audio</h2>
+      <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
+      <button onclick="pausarGrabacion()">Pausar</button>
+      <button onclick="detenerGrabacion()">Detener</button>
+      <audio id="audioPlayer" controls style="margin-top:10px;"></audio>
+      <button onclick="transcribirAudio()">Transcribir</button>
     </div>
-    <footer>
-      Desarrollado por Francisco Javier Martínez Gutiérrez. Derechos reservados.
-    </footer>
+
+    <div class="section">
+      <h2>2. Transcripción</h2>
+      <textarea id="transcripcion" rows="6" placeholder="Aquí aparecerá la transcripción..."></textarea>
+    </div>
+
+    <div class="section">
+      <h2>3. Información de la Reunión</h2>
+      <label>Tema de la Reunión</label>
+      <input type="text" id="tema">
+      <label>Fecha</label>
+      <input type="date" id="fecha">
+      <label>Lugar o Medio</label>
+      <input type="text" id="lugar">
+      <label>Asistentes</label>
+      <div id="asistentes"></div>
+      <button onclick="agregarAsistente()">Agregar Asistente</button>
+    </div>
+
+    <div class="section">
+      <button onclick="confirmarYGenerarPDF()">Guardar como PDF</button>
+    </div>
   </div>
 
   <script>
@@ -107,17 +148,7 @@
       usuario: "Usuario estandard"
     };
 
-    const loaderSVG = document.querySelector('.loader-svg');
-    const arrowMiddleNull = document.querySelector('.arrow-middle-null');
-    const arrowRightNull = document.querySelector('.arrow-right-null');
-    const arrowLeftNull = document.querySelector('.arrow-left-null');
-    const arrowHead = document.querySelector('.arrow-head');
-    const arrowLine = document.querySelector('.arrow-line');
-    const outline = document.querySelector('.outline');
-    const outlineBg = document.querySelector('.outline-bg');
-    const allLines = document.querySelector('.all-lines');
-
-    const usuario = prompt("Por favor, ingresa tu usuario").trim().toLowerCase();
+    const usuario = prompt("Ingresa tu usuario").trim().toLowerCase();
     const nombre = usuariosPermitidos[usuario];
     if (!nombre) {
       alert("Usuario no autorizado");
@@ -126,57 +157,48 @@
       document.getElementById("welcome").style.display = 'block';
     }
 
-    gsap.set(allLines, { filter: 'url(#glow)' });
-    gsap.set(arrowLeftNull, { x: 57.5, y: 103 });
-    gsap.set(arrowMiddleNull, { x: 90, y: 135.5 });
-    gsap.set(arrowRightNull, { x: 122.5, y: 103 });
-
-    const tl = gsap.timeline({ paused: true, onUpdate: updateSVG });
-
-    tl.set(outline, { opacity: 0 })
-      .set(outline, { drawSVG: '49.8% 49.9%' })
-      .to(arrowLine, { duration: 0.6, drawSVG: '59% 60%', ease: 'power3.inOut' })
-      .to(arrowMiddleNull, { duration: 0.6, y: 103, ease: 'elastic.out' })
-      .to(arrowLine, { duration: 0.5, y: '-=95', ease: 'power1.out' }, '-=0.55')
-      .to(arrowLine, { duration: 0.2, y: '+=17', ease: 'power1.in' })
-      .set(arrowLine, { opacity: 0 })
-      .set(outline, { opacity: 1 })
-      .to(outline, { duration: 3, drawSVG: '0% 100%', ease: 'linear' })
-      .to(arrowLeftNull, { duration: 3, x: '+=32.5', ease: 'linear' }, '-=3')
-      .to(arrowRightNull, { duration: 3, x: '-=32.5', ease: 'linear' }, '-=3')
-      .to(arrowLeftNull, { duration: 0.6, x: '-=30', y: '-=5', delay: 0.4, ease: 'back.out' })
-      .to(arrowMiddleNull, { duration: 0.6, y: '+=15', ease: 'back.out' }, '-=0.6')
-      .to(arrowRightNull, { duration: 0.6, x: '+=32.5', y: '-=35', ease: 'back.out' }, '-=0.6')
-      .to(arrowHead, { duration: 0.6, stroke: '#2EC26A' }, '-=0.6')
-      .to(outline, { duration: 0.5, drawSVG: '49.8% 49.9%', delay: 1 })
-      .set(outline, { opacity: 0 })
-      .set(arrowLine, { opacity: 1 })
-      .to(arrowLine, { duration: 0.3, y: '+=95', ease: 'power1.in' })
-      .to(arrowLine, { duration: 0.6, y: '-=18', drawSVG: '0% 100%', ease: 'power2.inOut' })
-      .to(arrowHead, { duration: 0.6, stroke: '#ededed' }, '-=0.6')
-      .to(arrowLeftNull, { duration: 0.6, x: 57.5, y: 103, ease: 'power3.out' }, '-=0.6')
-      .to(arrowMiddleNull, { duration: 0.6, x: 90, y: 135.5, ease: 'power3.out' }, '-=0.6')
-      .to(arrowRightNull, { duration: 0.6, x: 122.5, y: 103, ease: 'power3.out' }, '-=0.6')
-      .add(() => {
+    document.querySelector('.loader-svg').onclick = () => {
+      if (nombre) {
         document.getElementById("sistemaCompleto").style.display = 'block';
-      });
+        document.querySelector('svg').style.display = 'none';
+      }
+    };
 
-    function updateSVG() {
-      const leftX = arrowLeftNull._gsap.x;
-      const leftY = arrowLeftNull._gsap.y;
-      const middleX = arrowMiddleNull._gsap.x;
-      const middleY = arrowMiddleNull._gsap.y;
-      const rightX = arrowRightNull._gsap.x;
-      const rightY = arrowRightNull._gsap.y;
-
-      const pointStr = `${leftX},${leftY} ${middleX},${middleY} ${rightX},${rightY}`;
-      gsap.set(arrowHead, { attr: { points: pointStr } });
+    function agregarAsistente() {
+      const contenedor = document.getElementById("asistentes");
+      const fila = document.createElement("div");
+      fila.className = "asistente-row";
+      fila.innerHTML = `
+        <select>
+          <option value="Mtro.">Mtro.</option>
+          <option value="Dra.">Dra.</option>
+          <option value="Dr.">Dr.</option>
+          <option value="Lic.">Lic.</option>
+        </select>
+        <input type="text" placeholder="Nombre completo">
+        <input type="email" placeholder="Correo electrónico">
+      `;
+      contenedor.appendChild(fila);
     }
 
-    loaderSVG.onclick = () => {
-      if (nombre) {
-        tl.restart();
+    for (let i = 0; i < 1; i++) agregarAsistente();
+
+    function confirmarYGenerarPDF() {
+      const confirmado = confirm("¿Este archivo ha sido revisado y está listo para ser descargado?");
+      if (!confirmado) {
+        alert("Por favor revisa la transcripción antes de continuar.");
+        return;
       }
+      // Aquí iría la lógica para generar el PDF
+      alert("(PDF generado y descargado localmente)");
+    }
+
+    // Funciones de grabación/transcripción simuladas
+    function iniciarGrabacion() { alert("Iniciando grabación..."); }
+    function pausarGrabacion() { alert("Grabación en pausa."); }
+    function detenerGrabacion() { alert("Grabación detenida."); }
+    function transcribirAudio() {
+      document.getElementById("transcripcion").value = "Ejemplo de transcripción generada automáticamente...";
     }
   </script>
 </body>
