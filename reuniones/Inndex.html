@@ -58,7 +58,7 @@
     label { display: block; margin: 5px 0; font-weight: bold; color: var(--primary-color); }
     button {
       background: transparent;
-      color: white;
+      color: var(--accent-color);
       border: 2px solid var(--accent-color);
       padding: 10px 30px;
       border-radius: 50px;
@@ -143,18 +143,20 @@
     let recognition, textoReconocido = '';
 
     async function iniciarGrabacion() {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      recordedChunks = [];
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.ondataavailable = e => e.data.size && recordedChunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
-        document.getElementById('audioPlayer').src = URL.createObjectURL(lastBlob);
-      };
-      mediaRecorder.start();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => e.data.size && recordedChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+          lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+          document.getElementById('audioPlayer').src = URL.createObjectURL(lastBlob);
+        };
+        mediaRecorder.start();
 
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return alert('Tu navegador no soporta reconocimiento de voz.');
+
         recognition = new SpeechRecognition();
         recognition.lang = 'es-MX';
         recognition.interimResults = true;
@@ -164,13 +166,13 @@
           document.getElementById('transcripcion').value = textoReconocido;
         };
         recognition.start();
-      } else {
-        alert('Tu navegador no soporta reconocimiento de voz.');
+      } catch (err) {
+        alert('Error al iniciar grabación: ' + err.message);
       }
     }
 
     function pausarGrabacion() {
-      if (mediaRecorder?.state === 'recording') mediaRecorder.pause();
+      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.pause();
       if (recognition) recognition.stop();
     }
 
