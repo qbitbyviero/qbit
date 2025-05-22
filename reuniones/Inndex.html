@@ -181,7 +181,6 @@
 
   const formData = new FormData();
   formData.append('file', lastBlob, 'grabacion.webm');
-  document.getElementById('transcripcion').value = 'Transcribiendo, por favor espera...';
 
   try {
     const response = await fetch('https://texto-production.up.railway.app/transcribe', {
