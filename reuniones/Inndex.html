@@ -125,144 +125,144 @@
   </div>
 
   <script>
-    let mediaRecorder, recordedChunks = [], lastBlob, recognition;
+  let mediaRecorder, recordedChunks = [], lastBlob, recognition;
 
-    async function iniciarGrabacion() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordedChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = e => { if (e.data.size) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-          lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
-          const url = URL.createObjectURL(lastBlob);
-          document.getElementById('audioPlayer').src = url;
-          enviarAudioParaTranscripcion(lastBlob);
-        };
-        mediaRecorder.start();
-      } catch (err) {
-        alert('Error al acceder al micrófono: ' + err.message);
+  async function iniciarGrabacion() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(lastBlob);
+        document.getElementById('audioPlayer').src = url;
+        enviarAudioParaTranscripcion(lastBlob); // Transcribe automáticamente al detener
+      };
+      mediaRecorder.start();
+    } catch (err) {
+      alert('Error al acceder al micrófono: ' + err.message);
+    }
+  }
+
+  function pausarGrabacion() {
+    if (mediaRecorder?.state === 'recording') mediaRecorder.pause();
+  }
+
+  function detenerGrabacion() {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    }
+  }
+
+  function descargarAudio() {
+    if (!lastBlob) return alert('No hay audio para descargar.');
+    const url = URL.createObjectURL(lastBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grabacion_${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  async function enviarAudioParaTranscripcion(blob) {
+    const formData = new FormData();
+    formData.append('file', blob, 'grabacion.webm');
+    document.getElementById('transcripcion').value = 'Transcribiendo, por favor espera...';
+
+    try {
+      const response = await fetch('https://texto-production.up.railway.app/transcribe', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
-    }
 
-    function pausarGrabacion() {
-      if (mediaRecorder?.state === 'recording') mediaRecorder.pause();
+      const data = await response.json();
+      document.getElementById('transcripcion').value = data.text;
+    } catch (err) {
+      document.getElementById('transcripcion').value = '';
+      alert('⚠️ Error al transcribir: ' + err.message + '\n\nVerifica que el backend esté encendido en Railway y acepte peticiones.');
     }
+  }
 
-    function detenerGrabacion() {
-      if (mediaRecorder) {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(t => t.stop());
-      }
-    }
+  const usuariosPermitidos = {
+    viero: 'Francisco Javier Martínez Gutiérrez', lau: 'Laura Mendoza Bernal', cesar: 'César Gómez Gómez',
+    gus: 'José Gustavo Domínguez Vargas', jesus: 'Jesús Jiménez Cruz', usuario: 'Usuario estandard'
+  };
 
-    function descargarAudio() {
-      if (!lastBlob) return alert('No hay audio para descargar.');
-      const url = URL.createObjectURL(lastBlob);
+  function validarAcceso() {
+    const u = document.getElementById('usuario').value.trim().toLowerCase();
+    const nombre = usuariosPermitidos[u];
+    if (!nombre) return alert('Usuario no autorizado');
+    document.getElementById('welcome').textContent = `Bienvenido(a), ${nombre}`;
+    document.getElementById('welcome').style.display = 'block';
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('sistemaCompleto').style.display = 'flex';
+  }
+
+  function agregarAsistente() {
+    const cont = document.getElementById('asistentes');
+    const row = document.createElement('div'); row.className = 'asistente-row';
+    row.innerHTML = `
+      <select>
+        <option value="Dra.">Dra.</option>
+        <option value="Dr.">Dr.</option>
+        <option value="Mtra.">Mtra.</option>
+        <option value="Mtro.">Mtro.</option>
+        <option value="Lic.">Lic.</option>
+        <option value="Ing.">Ing.</option>
+        <option value="Arq.">Arq.</option>
+        <option value="C.P.">C.P.</option>
+        <option value="C.P.C.">C.P.C.</option>
+        <option value="Abg.">Abg.</option>
+        <option value="Q.">Q.</option>
+        <option value="Q.F.B.">Q.F.B.</option>
+        <option value="Psic.">Psic.</option>
+        <option value="Enf.">Enf.</option>
+        <option value="Téc.">Téc.</option>
+        <option value="Tgo.">Tgo.</option>
+        <option value="Prof.">Prof.</option>
+        <option value="Mgtr.">Mgtr.</option>
+        <option value="Mag.">Mag.</option>
+        <option value="Ph.D.">Ph.D.</option>
+        <option value="Not.">Not.</option>
+        <option value="J.">J.</option>
+        <option value="Cap.">Cap.</option>
+        <option value="Cnel.">Cnel.</option>
+        <option value="Gral.">Gral.</option>
+      </select>
+      <input type="text" placeholder="Nombre completo">
+      <input type="email" placeholder="Correo electrónico">
+    `;
+    cont.appendChild(row);
+  }
+  agregarAsistente();
+
+  const pdfSlider = document.getElementById('pdfSlider');
+  pdfSlider && pdfSlider.addEventListener('input', () => {
+    if (pdfSlider.value >= 100) {
+      const asistentes = [...document.querySelectorAll('#asistentes .asistente-row')].map(row => {
+        const grado = row.querySelector('select')?.value || '';
+        const nombre = row.querySelector('input[type="text"]')?.value || '';
+        return `${grado} ${nombre}`;
+      });
+      const texto = document.getElementById('transcripcion').value;
+      const contenido = `Asistentes:\n${asistentes.join('\n')}\n\nTranscripción:\n${texto}`;
+      const blob = new Blob([contenido], { type: 'application/pdf' });
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `grabacion_${new Date().toISOString().replace(/[:.]/g,'-')}.webm`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      a.href = URL.createObjectURL(blob);
+      a.download = `minuta_${new Date().toISOString().replace(/[:.]/g, '-')}.pdf`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      pdfSlider.value = 0;
     }
-
-    async function enviarAudioParaTranscripcion(blob) {
-      const formData = new FormData();
-      formData.append('file', blob, 'grabacion.webm');
-      document.getElementById('transcripcion').value = 'Transcribiendo, por favor espera...';
-
-      try {
-        const response = await fetch('https://texto-production.up.railway.app/transcribe', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
-        }
-
-        const data = await response.json();
-        document.getElementById('transcripcion').value = data.text;
-      } catch (err) {
-        document.getElementById('transcripcion').value = '';
-        alert('Error al transcribir: ' + err.message);
-      }
-    }
-
-    const usuariosPermitidos = {
-      viero: 'Francisco Javier Martínez Gutiérrez', lau: 'Laura Mendoza Bernal', cesar: 'César Gómez Gómez',
-      gus: 'José Gustavo Domínguez Vargas', jesus: 'Jesús Jiménez Cruz', usuario: 'Usuario estandard'
-    };
-
-    function validarAcceso() {
-      const u = document.getElementById('usuario').value.trim().toLowerCase();
-      const nombre = usuariosPermitidos[u];
-      if (!nombre) return alert('Usuario no autorizado');
-      document.getElementById('welcome').textContent = `Bienvenido(a), ${nombre}`;
-      document.getElementById('welcome').style.display = 'block';
-      document.getElementById('loginCard').style.display = 'none';
-      document.getElementById('sistemaCompleto').style.display = 'flex';
-    }
-
-    function agregarAsistente() {
-      const cont = document.getElementById('asistentes');
-      const row = document.createElement('div'); row.className = 'asistente-row';
-      row.innerHTML = `
-        <select>
-          <option value="Dra.">Dra.</option>
-          <option value="Dr.">Dr.</option>
-          <option value="Mtra.">Mtra.</option>
-          <option value="Mtro.">Mtro.</option>
-          <option value="Lic.">Lic.</option>
-          <option value="Ing.">Ing.</option>
-          <option value="Arq.">Arq.</option>
-          <option value="C.P.">C.P.</option>
-          <option value="C.P.C.">C.P.C.</option>
-          <option value="Abg.">Abg.</option>
-          <option value="Q.">Q.</option>
-          <option value="Q.F.B.">Q.F.B.</option>
-          <option value="Psic.">Psic.</option>
-          <option value="Enf.">Enf.</option>
-          <option value="Téc.">Téc.</option>
-          <option value="Tgo.">Tgo.</option>
-          <option value="Prof.">Prof.</option>
-          <option value="Mgtr.">Mgtr.</option>
-          <option value="Mag.">Mag.</option>
-          <option value="Ph.D.">Ph.D.</option>
-          <option value="Not.">Not.</option>
-          <option value="J.">J.</option>
-          <option value="Cap.">Cap.</option>
-          <option value="Cnel.">Cnel.</option>
-          <option value="Gral.">Gral.</option>
-        </select>
-        <input type="text" placeholder="Nombre completo">
-        <input type="email" placeholder="Correo electrónico">
-      `;
-      cont.appendChild(row);
-    }
-    agregarAsistente();
-
-    const pdfSlider = document.getElementById('pdfSlider');
-    pdfSlider && pdfSlider.addEventListener('input', () => {
-      if (pdfSlider.value >= 100) {
-        const asistentes = [...document.querySelectorAll('#asistentes .asistente-row')].map(row => {
-          const grado = row.querySelector('select')?.value || '';
-          const nombre = row.querySelector('input[type="text"]')?.value || '';
-          return `${grado} ${nombre}`;
-        });
-        const texto = document.getElementById('transcripcion').value;
-        const contenido = `Asistentes:\n${asistentes.join('\n')}\n\nTranscripción:\n${texto}`;
-        const blob = new Blob([contenido], { type: 'application/pdf' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `minuta_${new Date().toISOString().replace(/[:.]/g,'-')}.pdf`;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        pdfSlider.value = 0;
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
