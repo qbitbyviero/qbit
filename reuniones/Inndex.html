@@ -78,13 +78,12 @@
 
   <div id="sistemaCompleto">
     <div class="card">
-      <h2>1. Grabación de Audio</h2>
+      <h2>1. Grabación de Audio y Transcripción en Tiempo Real</h2>
       <button onclick="iniciarGrabacion()">Iniciar Grabación</button>
       <button onclick="pausarGrabacion()">Pausar</button>
       <button onclick="detenerGrabacion()">Detener</button>
       <audio id="audioPlayer" controls style="margin-top:10px; width:100%; max-width:500px;"></audio>
       <button onclick="descargarAudio()">Descargar Audio</button>
-      <button onclick="transcribirGrabacion()">Transcribir Grabación</button>
     </div>
 
     <div class="card">
@@ -126,7 +125,7 @@
   </div>
 
   <script>
-    let mediaRecorder, recordedChunks = [], lastBlob;
+    let mediaRecorder, recordedChunks = [], lastBlob, recognition;
 
     async function iniciarGrabacion() {
       try {
@@ -138,6 +137,7 @@
           lastBlob = new Blob(recordedChunks, { type: 'audio/webm' });
           const url = URL.createObjectURL(lastBlob);
           document.getElementById('audioPlayer').src = url;
+          enviarAudioParaTranscripcion(lastBlob);
         };
         mediaRecorder.start();
       } catch (err) {
@@ -146,7 +146,7 @@
     }
 
     function pausarGrabacion() {
-      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.pause();
+      if (mediaRecorder?.state === 'recording') mediaRecorder.pause();
     }
 
     function detenerGrabacion() {
@@ -168,14 +168,9 @@
       URL.revokeObjectURL(url);
     }
 
-    async function transcribirGrabacion() {
-      if (!lastBlob) {
-        alert('Graba algo antes de transcribir.');
-        return;
-      }
-
+    async function enviarAudioParaTranscripcion(blob) {
       const formData = new FormData();
-      formData.append('file', lastBlob, 'grabacion.webm');
+      formData.append('file', blob, 'grabacion.webm');
       document.getElementById('transcripcion').value = 'Transcribiendo, por favor espera...';
 
       try {
@@ -191,8 +186,8 @@
 
         const data = await response.json();
         document.getElementById('transcripcion').value = data.text;
-
       } catch (err) {
+        document.getElementById('transcripcion').value = '';
         alert('Error al transcribir: ' + err.message);
       }
     }
