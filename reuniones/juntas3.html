@@ -130,6 +130,52 @@
     document.body.prepend(aviso);
   }
 })();
+function iniciarReconocimiento() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  recognition = new SR();
+  recognition.lang = 'es-MX';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.onstart = () => showDebug('🤖 Reconocimiento iniciado');
+  recognition.onspeechstart = () => showDebug('🎤 Habla detectada');
+  recognition.onaudioend = () => showDebug('🔈 Audio finalizado');
+  recognition.onresult = ev => {
+    let txt = '';
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      txt += ev.results[i][0].transcript + ' ';
+    }
+    finalTranscript += txt;
+    document.getElementById('transcripcion').value = finalTranscript;
+  };
+  recognition.onerror = e => {
+    showDebug('⚠️ Error de reconocimiento: ' + e.error);
+    recognition.start(); // intenta reiniciar
+  };
+  recognition.onend = () => {
+    showDebug('🔄 Reiniciando reconocimiento');
+    recognition.start();
+  };
+  recognition.start();
+}
+
+// función auxiliar para volcar mensajes en pantalla
+function showDebug(msg) {
+  let d = document.getElementById('debugLog');
+  if (!d) {
+    d = document.createElement('div');
+    d.id = 'debugLog';
+    Object.assign(d.style, {
+      position: 'fixed', bottom: '0', left: '0',
+      width: '100%', maxHeight: '30%', overflowY: 'auto',
+      background: 'rgba(0,0,0,0.7)', color: 'white',
+      padding: '5px', fontSize: '12px', zIndex: 9999
+    });
+    document.body.appendChild(d);
+  }
+  d.innerText += msg + '\n';
+  d.scrollTop = d.scrollHeight;
+}
 
     let finalTranscript = '';
     async function requestMicPermission() {
