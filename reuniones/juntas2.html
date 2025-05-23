@@ -3,117 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de Juntas de la FES Acatlán</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    :root {
-      --primary-color: #002147;
-      --accent-color: #f1c40f;
-      --text-color: #333;
-      --bg-light: #f9f9f9;
-      --border-light: #ccc;
-      --neumorph-light: #ffffff;
-      --neumorph-dark: #babecc;
-    }
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--primary-color);
-      margin: 0; padding: 20px;
-      color: white;
-      display: flex; flex-direction: column;
-      align-items: center; text-align: center;
-    }
-    h1 { color: var(--accent-color); margin-bottom: 20px; }
-    .card {
-      background: var(--bg-light); color: var(--text-color);
-      border-radius: 20px; padding: 20px;
-      margin-bottom: 20px; width: 90%; max-width: 500px;
-      box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
-    }
-    input, select, textarea {
-      width: 100%; padding: 10px; margin: 10px 0;
-      border: none; border-radius: 10px;
-      background: var(--neumorph-light);
-      box-shadow: inset 5px 5px 10px var(--neumorph-dark), inset -5px -5px 10px white;
-      font-size: 16px; color: var(--text-color);
-    }
-    button, .neumorph-button {
-      background: var(--neumorph-light); border: none;
-      border-radius: 20px; box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
-      padding: 10px 20px; margin: 5px; font-size: 14px;
-      color: var(--text-color); cursor: pointer; transition: all 0.3s ease;
-    }
-    button:hover, .neumorph-button:hover {
-      box-shadow: inset 8px 8px 15px var(--neumorph-dark), inset -8px -8px 15px white;
-    }
-    audio { margin-top: 10px; width: 100%; }
-    .asistente-row { display: flex; gap: 10px; margin-bottom: 10px; }
-    .asistente-row > * { flex: 1; }
-  </style>
-</head>
-<body>
-  <h1>Juntas 2 - FES Acatlán</h1>
-  <div class="card" id="loginCard">
-    <input type="text" id="usuario" placeholder="Ingresa tu usuario">
-    <button onclick="validarAcceso()">Acceder</button>
-  </div>
-  <div id="sistemaCompleto" style="display:none; flex-direction:column; align-items:center; width:100%;">
-    <div class="card">
-      <h2 id="saludoUsuario">Bienvenido(a)</h2>
-    </div>
-    <div class="card">
-      <h3>Reproductor / Grabador de Junta</h3>
-      <button class="neumorph-button" onclick="iniciarGrabacion()">Grabar</button>
-      <button class="neumorph-button" onclick="pausarGrabacion()">Pausar</button>
-      <button class="neumorph-button" onclick="detenerGrabacion()">Detener</button>
-      <button class="neumorph-button" onclick="reproducirAudio()">Reproducir</button>
-      <audio id="audioPlayer" controls></audio>
-      <textarea id="transcripcion" rows="4" placeholder="Transcripción en tiempo real..." readonly></textarea>
-    </div>
-    <div class="card formulario">
-      <h3>Datos de la Reunión</h3>
-      <input type="text" id="tema" placeholder="Tema de la Reunión">
-      <input type="text" id="folio" placeholder="Folio de la Minuta y/o Junta">
-      <input type="date" id="fecha">
-      <input type="time" id="horaInicio">
-      <input type="time" id="horaFin">
-      <input type="text" id="lugar" placeholder="Lugar o Medio">
-      <div>
-        <label>¿Hay personal del STUNAM?</label><br>
-        <label><input type="radio" name="stunam" value="si" onchange="toggleStunam(true)"> Sí</label>
-        <label><input type="radio" name="stunam" value="no" onchange="toggleStunam(false)" checked> No</label>
-      </div>
-      <h4>Asistentes UNAM</h4>
-      <div id="asistentesUNAM"></div>
-      <button class="neumorph-button" onclick="agregarAsistente('UNAM')">Agregar Asistente UNAM</button>
-      <div id="stunamSection" style="display:none; margin-top:10px;">
-        <h4>Asistentes STUNAM</h4>
-        <div id="asistentesSTUNAM"></div>
-        <button class="neumorph-button" onclick="agregarAsistente('STUNAM')">Agregar Asistente STUNAM</button>
-      </div>
-    </div>
-    <div class="card">
-      <button class="neumorph-button" onclick="generarPDF()">Generar PDF</button>
-    </div>
-  </div>
-  <script>
-    async function requestMicPermission() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(t => t.stop());
-      } catch (e) {
-        alert('Para grabar en el celular debes permitir el micrófono. Revisa la configuración de tu navegador.');
-      }
-    }
-    const usuariosPermitidos = { viero:'Francisco Javier Martínez Gutiérrez', lau:'Laura Mendoza Bernal', cesar:'César Gómez Gómez', gus:'José Gustavo Domínguez Vargas', jesus:'Jesús Jiménez Cruz', usuario:'Usuario estándar' };
-    async function validarAcceso() {
-      const u = document.getElementById('usuario').value.trim().toLowerCase();
-      const nombre = usuariosPermitidos[u];<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juntas 2 - FES Acatlán</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -164,7 +53,7 @@
   </style>
 </head>
 <body>
-  <h1>MinuSys Acatlán</h1>
+  <h1>Juntas 2 - FES Acatlán</h1>
 
   <!-- Login -->
   <div class="card" id="loginCard">
@@ -290,68 +179,6 @@
       const pdfBlob=doc.output('blob');
       const url=URL.createObjectURL(pdfBlob);
       const a=document.createElement('a');a.href=url;a.download=`minuta_${fecha}.pdf`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-    }
-  </script>
-</body>
-</html>
-
-      if (!nombre) return alert('Usuario no autorizado');
-      await requestMicPermission();
-      document.getElementById('loginCard').style.display = 'none';
-      document.getElementById('sistemaCompleto').style.display = 'flex';
-      document.getElementById('saludoUsuario').textContent = `Bienvenido(a), ${nombre}`;
-    }
-    function agregarAsistente(tipo) {
-      const cont = document.getElementById(tipo==='STUNAM'?'asistentesSTUNAM':'asistentesUNAM');
-      const row = document.createElement('div'); row.className = 'asistente-row';
-      row.innerHTML = `<select>...opciones...</select><input type="text" placeholder="Otro título (opcional)"><input type="text" placeholder="Nombre completo"><input type="email" placeholder="Correo electrónico">`;
-      cont.appendChild(row);
-    }
-    function toggleStunam(show) { document.getElementById('stunamSection').style.display = show?'block':'none'; }
-    let mediaRecorder, recognition, audioChunks=[];
-    function iniciarGrabacion() {
-      navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-        audioChunks=[]; mediaRecorder=new MediaRecorder(stream);
-        mediaRecorder.ondataavailable=e=>{if(e.data.size)audioChunks.push(e.data)};
-        mediaRecorder.onstop=()=>{const blob=new Blob(audioChunks,{type:'audio/webm'});document.getElementById('audioPlayer').src=URL.createObjectURL(blob)};
-        mediaRecorder.start(); iniciarReconocimiento();
-      }).catch(err=>alert('Error micrófono: '+err.message));
-    }
-    function pausarGrabacion(){ if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.pause(); detenerReconocimiento(); }
-    function detenerGrabacion(){ if(mediaRecorder){mediaRecorder.stop();mediaRecorder.stream.getTracks().forEach(t=>t.stop())}detenerReconocimiento(); }
-    function reproducirAudio(){document.getElementById('audioPlayer').play();}
-    function iniciarReconocimiento(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR)return; if(!recognition){ recognition=new SR(); recognition.lang='es-ES'; recognition.continuous=true; recognition.interimResults=true; recognition.onresult=ev=>{let txt='';for(let i=ev.resultIndex;i<ev.results.length;i++)txt+=ev.results[i][0].transcript+' '; document.getElementById('transcripcion').value=txt.trim()}; } recognition.start(); }
-    function detenerReconocimiento(){ if(recognition) recognition.stop(); }
-    function generarPDF(){
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFontSize(14);
-      doc.text('FACULTAD DE ESTUDIOS SUPERIORES ACATLÁN', 10, 20);
-      doc.setFontSize(12);
-      const fecha = document.getElementById('fecha').value;
-      const lugar = document.getElementById('lugar').value;
-      doc.text('MINUTA', 10, 30);
-      doc.text(`Fecha: ${fecha}`, 10, 40);
-      doc.text(`Lugar: ${lugar}`, 10, 50);
-      let y = 60;
-      doc.text('Por la UNAM:', 10, y);
-      y += 10;
-      Array.from(document.querySelectorAll('#asistentesUNAM .asistente-row')).map(r => `${r.querySelector('select').value} ${r.querySelectorAll('input')[1].value}`).forEach(a => {doc.text(a, 15, y); y += 10;});
-      if(document.querySelector('input[name="stunam"][value="si"]').checked) {
-        doc.text('Por el STUNAM:', 10, y); y += 10;
-        Array.from(document.querySelectorAll('#asistentesSTUNAM .asistente-row')).map(r => `${r.querySelector('select').value} ${r.querySelectorAll('input')[1].value}`).forEach(a => {doc.text(a, 15, y); y += 10;});
-      }
-      y += 10;
-      doc.text('Transcripción:', 10, y); y += 10;
-      const lines = doc.splitTextToSize(document.getElementById('transcripcion').value, 180);
-      lines.forEach(line => {doc.text(line, 10, y); y += 10; if(y > 280){ doc.addPage(); y = 20; }});
-      // Generar blob para descarga
-      const pdfBlob = doc.output('blob');
-      const url = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a'); a.href = url;
-      a.download = `minuta_${fecha}.pdf`;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     }
   </script>
 </body>
