@@ -11,9 +11,10 @@
       --accent-color: #f1c40f;
       --text-color: #333;
       --bg-light: #f9f9f9;
-      --border-light: #ccc;
       --neumorph-light: #ffffff;
       --neumorph-dark: #babecc;
+      --footer-bg: #001731;
+      --footer-text: #f9f9f9;
     }
     * { box-sizing: border-box; }
     body {
@@ -26,10 +27,17 @@
     }
     h1 { color: var(--accent-color); margin-bottom: 20px; }
     .card {
-      background: var(--bg-light); color: var(--text-color);
-      border-radius: 20px; padding: 20px;
-      margin-bottom: 20px; width: 90%; max-width: 500px;
+      background: var(--bg-light);
+      color: var(--text-color);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 90%; max-width: 500px;
       box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
+    }
+    .formulario {
+      display: flex; flex-direction: column;
+      align-items: stretch;
     }
     input, select, textarea {
       width: 100%; padding: 10px; margin: 10px 0;
@@ -40,9 +48,11 @@
     }
     button, .neumorph-button {
       background: var(--neumorph-light); border: none;
-      border-radius: 20px; box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
-      padding: 10px 20px; margin: 5px; font-size: 14px;
-      color: var(--text-color); cursor: pointer; transition: all 0.3s ease;
+      border-radius: 20px;
+      box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
+      padding: 10px 20px; margin: 5px;
+      font-size: 14px; color: var(--text-color);
+      cursor: pointer; transition: all 0.3s ease;
     }
     button:hover, .neumorph-button:hover {
       box-shadow: inset 8px 8px 15px var(--neumorph-dark), inset -8px -8px 15px white;
@@ -50,10 +60,21 @@
     audio { margin-top: 10px; width: 100%; }
     .asistente-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .asistente-row > * { flex: 1; }
+    footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      padding: 15px;
+      width: 100%; max-width: 500px;
+      border-radius: 0 0 20px 20px;
+      font-size: 14px;
+      box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
+    }
+    footer p { margin: 5px 0; }
+    footer .motto { font-style: italic; }
   </style>
 </head>
 <body>
-  <h1>Juntas 2 - FES Acatlán</h1>
+  <h1>MinuSys Acatlán</h1>
 
   <!-- Login -->
   <div class="card" id="loginCard">
@@ -105,16 +126,26 @@
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer>
+    <p class="motto">"El futuro es este; si no estás preparado para él, aquí te espero."</p>
+    <p>Desarrollado por Francisco Javier Martínez Gutiérrez. Patente pendiente.</p>
+  </footer>
+
   <script>
     async function requestMicPermission() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(t => t.stop());
-      } catch (e) {
-        alert('Para grabar en el celular debes permitir el micrófono. Revisa la configuración de tu navegador.');
-      }
+      try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); stream.getTracks().forEach(t => t.stop()); }
+      catch (e) { alert('Para grabar debes permitir el micrófono.'); }
     }
-    const usuariosPermitidos = { viero:'Francisco Javier Martínez Gutiérrez', Fer:'María Fernanda Sánchez Peralta',lau:'Laura Mendoza Bernal', cesar:'César Gómez Gómez', gus:'José Gustavo Domínguez Vargas', jesus:'Jesús Jiménez Cruz', usuario:'Usuario estándar' };
+    const usuariosPermitidos = {
+      viero: 'Francisco Javier Martínez Gutiérrez',
+      fer: 'María Fernanda Sánchez Peralta',
+      lau: 'Laura Mendoza Bernal',
+      cesar: 'César Gómez Gómez',
+      gus: 'José Gustavo Domínguez Vargas',
+      jesus: 'Jesús Jiménez Cruz',
+      usuario: 'Usuario estándar'
+    };
     async function validarAcceso() {
       const u = document.getElementById('usuario').value.trim().toLowerCase();
       const nombre = usuariosPermitidos[u];
@@ -142,43 +173,45 @@
       `;
       cont.appendChild(row);
     }
-    function toggleStunam(show) { document.getElementById('stunamSection').style.display = show?'block':'none'; }
-    let mediaRecorder, recognition, audioChunks=[];
+    function toggleStunam(show) { document.getElementById('stunamSection').style.display = show ? 'block' : 'none'; }
+    let mediaRecorder, recognition, audioChunks = [];
     function iniciarGrabacion() {
-      navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-        audioChunks=[]; mediaRecorder=new MediaRecorder(stream);
-        mediaRecorder.ondataavailable=e=>{if(e.data.size)audioChunks.push(e.data)};
-        mediaRecorder.onstop=()=>{const blob=new Blob(audioChunks,{type:'audio/webm'});document.getElementById('audioPlayer').src=URL.createObjectURL(blob)};
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
+        mediaRecorder.onstop = () => { const blob = new Blob(audioChunks, { type: 'audio/webm' }); document.getElementById('audioPlayer').src = URL.createObjectURL(blob); };
         mediaRecorder.start(); iniciarReconocimiento();
-      }).catch(err=>alert('Error micrófono: '+err.message));
+      }).catch(err => alert('Error micrófono: ' + err.message));
     }
-    function pausarGrabacion(){ if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.pause(); detenerReconocimiento(); }
-    function detenerGrabacion(){ if(mediaRecorder){mediaRecorder.stop();mediaRecorder.stream.getTracks().forEach(t=>t.stop())}detenerReconocimiento(); }
-    function reproducirAudio(){document.getElementById('audioPlayer').play();}
-    function iniciarReconocimiento(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR)return; if(!recognition){recognition=new SR();recognition.lang='es-MX';recognition.continuous=true;recognition.interimResults=true;recognition.onresult=ev=>{let txt='';for(let i=ev.resultIndex;i<ev.results.length;i++)txt+=ev.results[i][0].transcript+' ';document.getElementById('transcripcion').value=txt.trim()};}recognition.start(); }
-    function detenerReconocimiento(){ if(recognition) recognition.stop(); }
-    function generarPDF(){
+    function pausarGrabacion() { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.pause(); detenerReconocimiento(); }
+    function detenerGrabacion() { if (mediaRecorder) { mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(t => t.stop()); } detenerReconocimiento(); }
+    function reproducirAudio() { document.getElementById('audioPlayer').play(); }
+    function iniciarReconocimiento() { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return; if (!recognition) { recognition = new SR(); recognition.lang = 'es-MX'; recognition.continuous = true; recognition.interimResults = true; recognition.onresult = ev => { let txt = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) txt += ev.results[i][0].transcript + ' '; document.getElementById('transcripcion').value = txt.trim(); }; } recognition.start(); }
+    function detenerReconocimiento() { if (recognition) recognition.stop(); }
+    function generarPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.setFontSize(14);
       doc.text('FACULTAD DE ESTUDIOS SUPERIORES ACATLÁN', 10, 20);
       doc.setFontSize(12);
-      const fecha=document.getElementById('fecha').value;
-      const lugar=document.getElementById('lugar').value;
-      doc.text('MINUTA', 10,30);
-      doc.text(`Fecha: ${fecha}`,10,40);
-      doc.text(`Lugar: ${lugar}`,10,50);
-      let y=60;
-      doc.text('Por la UNAM:',10,y);
-      y+=10;
-      document.querySelectorAll('#asistentesUNAM .asistente-row').forEach(r=>{doc.text(`${r.querySelector('select').value} ${r.querySelectorAll('input')[0].value}`,15,y); y+=10;});
-      if(document.querySelector('input[name="stunam"][value="si"]').checked){doc.text('Por el STUNAM:',10,y);y+=10;document.querySelectorAll('#asistentesSTUNAM .asistente-row').forEach(r=>{doc.text(`${r.querySelector('select').value} ${r.querySelectorAll('input')[0].value}`,15,y);y+=10;});}
-      y+=10;
-      doc.text('Transcripción:',10,y);y+=10;
-      doc.splitTextToSize(document.getElementById('transcripcion').value,180).forEach(line=>{doc.text(line,10,y);y+=10;if(y>280){doc.addPage();y=20;}});
-      const pdfBlob=doc.output('blob');
-      const url=URL.createObjectURL(pdfBlob);
-      const a=document.createElement('a');a.href=url;a.download=`minuta_${fecha}.pdf`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+      const fecha = document.getElementById('fecha').value;
+      const lugar = document.getElementById('lugar').value;
+      doc.text('MINUTA', 10, 30);
+      doc.text(`Fecha: ${fecha}`, 10, 40);
+      doc.text(`Lugar: ${lugar}`, 10, 50);
+      let y = 60;
+      doc.text('Por la UNAM:', 10, y); y += 10;
+      document.querySelectorAll('#asistentesUNAM .asistente-row').forEach(r => { doc.text(`${r.querySelector('select').value} ${r.querySelectorAll('input')[0].value}`, 15, y); y += 10; });
+      if (document.querySelector('input[name="stunam"][value="si"]').checked) {
+        doc.text('Por el STUNAM:', 10, y); y += 10;
+        document.querySelectorAll('#asistentesSTUNAM .asistente-row').forEach(r => { doc.text(`${r.querySelector('select').value} ${r.querySelectorAll('input')[0].value}`, 15, y); y += 10; });
+      }
+      y += 10; doc.text('Transcripción:', 10, y); y += 10;
+      doc.splitTextToSize(document.getElementById('transcripcion').value, 180).forEach(line => { doc.text(line, 10, y); y += 10; if (y > 280) { doc.addPage(); y = 20; } });
+      const pdfBlob = doc.output('blob'); const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a'); a.href = url; a.download = `minuta_${fecha}.pdf`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     }
   </script>
 </body>
