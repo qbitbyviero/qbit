@@ -54,28 +54,32 @@
     audio { margin-top: 10px; width: 100%; }
     .asistente-row { display: flex; gap: 10px; margin-bottom: 10px; }
     .asistente-row > * { flex: 1; }
-    footer {
-      background: var(--footer-bg); color: var(--footer-text);
-      padding: 15px; width: 100%; max-width: 500px;
-      border-radius: 0 0 20px 20px; font-size: 14px;
-      box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
-    }
-    footer p { margin: 5px 0; }
-    footer .motto { font-style: italic; }
-    .motto {
-    display: inline-block;
-    opacity: 1;
-    transform: translateX(0);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  .fade-out {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  .fade-in {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  footer {
+  background: var(--footer-bg);
+  color: rgba(255, 255, 255, 0.4); /* ← TRANSPARENTE */
+  padding: 15px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 0 0 20px 20px;
+  font-size: 13px;
+  box-shadow: 8px 8px 15px var(--neumorph-dark), -8px -8px 15px white;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+footer .motto {
+  font-style: italic;
+  font-weight: 500;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5); /* ligeramente más visible */
+}
+
+footer .footer-autor {
+  margin-top: 10px;
+  line-height: 1.4;
+  font-size: 12px;
+}
   </style>
 </head>
 <body>
@@ -123,14 +127,13 @@
   </div>
 
   <footer>
-    <p class="motto">"El futuro es este; si no estás preparado para él, aquí te espero."</p>
- <p>
-  <strong>MinuSys Acatlán</strong> es una solución operativa desarrollada por <strong>Qbit Enterprises</strong>,  
-  como parte del portafolio de sistemas avanzados de <strong>Viero's World</strong>.  
-  Desarrollo tecnológico a cargo de <strong>Francisco Javier Martínez Gutiérrez</strong>.  
-  Aplicación en proceso de validación y protección legal conforme a normativa vigente.
-</p>
-  </footer>
+  <p class="motto">"El futuro ya llegó. Algunos lo usamos, otros lo alcanzarán."</p>
+  <p class="footer-autor">
+    <strong>MinuSys Acatlán</strong> · Unidad operativa de <strong>Qbit Enterprises</strong><br>
+    Desarrollo estratégico bajo el ecosistema digital de <strong>Viero’s World</strong><br>
+    Dirigido por <em>Francisco Javier Martínez Gutiérrez</em> · En proceso de protección legal
+  </p>
+</footer>
 
   <script>
     // TEST DE DISPONIBILIDAD
