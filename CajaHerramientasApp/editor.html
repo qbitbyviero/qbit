@@ -173,11 +173,19 @@
     }
 
     function applyColor(color) {
+      if (selected.length === 0) {
+        alert('Selecciona elementos.');
+        return;
+      }
       selected.forEach(el => {
-        const svgEl = el.querySelector('svg.shape');
-        svgEl.setAttribute('fill', color);
-        svgEl.style.fill = color;
+        // Cambiar el color de relleno de la forma
+        const use = el.querySelector('svg.shape use');
+        if (use) {
+          use.setAttribute('fill', color);
+          use.style.fill = color;
+        }
       });
+      // Cambiar color de las flechas
       lines.forEach(o => o.line.setOptions({ color }));
     }
 
