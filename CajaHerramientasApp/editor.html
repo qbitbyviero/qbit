@@ -89,7 +89,7 @@
       makeDraggable(el); el.addEventListener('click', () => toggle(el));
     });
 
-    // Make draggable
+    // Draggable
     function makeDraggable(el) {
       el.addEventListener('mousedown', e => {
         if (e.target.classList.contains('label')) return;
@@ -105,14 +105,11 @@
     }
 
     function toggle(el) {
-      if (selected.includes(el)) el.classList.remove('selected'), selected = selected.filter(e => e !== el);
-      else el.classList.add('selected'), selected.push(el);
+      if (selected.includes(el)) { el.classList.remove('selected'); selected = selected.filter(e => e !== el); }
+      else { el.classList.add('selected'); selected.push(el); }
     }
 
-    function clearSelection() {
-      selected.forEach(e => e.classList.remove('selected'));
-      selected = [];
-    }
+    function clearSelection() { selected.forEach(e => e.classList.remove('selected')); selected = []; }
 
     // Conexiones
     function startConnection() {
@@ -138,20 +135,17 @@
       } else alert('Selecciona un solo elemento.');
     }
 
-    // Zoom ajustado
-    function applyZoom(factor) {
-      document.querySelectorAll('.element').forEach(el => {
-        const lx = parseFloat(el.style.left), ty = parseFloat(el.style.top);
+    // Resize seleccionado
+    function changeSize(factor) {
+      selected.forEach(el => {
         const w = el.offsetWidth, h = el.offsetHeight;
-        el.style.left = (lx * factor) + 'px';
-        el.style.top = (ty * factor) + 'px';
         el.style.width = (w * factor) + 'px';
         el.style.height = (h * factor) + 'px';
       });
       lines.forEach(o => o.line.position());
     }
-    function zoomIn() { applyZoom(1.2); }
-    function zoomOut() { applyZoom(0.8); }
+    function increaseSize() { changeSize(1.2); }
+    function decreaseSize() { changeSize(0.8); }
 
     // Exportar PNG
     function exportImage() {
@@ -169,7 +163,7 @@
       refreshSavedList();
     }
 
-    // Lista proyectos
+    // Listar proyectos
     function refreshSavedList() {
       const list = document.getElementById('savedList'); list.innerHTML = '<strong>Proyectos guardados:</strong>';
       Object.keys(localStorage).filter(k => k.startsWith('diagrama_')).forEach(k => {
@@ -207,9 +201,7 @@
 
     // Eliminar proyecto
     function deleteProject(name) {
-      if (confirm(`¿Eliminar proyecto '${name}'?`)) {
-        localStorage.removeItem(`diagrama_${name}`); refreshSavedList();
-      }
+      if (confirm(`¿Eliminar proyecto '${name}'?`)) { localStorage.removeItem(`diagrama_${name}`); refreshSavedList(); }
     }
 
     // Color picker
