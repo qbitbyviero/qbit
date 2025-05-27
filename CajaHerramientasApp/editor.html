@@ -10,42 +10,13 @@
     #sidebar h3 { margin:10px 0 5px; font-size:16px; }
     .block, button { background:#eee; border:1px solid #999; margin-bottom:8px; padding:8px; text-align:center; border-radius:4px; cursor:grab; user-select:none; }
     button { cursor:pointer; }
-    #canvas {
-      flex:1;
-      position:relative;
-      background:#fafafa;
-      overflow:auto;
-    }
+    #canvas { flex:1; position:relative; background:#fafafa; overflow:auto; }
     .element { position:absolute; width:100px; height:60px; cursor:move; }
     svg.shape { width:100%; height:100%; }
-    .label {
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:12px;
-      text-align:center;
-      pointer-events:none;
-    }
+    .label { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px; text-align:center; pointer-events:none; }
     .selected { outline:2px dashed #007BFF; }
     #colorPicker { display:none; margin-bottom:8px; width:100%; }
-    /* Lista de proyectos guardados */
-    #savedList {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 220px;
-      max-height: 300px;
-      overflow-y: auto;
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 8px;
-      font-size: 12px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
+    #savedList { position: fixed; bottom: 10px; right: 10px; width: 220px; max-height: 300px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 8px; font-size: 12px; box-shadow: 0 0 5px rgba(0,0,0,0.2); z-index: 1000; }
     #savedList .entry { display:flex; justify-content:space-between; margin-bottom:4px; }
     #savedList .entry button { margin:0 2px; padding:2px 4px; font-size:12px; }
   </style>
@@ -76,10 +47,8 @@
     <button onclick="increaseSize()">Más grande</button>
     <button onclick="decreaseSize()">Más pequeño</button>
   </div>
-
   <div id="canvas"></div>
   <div id="savedList"></div>
-
   <svg style="display:none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
       <rect id="process" x="0" y="0" width="100" height="60" fill="currentColor" stroke="#000"/>
@@ -94,7 +63,6 @@
       <rect id="note" x="0" y="0" width="100" height="60" fill="#fffae6" stroke="#000" stroke-dasharray="4"/>
     </defs>
   </svg>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leader-line/1.0.7/leader-line.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
@@ -110,8 +78,7 @@
       const text = prompt('¿Etiqueta?', ''); if (text === null) return;
       const el = document.createElement('div'); el.className = 'element'; el.id = 'el' + count++;
       el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '100px'; el.style.height = '60px';
-      const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60');
+      const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg'); svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60');
       const use = document.createElementNS('http://www.w3.org/2000/svg','use'); use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+draggedType);
       svgEl.appendChild(use);
       const lbl = document.createElement('div'); lbl.className = 'label'; lbl.innerText = text;
@@ -119,7 +86,7 @@
       makeDraggable(el); el.addEventListener('click', () => toggle(el));
     });
 
-    // Draggable elements
+    // Make draggable
     function makeDraggable(el) {
       el.addEventListener('mousedown', e => {
         if (e.target.classList.contains('label')) return;
@@ -139,12 +106,9 @@
       else el.classList.add('selected'), selected.push(el);
     }
 
-    function clearSelection() {
-      selected.forEach(e => e.classList.remove('selected'));
-      selected = [];
-    }
+    function clearSelection() { selected.forEach(e => e.classList.remove('selected')); selected = []; }
 
-    // Conectar nodos
+    // Conexiones
     function startConnection() {
       if (selected.length === 2) {
         const ln = new LeaderLine(selected[0], selected[1], { color: '#000', size: 2, path: 'straight', svgContainer: canvas });
@@ -153,13 +117,10 @@
       } else alert('Selecciona exactamente 2.');
     }
 
-    // Eliminar selecciones
+    // Eliminar nodos y flechas
     function deleteSelected() {
       selected.forEach(el => {
-        lines = lines.filter(o => {
-          if (o.from === el || o.to === el) { o.line.remove(); return false; }
-          return true;
-        });
+        lines = lines.filter(o => { if (o.from === el || o.to === el) { o.line.remove(); return false; } return true; });
         el.remove();
       });
       clearSelection();
@@ -173,48 +134,41 @@
       } else alert('Selecciona un solo elemento.');
     }
 
-    // Zoom sin distorsionar flechas
+    // Zoom sin distorsionar
     function applyZoom(factor) {
       document.querySelectorAll('.element').forEach(el => {
-        const left = parseFloat(el.style.left);
-        const top = parseFloat(el.style.top);
-        el.style.left = (left * factor) + 'px';
-        el.style.top = (top * factor) + 'px';
-        el.style.width = (el.offsetWidth * factor) + 'px';
-        el.style.height = (el.offsetHeight * factor) + 'px';
+        const lx = parseFloat(el.style.left), ty = parseFloat(el.style.top);
+        el.style.left = (lx * factor) + 'px'; el.style.top = (ty * factor) + 'px';
+        el.style.width = (el.offsetWidth * factor) + 'px'; el.style.height = (el.offsetHeight * factor) + 'px';
       });
       lines.forEach(o => o.line.position());
     }
     function zoomIn() { applyZoom(1.2); }
     function zoomOut() { applyZoom(0.8); }
 
-    // Exportar PNG
+    // Exportar imagen
     function exportImage() {
       html2canvas(canvas, { backgroundColor: null, useCORS: true }).then(ci => {
         const link = document.createElement('a'); link.download = 'diagrama.png'; link.href = ci.toDataURL(); link.click();
       });
     }
 
-    // Guardar y cargar proyectos
+    // Guardar proyecto
     function saveProject() {
       const name = prompt('Nombre del proyecto:', 'MiDiagrama'); if (!name) return;
-      const state = Array.from(canvas.querySelectorAll('.element')).map(el => {
+      const nodes = Array.from(canvas.querySelectorAll('.element')).map(el => {
         const use = el.querySelector('use');
-        return {
-          type: use.getAttribute('xlink:href').slice(1),
-          x: parseFloat(el.style.left), y: parseFloat(el.style.top),
-          width: el.offsetWidth, height: el.offsetHeight,
-          text: el.querySelector('.label').innerText,
-          color: use.getAttribute('fill') || getComputedStyle(el.querySelector('svg')).color
-        };
+        return { id: el.id, type: use.getAttribute('xlink:href').slice(1), x: parseFloat(el.style.left), y: parseFloat(el.style.top), width: el.offsetWidth, height: el.offsetHeight, text: el.querySelector('.label').innerText, color: use.getAttribute('fill') || getComputedStyle(el.querySelector('svg')).color };
       });
-      localStorage.setItem(`diagrama_${name}`, JSON.stringify(state));
+      const connections = lines.map(o => ({ from: o.from.id, to: o.to.id, color: o.line.options.color, size: o.line.options.size, path: o.line.options.path }));
+      const project = { nodes, connections };
+      localStorage.setItem(`diagrama_${name}`, JSON.stringify(project));
       refreshSavedList();
     }
 
+    // Listar proyectos
     function refreshSavedList() {
-      const list = document.getElementById('savedList');
-      list.innerHTML = '<strong>Proyectos guardados:</strong>';
+      const list = document.getElementById('savedList'); list.innerHTML = '<strong>Proyectos guardados:</strong>';
       Object.keys(localStorage).filter(k => k.startsWith('diagrama_')).forEach(k => {
         const name = k.replace('diagrama_', '');
         const entry = document.createElement('div'); entry.className = 'entry';
@@ -224,14 +178,16 @@
       });
     }
 
+    // Cargar proyecto
     function loadProject(name) {
-      const key = `diagrama_${name}`, data = localStorage.getItem(key);
+      const key = `diagrama_${name}`; const data = localStorage.getItem(key);
       if (!data) return alert('Proyecto no encontrado.');
-      const state = JSON.parse(data);
-      lines.forEach(o => o.line.remove()); lines = [];
-      canvas.innerHTML = '';
-      state.forEach(item => {
-        const el = document.createElement('div'); el.className = 'element';
+      const project = JSON.parse(data); const { nodes, connections } = project;
+      // Limpiar
+      lines.forEach(o => o.line.remove()); lines = []; canvas.innerHTML = '';
+      // Reconstruir nodos
+      nodes.forEach(item => {
+        const el = document.createElement('div'); el.className = 'element'; el.id = item.id;
         el.style.left = item.x + 'px'; el.style.top = item.y + 'px'; el.style.width = item.width + 'px'; el.style.height = item.height + 'px';
         const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg'); svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60'); svgEl.style.color = item.color;
         const use = document.createElementNS('http://www.w3.org/2000/svg','use'); use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+item.type); use.setAttribute('fill', item.color);
@@ -240,12 +196,20 @@
         el.appendChild(svgEl); el.appendChild(lbl); canvas.appendChild(el);
         makeDraggable(el); el.addEventListener('click', () => toggle(el));
       });
+      // Reconstruir conexiones
+      connections.forEach(conn => {
+        const fromEl = document.getElementById(conn.from); const toEl = document.getElementById(conn.to);
+        if (fromEl && toEl) {
+          const ln = new LeaderLine(fromEl, toEl, { color: conn.color, size: conn.size, path: conn.path, svgContainer: canvas });
+          lines.push({ line: ln, from: fromEl, to: toEl });
+        }
+      });
     }
 
+    // Eliminar proyecto
     function deleteProject(name) {
-      if (confirm(`Eliminar proyecto '${name}'?`)) {
-        localStorage.removeItem(`diagrama_${name}`);
-        refreshSavedList();
+      if (confirm(`¿Eliminar proyecto '${name}'?`)) {
+        localStorage.removeItem(`diagrama_${name}`); refreshSavedList();
       }
     }
 
@@ -260,7 +224,6 @@
       lines.forEach(o => o.line.setOptions({ color }));
     }
 
-    // Inicializar
     document.addEventListener('DOMContentLoaded', refreshSavedList);
   </script>
 </body>
