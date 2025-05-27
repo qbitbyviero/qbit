@@ -5,17 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Editor Profesional de Diagrama de Flujo</title>
   <style>
-    body { margin: 0; display: flex; height: 100vh; font-family: Arial, sans-serif; }
-    #sidebar { width: 260px; background: #fff; border-right: 1px solid #ccc; padding: 10px; box-sizing: border-box; overflow-y: auto; }
-    #sidebar h3 { margin: 10px 0 5px; font-size: 16px; }
-    .block, button { background: #eee; border: 1px solid #999; margin-bottom: 8px; padding: 8px; text-align: center; border-radius: 4px; cursor: grab; user-select: none; }
-    button { cursor: pointer; }
-    #canvas { flex: 1; position: relative; background: #fafafa; overflow: auto; transform-origin: 0 0; }
-    .element { position: absolute; width: 100px; height: 60px; cursor: move; }
-    svg.shape { width: 100%; height: 100%; }
-    .label { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 12px; text-align: center; pointer-events: none; }
-    .selected { outline: 2px dashed #007BFF; }
-    #colorPicker { display: none; margin-bottom: 8px; width: 100%; }
+    body { margin:0; display:flex; height:100vh; font-family:Arial,sans-serif; }
+    #sidebar { width:260px; background:#fff; border-right:1px solid #ccc; padding:10px; box-sizing:border-box; overflow-y:auto; }
+    #sidebar h3 { margin:10px 0 5px; font-size:16px; }
+    .block, button { background:#eee; border:1px solid #999; margin-bottom:8px; padding:8px; text-align:center; border-radius:4px; cursor:grab; user-select:none; }
+    button { cursor:pointer; }
+    #canvas {
+      flex:1;
+      position:relative;
+      background:#fafafa;
+      overflow:auto;
+      transform-origin:0 0;
+    }
+    .element { position:absolute; width:100px; height:60px; cursor:move; }
+    svg.shape { width:100%; height:100%; }
+    .label {
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      text-align:center;
+      pointer-events:none;
+    }
+    .selected { outline:2px dashed #007BFF; }
+    #colorPicker { display:none; margin-bottom:8px; width:100%; }
   </style>
 </head>
 <body>
@@ -46,61 +62,47 @@
   </div>
   <div id="canvas"></div>
 
-  <svg style="display:none">
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
-      <rect id="process" x="0" y="0" width="100" height="60" fill="#fff" stroke="#000" />
-      <path id="document" d="M0,0 L90,0 L100,10 L100,60 L0,60 Z" fill="#fff" stroke="#000" />
-      <path id="input" d="M10,0 L100,0 L90,60 L0,60 Z" fill="#fff" stroke="#000" />
-      <path id="manual" d="M10,0 L100,0 L90,60 L0,60 Z" fill="#fff" stroke="#000" />
-      <circle id="operation" cx="50" cy="30" r="30" fill="#fff" stroke="#000" />
-      <polygon id="decision" points="50,0 100,30 50,60 0,30" fill="#fff" stroke="#000" />
-      <path id="database" d="M0,10 a50,10 0 0,0 100,0 v40 a50,10 0 0,1 -100,0 z" fill="#fff" stroke="#000" />
-      <path id="delay" d="M0,30 a30,30 0 0,1 60,0 L100,60 L0,60 Z" fill="#fff" stroke="#000" />
-      <ellipse id="terminal" cx="50" cy="30" rx="50" ry="30" fill="#fff" stroke="#000" />
-      <rect id="note" x="0" y="0" width="100" height="60" fill="#fffae6" stroke="#000" stroke-dasharray="4" />
+      <rect id="process" x="0" y="0" width="100" height="60" fill="#fff" stroke="#000"/>
+      <path id="document" d="M0,0 L90,0 L100,10 L100,60 L0,60 Z" fill="#fff" stroke="#000"/>
+      <path id="input" d="M10,0 L100,0 L90,60 L0,60 Z" fill="#fff" stroke="#000"/>
+      <path id="manual" d="M10,0 L100,0 L90,60 L0,60 Z" fill="#fff" stroke="#000"/>
+      <circle id="operation" cx="50" cy="30" r="30" fill="#fff" stroke="#000"/>
+      <polygon id="decision" points="50,0 100,30 50,60 0,30" fill="#fff" stroke="#000"/>
+      <path id="database" d="M0,10 a50,10 0 0,0 100,0 v40 a50,10 0 0,1 -100,0 z" fill="#fff" stroke="#000"/>
+      <path id="delay" d="M0,30 a30,30 0 0,1 60,0 L100,60 L0,60 Z" fill="#fff" stroke="#000"/>
+      <ellipse id="terminal" cx="50" cy="30" rx="50" ry="30" fill="#fff" stroke="#000"/>
+      <rect id="note" x="0" y="0" width="100" height="60" fill="#fffae6" stroke="#000" stroke-dasharray="4"/>
     </defs>
   </svg>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leader-line/1.0.7/leader-line.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
     const colorPicker = document.getElementById('colorPicker');
     let count = 0, draggedType = '', selected = [], lines = [], zoom = 1;
 
-    document.querySelectorAll('.block').forEach(b => {
-      b.addEventListener('dragstart', e => draggedType = e.target.dataset.type);
-    });
+    document.querySelectorAll('.block').forEach(b => b.addEventListener('dragstart', e => draggedType = e.target.dataset.type));
     canvas.addEventListener('dragover', e => e.preventDefault());
     canvas.addEventListener('drop', e => {
       const x = e.offsetX, y = e.offsetY;
-      const text = prompt('¿Etiqueta?', '');
-      if (text === null) return;
+      const text = prompt('¿Etiqueta?', ''); if (text === null) return;
       const el = document.createElement('div');
-      el.className = 'element';
-      el.id = 'el' + count++;
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      el.style.width = '100px';
-      el.style.height = '60px';
+      el.className = 'element'; el.id = 'el' + count++;
+      el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '100px'; el.style.height = '60px';
 
       const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svgEl.setAttribute('class', 'shape');
-      svgEl.setAttribute('viewBox', '0 0 100 60');
+      svgEl.setAttribute('class', 'shape'); svgEl.setAttribute('viewBox', '0 0 100 60');
       const shapeUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-      shapeUse.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + draggedType);
+      shapeUse.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + draggedType);
       svgEl.appendChild(shapeUse);
 
-      const lbl = document.createElement('div');
-      lbl.className = 'label';
-      lbl.innerText = text;
+      const lbl = document.createElement('div'); lbl.className = 'label'; lbl.innerText = text;
 
-      el.appendChild(svgEl);
-      el.appendChild(lbl);
-      canvas.appendChild(el);
-
-      makeDraggable(el);
-      el.addEventListener('click', () => toggle(el));
+      el.appendChild(svgEl); el.appendChild(lbl); canvas.appendChild(el);
+      makeDraggable(el); el.addEventListener('click', () => toggle(el));
     });
 
     function makeDraggable(el) {
@@ -118,32 +120,21 @@
     }
 
     function toggle(el) {
-      if (selected.includes(el)) {
-        el.classList.remove('selected');
-        selected = selected.filter(e => e !== el);
-      } else {
-        el.classList.add('selected');
-        selected.push(el);
-      }
+      if (selected.includes(el)) { el.classList.remove('selected'); selected = selected.filter(e => e !== el); }
+      else { el.classList.add('selected'); selected.push(el); }
     }
 
     function startConnection() {
       if (selected.length === 2) {
         const ln = new LeaderLine(selected[0], selected[1], { color: '#000', size: 2, path: 'straight', svgContainer: canvas });
-        lines.push({ line: ln, from: selected[0], to: selected[1] });
-        clearSelection();
+        lines.push({ line: ln, from: selected[0], to: selected[1] }); clearSelection();
       } else alert('Selecciona exactamente 2.');
     }
 
     function deleteSelected() {
       selected.forEach(el => {
-        lines = lines.filter(o => {
-          if (o.from === el || o.to === el) { o.line.remove(); return false; }
-          return true;
-        });
-        el.remove();
-      });
-      selected = [];
+        lines = lines.filter(o => { if (o.from === el || o.to === el) { o.line.remove(); return false;} return true; }); el.remove();
+      }); selected = [];
     }
 
     function editText() {
@@ -158,47 +149,25 @@
     function resetZoom() { zoom = 1; canvas.style.transform = `scale(1)`; lines.forEach(o => o.line.position()); }
 
     function exportImage() {
-      domtoimage.toPng(canvas)
-        .then(dataUrl => {
-          const link = document.createElement('a');
-          link.download = 'diagrama.png';
-          link.href = dataUrl;
-          link.click();
-        });
+      html2canvas(canvas, {backgroundColor: null, useCORS: true}).then(canvasImg => {
+        const link = document.createElement('a'); link.download = 'diagrama.png'; link.href = canvasImg.toDataURL(); link.click();
+      });
     }
 
-    function showColorPicker() {
-      if (!selected.length) { alert('Selecciona elementos.'); return; }
-      colorPicker.click();
-    }
+    function showColorPicker() { if (!selected.length) { alert('Selecciona elementos.'); return;} colorPicker.click(); }
 
     function applyColor(color) {
-      if (selected.length === 0) {
-        alert('Selecciona elementos.');
-        return;
-      }
+      if (!selected.length) { alert('Selecciona elementos.'); return; }
       selected.forEach(el => {
-        // Cambiar el color de relleno de la forma
-        const use = el.querySelector('svg.shape use');
-        if (use) {
-          use.setAttribute('fill', color);
-          use.style.fill = color;
-        }
+        const svgEl = el.querySelector('svg.shape');
+        if (svgEl) svgEl.style.fill = color;
       });
-      // Cambiar color de las flechas
       lines.forEach(o => o.line.setOptions({ color }));
     }
 
     function increaseSize() { changeSize(1.2); }
     function decreaseSize() { changeSize(0.8); }
-    function changeSize(f) {
-      selected.forEach(el => {
-        const w = el.offsetWidth * f, h = el.offsetHeight * f;
-        el.style.width = w + 'px';
-        el.style.height = h + 'px';
-      });
-      lines.forEach(o => o.line.position());
-    }
+    function changeSize(f) { selected.forEach(el => { el.style.width = el.offsetWidth * f + 'px'; el.style.height = el.offsetHeight * f + 'px'; }); lines.forEach(o => o.line.position()); }
   </script>
 </body>
 </html>
