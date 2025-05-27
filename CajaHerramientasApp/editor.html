@@ -15,7 +15,6 @@
       position:relative;
       background:#fafafa;
       overflow:auto;
-      transform-origin:0 0;
     }
     .element { position:absolute; width:100px; height:60px; cursor:move; }
     svg.shape { width:100%; height:100%; }
@@ -37,7 +36,7 @@
       position: fixed;
       bottom: 10px;
       right: 10px;
-      width: 200px;
+      width: 220px;
       max-height: 300px;
       overflow-y: auto;
       background: #fff;
@@ -47,16 +46,8 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.2);
       z-index: 1000;
     }
-    #savedList button {
-      display: block;
-      width: 100%;
-      margin-bottom: 4px;
-      text-align: left;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      padding: 4px;
-      cursor: pointer;
-    }
+    #savedList .entry { display:flex; justify-content:space-between; margin-bottom:4px; }
+    #savedList .entry button { margin:0 2px; padding:2px 4px; font-size:12px; }
   </style>
 </head>
 <body>
@@ -78,7 +69,6 @@
     <button onclick="editText()">Editar Texto</button>
     <button onclick="zoomIn()">Zoom +</button>
     <button onclick="zoomOut()">Zoom -</button>
-    <button onclick="resetZoom()">Reset</button>
     <button onclick="exportImage()">Exportar PNG</button>
     <button onclick="saveProject()">Guardar proyecto</button>
     <input type="color" id="colorPicker" onchange="applyColor(this.value)" />
@@ -110,9 +100,9 @@
   <script>
     const canvas = document.getElementById('canvas');
     const colorPicker = document.getElementById('colorPicker');
-    let count = 0, draggedType = '', selected = [], lines = [], zoom = 1;
+    let count = 0, draggedType = '', selected = [], lines = [];
 
-    // Drag & Drop de bloques
+    // Drag & Drop
     document.querySelectorAll('.block').forEach(b => b.addEventListener('dragstart', e => draggedType = e.target.dataset.type));
     canvas.addEventListener('dragover', e => e.preventDefault());
     canvas.addEventListener('drop', e => {
@@ -120,19 +110,16 @@
       const text = prompt('¿Etiqueta?', ''); if (text === null) return;
       const el = document.createElement('div'); el.className = 'element'; el.id = 'el' + count++;
       el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '100px'; el.style.height = '60px';
-
       const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
       svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60');
-      const use = document.createElementNS('http://www.w3.org/2000/svg','use');
-      use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+draggedType);
+      const use = document.createElementNS('http://www.w3.org/2000/svg','use'); use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+draggedType);
       svgEl.appendChild(use);
-
       const lbl = document.createElement('div'); lbl.className = 'label'; lbl.innerText = text;
       el.appendChild(svgEl); el.appendChild(lbl); canvas.appendChild(el);
       makeDraggable(el); el.addEventListener('click', () => toggle(el));
     });
 
-    // Funciones básicas
+    // Draggable elements
     function makeDraggable(el) {
       el.addEventListener('mousedown', e => {
         if (e.target.classList.contains('label')) return;
@@ -146,109 +133,135 @@
         el.onmouseup = () => { document.removeEventListener('mousemove', move); el.onmouseup = null; };
       });
     }
+
     function toggle(el) {
-      if (selected.includes(el)) el.classList.remove('selected'), selected = selected.filter(e=>e!==el);
+      if (selected.includes(el)) el.classList.remove('selected'), selected = selected.filter(e => e !== el);
       else el.classList.add('selected'), selected.push(el);
     }
-    function clearSelection() { selected.forEach(e=>e.classList.remove('selected')); selected=[]; }
 
-    // Conexiones
+    function clearSelection() {
+      selected.forEach(e => e.classList.remove('selected'));
+      selected = [];
+    }
+
+    // Conectar nodos
     function startConnection() {
-      if (selected.length===2) {
-        const ln=new LeaderLine(selected[0],selected[1],{color:'#000',size:2,path:'straight',svgContainer:canvas});
-        lines.push({line:ln,from:selected[0],to:selected[1]}); clearSelection();
+      if (selected.length === 2) {
+        const ln = new LeaderLine(selected[0], selected[1], { color: '#000', size: 2, path: 'straight', svgContainer: canvas });
+        lines.push({ line: ln, from: selected[0], to: selected[1] });
+        clearSelection();
       } else alert('Selecciona exactamente 2.');
     }
 
-    // Eliminar nodos y líneas
+    // Eliminar selecciones
     function deleteSelected() {
-      selected.forEach(el=>{
-        lines=lines.filter(o=>{
-          if(o.from===el||o.to===el){o.line.remove();returnfalse;}returntrue;
-        }); el.remove();
-      }); selected=[];
+      selected.forEach(el => {
+        lines = lines.filter(o => {
+          if (o.from === el || o.to === el) { o.line.remove(); return false; }
+          return true;
+        });
+        el.remove();
+      });
+      clearSelection();
     }
 
-    // Edición de texto
+    // Editar texto
     function editText() {
-      if(selected.length===1){
-        const newText=prompt('Nuevo texto:',selected[0].querySelector('.label').innerText);
-        if(newText!==null)selected[0].querySelector('.label').innerText=newText;
+      if (selected.length === 1) {
+        const newText = prompt('Nuevo texto:', selected[0].querySelector('.label').innerText);
+        if (newText !== null) selected[0].querySelector('.label').innerText = newText;
       } else alert('Selecciona un solo elemento.');
     }
 
-    // Zoom
-    function zoomIn(){zoom+=0.1;canvas.style.transform=`scale(${zoom})`;lines.forEach(o=>o.line.position());}
-    function zoomOut(){zoom=Math.max(0.2,zoom-0.1);canvas.style.transform=`scale(${zoom})`;lines.forEach(o=>o.line.position());}
-    function resetZoom(){zoom=1;canvas.style.transform='scale(1)';lines.forEach(o=>o.line.position());}
+    // Zoom sin distorsionar flechas
+    function applyZoom(factor) {
+      document.querySelectorAll('.element').forEach(el => {
+        const left = parseFloat(el.style.left);
+        const top = parseFloat(el.style.top);
+        el.style.left = (left * factor) + 'px';
+        el.style.top = (top * factor) + 'px';
+        el.style.width = (el.offsetWidth * factor) + 'px';
+        el.style.height = (el.offsetHeight * factor) + 'px';
+      });
+      lines.forEach(o => o.line.position());
+    }
+    function zoomIn() { applyZoom(1.2); }
+    function zoomOut() { applyZoom(0.8); }
 
     // Exportar PNG
-    function exportImage(){
-      html2canvas(canvas,{backgroundColor:null,useCORS:true}).then(ci=>{
-        const link=document.createElement('a');link.download='diagrama.png';link.href=ci.toDataURL();link.click();
+    function exportImage() {
+      html2canvas(canvas, { backgroundColor: null, useCORS: true }).then(ci => {
+        const link = document.createElement('a'); link.download = 'diagrama.png'; link.href = ci.toDataURL(); link.click();
       });
     }
 
-    // Guardar proyecto en localStorage
-    function saveProject(){
-      const name=prompt('Nombre del proyecto:','MiDiagrama');if(!name)return;
-      const state=Array.from(canvas.querySelectorAll('.element')).map(el=>{
-        const use=el.querySelector('use');
-        return{
-          type:use.getAttribute('xlink:href').slice(1),
-          x:parseFloat(el.style.left),y:parseFloat(el.style.top),
-          width:el.offsetWidth,height:el.offsetHeight,
-          text:el.querySelector('.label').innerText,
-          color:use.getAttribute('fill')||getComputedStyle(el.querySelector('svg')).color
+    // Guardar y cargar proyectos
+    function saveProject() {
+      const name = prompt('Nombre del proyecto:', 'MiDiagrama'); if (!name) return;
+      const state = Array.from(canvas.querySelectorAll('.element')).map(el => {
+        const use = el.querySelector('use');
+        return {
+          type: use.getAttribute('xlink:href').slice(1),
+          x: parseFloat(el.style.left), y: parseFloat(el.style.top),
+          width: el.offsetWidth, height: el.offsetHeight,
+          text: el.querySelector('.label').innerText,
+          color: use.getAttribute('fill') || getComputedStyle(el.querySelector('svg')).color
         };
       });
-      localStorage.setItem(`diagrama_${name}`,JSON.stringify(state));
+      localStorage.setItem(`diagrama_${name}`, JSON.stringify(state));
       refreshSavedList();
     }
 
-    // Lista de proyectos guardados
-    function refreshSavedList(){
-      const list=document.getElementById('savedList');list.innerHTML='<strong>Proyectos guardados:</strong>';
-      Object.keys(localStorage).filter(k=>k.startsWith('diagrama_')).forEach(k=>{
-        const name=k.replace('diagrama_','');
-        const btn=document.createElement('button');btn.textContent=name;btn.onclick=()=>loadProject(name);
-        list.appendChild(btn);
+    function refreshSavedList() {
+      const list = document.getElementById('savedList');
+      list.innerHTML = '<strong>Proyectos guardados:</strong>';
+      Object.keys(localStorage).filter(k => k.startsWith('diagrama_')).forEach(k => {
+        const name = k.replace('diagrama_', '');
+        const entry = document.createElement('div'); entry.className = 'entry';
+        const loadBtn = document.createElement('button'); loadBtn.textContent = name; loadBtn.onclick = () => loadProject(name);
+        const delBtn = document.createElement('button'); delBtn.textContent = 'Eliminar'; delBtn.onclick = () => deleteProject(name);
+        entry.appendChild(loadBtn); entry.appendChild(delBtn); list.appendChild(entry);
       });
     }
 
-    // Cargar proyecto desde localStorage
-    function loadProject(name){
-      const key=`diagrama_${name}`,data=localStorage.getItem(key);
-      if(!data)return alert('Proyecto no encontrado.');
-      const state=JSON.parse(data);
-      // Limpiar todo
-      lines.forEach(o=>o.line.remove());lines=[];canvas.innerHTML='';
-      // Reconstruir elementos
-      state.forEach(item=>{
-        const el=document.createElement('div');el.className='element';
-        el.style.left=item.x+'px';el.style.top=item.y+'px';el.style.width=item.width+'px';el.style.height=item.height+'px';
-        const svgEl=document.createElementNS('http://www.w3.org/2000/svg','svg');svgEl.setAttribute('class','shape');svgEl.setAttribute('viewBox','0 0 100 60');svgEl.style.color=item.color;
-        const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+item.type);use.setAttribute('fill',item.color);
+    function loadProject(name) {
+      const key = `diagrama_${name}`, data = localStorage.getItem(key);
+      if (!data) return alert('Proyecto no encontrado.');
+      const state = JSON.parse(data);
+      lines.forEach(o => o.line.remove()); lines = [];
+      canvas.innerHTML = '';
+      state.forEach(item => {
+        const el = document.createElement('div'); el.className = 'element';
+        el.style.left = item.x + 'px'; el.style.top = item.y + 'px'; el.style.width = item.width + 'px'; el.style.height = item.height + 'px';
+        const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg'); svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60'); svgEl.style.color = item.color;
+        const use = document.createElementNS('http://www.w3.org/2000/svg','use'); use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+item.type); use.setAttribute('fill', item.color);
         svgEl.appendChild(use);
-        const lbl=document.createElement('div');lbl.className='label';lbl.innerText=item.text;
-        el.appendChild(svgEl);el.appendChild(lbl);canvas.appendChild(el);
-        makeDraggable(el);el.addEventListener('click',()=>toggle(el));
+        const lbl = document.createElement('div'); lbl.className = 'label'; lbl.innerText = item.text;
+        el.appendChild(svgEl); el.appendChild(lbl); canvas.appendChild(el);
+        makeDraggable(el); el.addEventListener('click', () => toggle(el));
       });
     }
 
-    // Aplicar color a selección
-    function showColorPicker(){if(!selected.length)alert('Selecciona elementos.');else colorPicker.click();}
-    function applyColor(color){
-      if(!selected.length){alert('Selecciona elementos.');return;}
-      selected.forEach(el=>{
-        const svgEl=el.querySelector('svg.shape');if(svgEl)svgEl.style.color=color;
-        const use=el.querySelector('use');if(use){use.setAttribute('fill',color);use.style.fill=color;}
-      });
-      lines.forEach(o=>o.line.setOptions({color}));
+    function deleteProject(name) {
+      if (confirm(`Eliminar proyecto '${name}'?`)) {
+        localStorage.removeItem(`diagrama_${name}`);
+        refreshSavedList();
+      }
     }
 
-    // Iniciar lista al cargar
-    document.addEventListener('DOMContentLoaded',refreshSavedList);
+    // Color picker
+    function showColorPicker() { if (!selected.length) alert('Selecciona elementos.'); else colorPicker.click(); }
+    function applyColor(color) {
+      if (!selected.length) { alert('Selecciona elementos.'); return; }
+      selected.forEach(el => {
+        const svgEl = el.querySelector('svg.shape'); if (svgEl) svgEl.style.color = color;
+        const use = el.querySelector('use'); if (use) { use.setAttribute('fill', color); use.style.fill = color; }
+      });
+      lines.forEach(o => o.line.setOptions({ color }));
+    }
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', refreshSavedList);
   </script>
 </body>
 </html>
