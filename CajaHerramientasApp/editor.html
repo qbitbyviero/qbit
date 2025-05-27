@@ -32,6 +32,31 @@
     }
     .selected { outline:2px dashed #007BFF; }
     #colorPicker { display:none; margin-bottom:8px; width:100%; }
+    /* Lista de proyectos guardados */
+    #savedList {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 200px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 12px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    #savedList button {
+      display: block;
+      width: 100%;
+      margin-bottom: 4px;
+      text-align: left;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -55,12 +80,15 @@
     <button onclick="zoomOut()">Zoom -</button>
     <button onclick="resetZoom()">Reset</button>
     <button onclick="exportImage()">Exportar PNG</button>
+    <button onclick="saveProject()">Guardar proyecto</button>
     <input type="color" id="colorPicker" onchange="applyColor(this.value)" />
     <button onclick="showColorPicker()">Color</button>
     <button onclick="increaseSize()">Más grande</button>
     <button onclick="decreaseSize()">Más pequeño</button>
   </div>
+
   <div id="canvas"></div>
+  <div id="savedList"></div>
 
   <svg style="display:none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
@@ -84,27 +112,27 @@
     const colorPicker = document.getElementById('colorPicker');
     let count = 0, draggedType = '', selected = [], lines = [], zoom = 1;
 
+    // Drag & Drop de bloques
     document.querySelectorAll('.block').forEach(b => b.addEventListener('dragstart', e => draggedType = e.target.dataset.type));
     canvas.addEventListener('dragover', e => e.preventDefault());
     canvas.addEventListener('drop', e => {
       const x = e.offsetX, y = e.offsetY;
       const text = prompt('¿Etiqueta?', ''); if (text === null) return;
-      const el = document.createElement('div');
-      el.className = 'element'; el.id = 'el' + count++;
+      const el = document.createElement('div'); el.className = 'element'; el.id = 'el' + count++;
       el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '100px'; el.style.height = '60px';
 
-      const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svgEl.setAttribute('class', 'shape'); svgEl.setAttribute('viewBox', '0 0 100 60');
-      const shapeUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-      shapeUse.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + draggedType);
-      svgEl.appendChild(shapeUse);
+      const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svgEl.setAttribute('class','shape'); svgEl.setAttribute('viewBox','0 0 100 60');
+      const use = document.createElementNS('http://www.w3.org/2000/svg','use');
+      use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+draggedType);
+      svgEl.appendChild(use);
 
       const lbl = document.createElement('div'); lbl.className = 'label'; lbl.innerText = text;
-
       el.appendChild(svgEl); el.appendChild(lbl); canvas.appendChild(el);
       makeDraggable(el); el.addEventListener('click', () => toggle(el));
     });
 
+    // Funciones básicas
     function makeDraggable(el) {
       el.addEventListener('mousedown', e => {
         if (e.target.classList.contains('label')) return;
@@ -118,59 +146,109 @@
         el.onmouseup = () => { document.removeEventListener('mousemove', move); el.onmouseup = null; };
       });
     }
-
     function toggle(el) {
-      if (selected.includes(el)) { el.classList.remove('selected'); selected = selected.filter(e => e !== el); }
-      else { el.classList.add('selected'); selected.push(el); }
+      if (selected.includes(el)) el.classList.remove('selected'), selected = selected.filter(e=>e!==el);
+      else el.classList.add('selected'), selected.push(el);
     }
+    function clearSelection() { selected.forEach(e=>e.classList.remove('selected')); selected=[]; }
 
+    // Conexiones
     function startConnection() {
-      if (selected.length === 2) {
-        const ln = new LeaderLine(selected[0], selected[1], { color: '#000', size: 2, path: 'straight', svgContainer: canvas });
-        lines.push({ line: ln, from: selected[0], to: selected[1] }); clearSelection();
+      if (selected.length===2) {
+        const ln=new LeaderLine(selected[0],selected[1],{color:'#000',size:2,path:'straight',svgContainer:canvas});
+        lines.push({line:ln,from:selected[0],to:selected[1]}); clearSelection();
       } else alert('Selecciona exactamente 2.');
     }
 
+    // Eliminar nodos y líneas
     function deleteSelected() {
-      selected.forEach(el => {
-        lines = lines.filter(o => { if (o.from === el || o.to === el) { o.line.remove(); return false;} return true; }); el.remove();
-      }); selected = [];}
+      selected.forEach(el=>{
+        lines=lines.filter(o=>{
+          if(o.from===el||o.to===el){o.line.remove();returnfalse;}returntrue;
+        }); el.remove();
+      }); selected=[];
+    }
 
+    // Edición de texto
     function editText() {
-      if (selected.length === 1) {
-        const newText = prompt('Nuevo texto:', selected[0].querySelector('.label').innerText);
-        if (newText !== null) selected[0].querySelector('.label').innerText = newText;
+      if(selected.length===1){
+        const newText=prompt('Nuevo texto:',selected[0].querySelector('.label').innerText);
+        if(newText!==null)selected[0].querySelector('.label').innerText=newText;
       } else alert('Selecciona un solo elemento.');
     }
 
-    function zoomIn() { zoom += 0.1; canvas.style.transform = `scale(${zoom})`; lines.forEach(o => o.line.position()); }
-    function zoomOut() { zoom = Math.max(0.2, zoom - 0.1); canvas.style.transform = `scale(${zoom})`; lines.forEach(o => o.line.position()); }
-    function resetZoom() { zoom = 1; canvas.style.transform = `scale(1)`; lines.forEach(o => o.line.position()); }
+    // Zoom
+    function zoomIn(){zoom+=0.1;canvas.style.transform=`scale(${zoom})`;lines.forEach(o=>o.line.position());}
+    function zoomOut(){zoom=Math.max(0.2,zoom-0.1);canvas.style.transform=`scale(${zoom})`;lines.forEach(o=>o.line.position());}
+    function resetZoom(){zoom=1;canvas.style.transform='scale(1)';lines.forEach(o=>o.line.position());}
 
-    function exportImage() {
-      html2canvas(canvas, {backgroundColor: null, useCORS: true}).then(canvasImg => {
-        const link = document.createElement('a'); link.download = 'diagrama.png'; link.href = canvasImg.toDataURL(); link.click();
+    // Exportar PNG
+    function exportImage(){
+      html2canvas(canvas,{backgroundColor:null,useCORS:true}).then(ci=>{
+        const link=document.createElement('a');link.download='diagrama.png';link.href=ci.toDataURL();link.click();
       });
     }
 
-    function showColorPicker() { if (!selected.length) { alert('Selecciona elementos.'); return;} colorPicker.click(); }
-
-    function applyColor(color) {
-      if (!selected.length) { alert('Selecciona elementos.'); return; }
-      selected.forEach(el => {
-        const svgEl = el.querySelector('svg.shape');
-        if (svgEl) svgEl.style.color = color;
-        const use = el.querySelector('use');
-        if (use) { use.setAttribute('fill', color); use.style.fill = color; }
+    // Guardar proyecto en localStorage
+    function saveProject(){
+      const name=prompt('Nombre del proyecto:','MiDiagrama');if(!name)return;
+      const state=Array.from(canvas.querySelectorAll('.element')).map(el=>{
+        const use=el.querySelector('use');
+        return{
+          type:use.getAttribute('xlink:href').slice(1),
+          x:parseFloat(el.style.left),y:parseFloat(el.style.top),
+          width:el.offsetWidth,height:el.offsetHeight,
+          text:el.querySelector('.label').innerText,
+          color:use.getAttribute('fill')||getComputedStyle(el.querySelector('svg')).color
+        };
       });
-      lines.forEach(o => o.line.setOptions({ color }));
+      localStorage.setItem(`diagrama_${name}`,JSON.stringify(state));
+      refreshSavedList();
     }
 
-    function increaseSize() { changeSize(1.2); }
-    function decreaseSize() { changeSize(0.8); }
-    function changeSize(f) { selected.forEach(el => { el.style.width = el.offsetWidth * f + 'px'; el.style.height = el.offsetHeight * f + 'px'; }); lines.forEach(o => o.line.position()); }
+    // Lista de proyectos guardados
+    function refreshSavedList(){
+      const list=document.getElementById('savedList');list.innerHTML='<strong>Proyectos guardados:</strong>';
+      Object.keys(localStorage).filter(k=>k.startsWith('diagrama_')).forEach(k=>{
+        const name=k.replace('diagrama_','');
+        const btn=document.createElement('button');btn.textContent=name;btn.onclick=()=>loadProject(name);
+        list.appendChild(btn);
+      });
+    }
 
-    function clearSelection() { selected.forEach(e => e.classList.remove('selected')); selected = []; }
+    // Cargar proyecto desde localStorage
+    function loadProject(name){
+      const key=`diagrama_${name}`,data=localStorage.getItem(key);
+      if(!data)return alert('Proyecto no encontrado.');
+      const state=JSON.parse(data);
+      // Limpiar todo
+      lines.forEach(o=>o.line.remove());lines=[];canvas.innerHTML='';
+      // Reconstruir elementos
+      state.forEach(item=>{
+        const el=document.createElement('div');el.className='element';
+        el.style.left=item.x+'px';el.style.top=item.y+'px';el.style.width=item.width+'px';el.style.height=item.height+'px';
+        const svgEl=document.createElementNS('http://www.w3.org/2000/svg','svg');svgEl.setAttribute('class','shape');svgEl.setAttribute('viewBox','0 0 100 60');svgEl.style.color=item.color;
+        const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#'+item.type);use.setAttribute('fill',item.color);
+        svgEl.appendChild(use);
+        const lbl=document.createElement('div');lbl.className='label';lbl.innerText=item.text;
+        el.appendChild(svgEl);el.appendChild(lbl);canvas.appendChild(el);
+        makeDraggable(el);el.addEventListener('click',()=>toggle(el));
+      });
+    }
+
+    // Aplicar color a selección
+    function showColorPicker(){if(!selected.length)alert('Selecciona elementos.');else colorPicker.click();}
+    function applyColor(color){
+      if(!selected.length){alert('Selecciona elementos.');return;}
+      selected.forEach(el=>{
+        const svgEl=el.querySelector('svg.shape');if(svgEl)svgEl.style.color=color;
+        const use=el.querySelector('use');if(use){use.setAttribute('fill',color);use.style.fill=color;}
+      });
+      lines.forEach(o=>o.line.setOptions({color}));
+    }
+
+    // Iniciar lista al cargar
+    document.addEventListener('DOMContentLoaded',refreshSavedList);
   </script>
 </body>
 </html>
