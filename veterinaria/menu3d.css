@@ -4,9 +4,11 @@
   justify-content: center;
   align-items: center;
 }
+
 .button-row {
   display: inline-flex;
 }
+
 .button-row > div {
   position: relative;
   width: 160px;
@@ -14,43 +16,58 @@
   margin: 0 15px;
   perspective: 1000px;
 }
+
 .button-row > div > a {
   display: block;
   width: 100%;
   height: 100%;
   position: absolute;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transform: translateZ(-25px);
+  -webkit-transform: translateZ(-25px);
   transition: transform 0.25s;
+  -webkit-transition: -webkit-transform 0.25s;
   text-decoration: none;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
+
 .button-row > div > a::before,
 .button-row > div > a::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 160px;
-  height: 50px;
+  width: 100%;
+  height: 100%;
   position: absolute;
   border: 5px solid #2AC3FF;
   box-sizing: border-box;
   content: attr(title);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: bold;
-  line-height: 1;
+  line-height: 1.2;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
+
 .button-row > div > a::before {
   background: linear-gradient(135deg, #2AC3FF, #5af2ff);
   color: #0d2c3b;
   transform: rotateY(0deg) translateZ(25px);
+  -webkit-transform: rotateY(0deg) translateZ(25px);
 }
+
 .button-row > div > a::after {
   background: #f8f9fa;
   border-color: #2AC3FF;
   color: #0d2c3b;
   transform: rotateX(90deg) translateZ(25px);
+  -webkit-transform: rotateX(90deg) translateZ(25px);
 }
+
 .button-row > div > a:hover {
   transform: translateZ(-25px) rotateX(-90deg);
+  -webkit-transform: translateZ(-25px) rotateX(-90deg);
 }
